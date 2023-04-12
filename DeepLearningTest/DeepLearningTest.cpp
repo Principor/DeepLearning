@@ -30,5 +30,14 @@ namespace DeepLearningTest
 			Assert::ExpectException<std::invalid_argument>([]() { Tensor _({ 0 }); });
 			Assert::ExpectException<std::invalid_argument>([]() { Tensor _({ 1, 0, 3 }); });
 		}
+
+		TEST_METHOD(TestSizes) {
+			Assert::AreEqual(1, Tensor({}).getSize());
+			Assert::AreEqual(1, Tensor({ 1 }).getSize());
+			Assert::AreEqual(1, Tensor({ 1, 1, 1 }).getSize());
+			Assert::AreEqual(2, Tensor({ 2 }).getSize());
+			Assert::AreEqual(9, Tensor({ 3, 3 }).getSize());
+			Assert::AreEqual(105, Tensor({ 3, 7, 5 }).getSize());
+		}
 	};
 }
