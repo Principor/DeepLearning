@@ -39,5 +39,11 @@ namespace DeepLearningTest
 			Assert::AreEqual(9, Tensor({ 3, 3 }).getSize());
 			Assert::AreEqual(105, Tensor({ 3, 7, 5 }).getSize());
 		}
+
+		TEST_METHOD(TestItemInvalidShapes) {
+			Assert::ExpectException<std::length_error>([]() {Tensor({ 3 }).item(); });
+			Assert::ExpectException<std::length_error>([]() {Tensor({ 1, 1, 2 }).item(); });
+			Assert::ExpectException<std::length_error>([]() {Tensor({ 1, 4, 1, 1 }).item(); });
+		}
 	};
 }

@@ -9,4 +9,5 @@ public:
 	Tensor(const std::vector<int>& shape);
 	const std::vector<int>& getShape();
 	int getSize();
+	float item();
 };

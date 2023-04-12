@@ -18,3 +18,8 @@ const std::vector<int>& Tensor::getShape() {
 int Tensor::getSize() {
 	return size;
 }
+
+float Tensor::item() {
+	if (size > 1) throw std::length_error("Item can only be used on tensors of size 1.");
+	return 0;
+}
