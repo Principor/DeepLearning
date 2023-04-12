@@ -3,11 +3,9 @@
 
 Tensor::Tensor(const std::vector<int>& shape) : shape(shape)
 {
-	size = 1;
-	for (int dim : shape) {
-		if (dim < 1)
-			throw std::invalid_argument("Length of all dimensions must be greater than or equal to 1.");
-		size *= dim;
+	if (!validateShape(shape, size))
+	{
+		throw std::invalid_argument("Length of all dimensions must be greater than or equal to 1.");
 	}
 }
 
@@ -22,4 +20,28 @@ int Tensor::getSize() {
 float Tensor::item() {
 	if (size > 1) throw std::length_error("Item can only be used on tensors of size 1.");
 	return 0;
+}
+
+Tensor& Tensor::reshape(const std::vector<int>& shape) {
+	int size;
+	if (!validateShape(shape, size))
+	{
+		throw std::invalid_argument("Length of all dimensions must be greater than or equal to 1.");
+	}
+	else if (this->size != size) {
+		throw::std::length_error("New size does not match the current size.");
+	}
+	this->shape = shape;
+	return *this;
+}
+
+bool Tensor::validateShape(const std::vector<int>& shape, int& size) {
+	size = 1;
+	bool valid = true;
+	for (int dim : shape) {
+		if (dim < 1)
+			valid = false;
+		size *= dim;
+	}
+	return valid;
 }

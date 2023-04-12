@@ -31,7 +31,8 @@ namespace DeepLearningTest
 			Assert::ExpectException<std::invalid_argument>([]() { Tensor _({ 1, 0, 3 }); });
 		}
 
-		TEST_METHOD(TestSizes) {
+		TEST_METHOD(TestSizes)
+		{
 			Assert::AreEqual(1, Tensor({}).getSize());
 			Assert::AreEqual(1, Tensor({ 1 }).getSize());
 			Assert::AreEqual(1, Tensor({ 1, 1, 1 }).getSize());
@@ -40,10 +41,30 @@ namespace DeepLearningTest
 			Assert::AreEqual(105, Tensor({ 3, 7, 5 }).getSize());
 		}
 
-		TEST_METHOD(TestItemInvalidShapes) {
+		TEST_METHOD(TestItemInvalidShapes)
+		{
 			Assert::ExpectException<std::length_error>([]() {Tensor({ 3 }).item(); });
 			Assert::ExpectException<std::length_error>([]() {Tensor({ 1, 1, 2 }).item(); });
 			Assert::ExpectException<std::length_error>([]() {Tensor({ 1, 4, 1, 1 }).item(); });
+		}
+
+		TEST_METHOD(TestInvalidReshapes) {
+			Assert::ExpectException<std::length_error>([]() {Tensor({ 1 }).reshape({ 1, 2 }); });
+			Assert::ExpectException<std::length_error>([]() {Tensor({ 3, 2 }).reshape({ 5, 1 }); });
+			Assert::ExpectException<std::length_error>([]() {Tensor({ 7, 1, 3 }).reshape({ 5, 4, 1 }); });
+		}
+
+		TEST_METHOD(TestReshapes) {
+			Assert::AreEqual(1, Tensor({}).reshape({ 1 }).getShape()[0]);
+
+			Assert::AreEqual(3, Tensor({ 1, 3, 1 }).reshape({ 3 }).getShape()[0]);
+
+			Assert::AreEqual(5, Tensor({ 10 }).reshape({ 5, 2 }).getShape()[0]);
+			Assert::AreEqual(2, Tensor({ 10 }).reshape({ 5, 2 }).getShape()[1]);
+
+			Assert::AreEqual(3, Tensor({ 5, 21 }).reshape({ 3,7,5 }).getShape()[0]);
+			Assert::AreEqual(7, Tensor({ 5, 21 }).reshape({ 3,7,5 }).getShape()[1]);
+			Assert::AreEqual(5, Tensor({ 5, 21 }).reshape({ 3,7,5 }).getShape()[2]);
 		}
 	};
 }
