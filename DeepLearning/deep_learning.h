@@ -13,4 +13,5 @@ public:
 	int getSize();
 	float item();
 	Tensor& reshape(const std::vector<int>& shape);
+	Tensor get(const std::vector<int>& indices);
 };

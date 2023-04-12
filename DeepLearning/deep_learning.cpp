@@ -45,3 +45,12 @@ bool Tensor::validateShape(const std::vector<int>& shape, int& size) {
 	}
 	return valid;
 }
+
+Tensor Tensor::get(const std::vector<int>& indices) {
+	if (indices.size() > shape.size()) throw std::length_error("Number of indices cannot be greater than number of dimensions.");
+	for (int i = 0; i < indices.size(); i++) {
+		if (indices[i] >= shape[i] || indices[i] < 0) throw std::out_of_range("Index is not in the range of the tensor.");
+	}
+	std::vector<int> newShape(shape.begin() + indices.size(), shape.end());
+	return Tensor(newShape);
+}
