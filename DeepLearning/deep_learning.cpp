@@ -1,14 +1,8 @@
 #include "deep_learning.h"
 #include <stdexcept>
 
-Tensor::Tensor(const std::vector<int>& shape, float* values) : shape(shape)
+Tensor::Tensor(const std::vector<int>& shape, int size, float* values) : shape(shape), size(size), values(values)
 {
-	if (!validateShape(shape, size))
-	{
-		throw std::invalid_argument("Length of all dimensions must be greater than or equal to 1.");
-	}
-	if (values == NULL) this->values = new float[size];
-	else this->values = values;
 }
 
 const std::vector<int>& Tensor::getShape() {
@@ -25,37 +19,32 @@ float Tensor::item() {
 }
 
 Tensor& Tensor::reshape(const std::vector<int>& shape) {
-	int size;
-	if (!validateShape(shape, size))
-	{
-		throw std::invalid_argument("Length of all dimensions must be greater than or equal to 1.");
-	}
-	else if (this->size != size) {
+	int size = calculateSize(shape);
+	if (this->size != size) {
 		throw::std::length_error("New size does not match the current size.");
 	}
 	this->shape = shape;
 	return *this;
 }
 
-bool Tensor::validateShape(const std::vector<int>& shape, int& size) {
-	size = 1;
-	bool valid = true;
+int Tensor::calculateSize(const std::vector<int>& shape) {
+	int size = 1;
 	for (int dim : shape) {
-		if (dim < 1)
-			valid = false;
+		if (dim < 1) throw std::invalid_argument("Length of all dimensions must be greater than or equal to 1.");
 		size *= dim;
 	}
-	return valid;
+	return size;
 }
 
 Tensor Tensor::get(const std::vector<int>& indices) {
 	int index = getIndex(indices);
 	std::vector<int> newShape(shape.begin() + indices.size(), shape.end());
-	return Tensor(newShape, values + index);
+	int newSize = calculateSize(newShape);
+	return Tensor(newShape, newSize, values + index);
 }
 
 Tensor& Tensor::set(float value) {
-	set({}, value);
+	return set({}, value);
 }
 
 Tensor& Tensor::set(const std::vector<int>& indices, float value) {
@@ -68,6 +57,7 @@ Tensor& Tensor::set(const std::vector<int>& indices, float value) {
 	for (int i = index; i < index + assignmentSize; i++) {
 		values[i] = value;
 	}
+	return *this;
 }
 
 int Tensor::getIndex(const std::vector<int>& indices) {
@@ -88,4 +78,18 @@ int Tensor::getIndex(const std::vector<int>& indices) {
 	}
 
 	return index;
+}
+
+Tensor Tensor::zeroes(const std::vector<int>& shape) {
+	return full(shape, 0.0f);
+}
+
+Tensor Tensor::full(const std::vector<int>& shape, float value)
+{
+	int size = calculateSize(shape);
+	float* values = new float[size];
+	for (int i = 0; i < size; i++) {
+		values[i] = value;
+	}
+	return Tensor(shape, size, values);
 }
