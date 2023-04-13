@@ -85,5 +85,22 @@ namespace DeepLearningTest
 
 			Assert::AreEqual(2, Tensor({ 3, 2 }).get({ 0 }).getShape()[0]);
 		}
+
+		TEST_METHOD(TestAssigningSingle) {
+			Tensor tensor1({ 3 });
+			tensor1.set(1.0f);
+			Assert::AreEqual(1.0f, tensor1.get({ 0 }).item());
+			Assert::AreEqual(1.0f, tensor1.get({ 1 }).item());
+			Assert::AreEqual(1.0f, tensor1.get({ 2 }).item());
+
+			Tensor tensor2({ 2, 3 });
+			tensor2.set({ 1 }, 1.0f);
+			Assert::IsTrue(std::abs(tensor2.get({ 0, 0 }).item()) < 1e-10);
+			Assert::IsTrue(std::abs(tensor2.get({ 0, 1 }).item()) < 1e-10);
+			Assert::IsTrue(std::abs(tensor2.get({ 0, 2 }).item()) < 1e-10);
+			Assert::IsTrue(std::abs(tensor2.get({ 1, 0 }).item() - 1) < 1e-10);
+			Assert::IsTrue(std::abs(tensor2.get({ 1, 1 }).item() - 1) < 1e-10);
+			Assert::IsTrue(std::abs(tensor2.get({ 1, 2 }).item() - 1) < 1e-10);
+		}
 	};
 }
