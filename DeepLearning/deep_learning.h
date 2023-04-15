@@ -23,5 +23,6 @@ public:
 	Tensor& set(float value);
 
 	static Tensor zeroes(const std::vector<int>& shape);
+	static Tensor ones(const std::vector<int>& shape);
 	static Tensor full(const std::vector<int>& shape, float value);
 };

@@ -57,6 +57,56 @@ namespace TensorTest
 		}
 	};
 
+	TEST_CLASS(OnesTest)
+	{
+	public:
+		TEST_METHOD(Shape)
+		{
+			Assert::AreEqual(1, Tensor::ones({ 1 }).getShape()[0]);
+
+			Assert::AreEqual(3, Tensor::ones({ 3 }).getShape()[0]);
+
+			Assert::AreEqual(5, Tensor::ones({ 5, 2 }).getShape()[0]);
+			Assert::AreEqual(2, Tensor::ones({ 5, 2 }).getShape()[1]);
+
+			Assert::AreEqual(3, Tensor::ones({ 3,7,5 }).getShape()[0]);
+			Assert::AreEqual(7, Tensor::ones({ 3,7,5 }).getShape()[1]);
+			Assert::AreEqual(5, Tensor::ones({ 3,7,5 }).getShape()[2]);
+		}
+
+		TEST_METHOD(Size)
+		{
+			Assert::AreEqual(1, Tensor::ones({}).getSize());
+			Assert::AreEqual(1, Tensor::ones({ 1 }).getSize());
+			Assert::AreEqual(1, Tensor::ones({ 1, 1, 1 }).getSize());
+			Assert::AreEqual(2, Tensor::ones({ 2 }).getSize());
+			Assert::AreEqual(9, Tensor::ones({ 3, 3 }).getSize());
+			Assert::AreEqual(105, Tensor::ones({ 3, 7, 5 }).getSize());
+		}
+
+		TEST_METHOD(Values)
+		{
+			Tensor tensor1 = Tensor::ones({ 3 });
+			Assert::IsTrue(std::abs(tensor1.get({ 0 }).item() - 1.0f) < 1e-10);
+			Assert::IsTrue(std::abs(tensor1.get({ 1 }).item() - 1.0f) < 1e-10);
+			Assert::IsTrue(std::abs(tensor1.get({ 2 }).item() - 1.0f) < 1e-10);
+
+			Tensor tensor2 = Tensor::ones({ 2, 3 });
+			Assert::IsTrue(std::abs(tensor2.get({ 0, 0 }).item() - 1.0f) < 1e-10);
+			Assert::IsTrue(std::abs(tensor2.get({ 0, 1 }).item() - 1.0f) < 1e-10);
+			Assert::IsTrue(std::abs(tensor2.get({ 0, 2 }).item() - 1.0f) < 1e-10);
+			Assert::IsTrue(std::abs(tensor2.get({ 1, 0 }).item() - 1.0f) < 1e-10);
+			Assert::IsTrue(std::abs(tensor2.get({ 1, 1 }).item() - 1.0f) < 1e-10);
+			Assert::IsTrue(std::abs(tensor2.get({ 1, 2 }).item() - 1.0f) < 1e-10);
+		}
+
+		TEST_METHOD(InvalidShape)
+		{
+			Assert::ExpectException<std::invalid_argument>([]() { Tensor::ones({ -1 }); });
+			Assert::ExpectException<std::invalid_argument>([]() { Tensor::ones({ 0 }); });
+			Assert::ExpectException<std::invalid_argument>([]() { Tensor::ones({ 1, 0, 3 }); });
+		}
+	};
 
 	TEST_CLASS(FullTest)
 	{

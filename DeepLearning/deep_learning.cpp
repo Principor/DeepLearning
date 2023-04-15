@@ -84,6 +84,10 @@ Tensor Tensor::zeroes(const std::vector<int>& shape) {
 	return full(shape, 0.0f);
 }
 
+Tensor Tensor::ones(const std::vector<int>& shape) {
+	return full(shape, 1.0f);
+}
+
 Tensor Tensor::full(const std::vector<int>& shape, float value)
 {
 	int size = calculateSize(shape);
