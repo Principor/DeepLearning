@@ -40,7 +40,11 @@ Tensor Tensor::get(const std::vector<int>& indices) {
 	int index = getIndex(indices);
 	std::vector<int> newShape(shape.begin() + indices.size(), shape.end());
 	int newSize = calculateSize(newShape);
-	return Tensor(newShape, newSize, values + index);
+	float* newValues = new float[newSize];
+	for (int i = 0; i < newSize; i++) {
+		newValues[i] = values[i + index];
+	}
+	return Tensor(newShape, newSize, newValues);
 }
 
 Tensor& Tensor::set(float value) {

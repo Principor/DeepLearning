@@ -238,6 +238,13 @@ namespace TensorTest
 			Tensor tensor2b = tensor2a.get({ 2, 3 });
 			Assert::AreEqual(tensor2a.get({ 2, 3, 1, 5 }).item(), tensor2b.get({ 1, 5 }).item());
 		}
+
+		TEST_METHOD(IndependentValues) {
+			Tensor tensor1 = Tensor::zeroes({ 1 });
+			Tensor tensor2 = tensor1.get({});
+			tensor2.set(1.0f);
+			Assert::AreNotEqual(tensor1.item(), tensor2.item());
+		}
 	};
 
 	TEST_CLASS(SetTest)
