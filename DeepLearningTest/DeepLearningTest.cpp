@@ -348,6 +348,19 @@ namespace TensorTest
 			tensor2.set(1.0f);
 			Assert::AreNotEqual(tensor1.item(), tensor2.item());
 		}
+
+		TEST_METHOD(Gradient)
+		{
+			Tensor tensor1 = Tensor::zeroes({ 10, 3 });
+			Tensor tensor2 = tensor1.get({});
+			Assert::IsFalse(tensor2.getGradient());
+			Assert::IsNull(tensor2.getFunction());
+
+			tensor1.setGradient(true);
+			Tensor tensor3 = tensor1.get({});
+			Assert::IsTrue(tensor3.getGradient());
+			Assert::IsNotNull((const GetFunction*)tensor3.getFunction());
+		}
 	};
 
 	TEST_CLASS(SetTest)

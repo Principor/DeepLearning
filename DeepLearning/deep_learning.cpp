@@ -1,19 +1,26 @@
-#include "deep_learning.h"
 #include <stdexcept>
 
-Tensor::Tensor(const std::vector<int>& shape, int size, float* values) : shape(shape), size(size), values(values), gradient(false)
+#include "deep_learning.h"
+
+Tensor::Tensor(const std::vector<int>& shape, int size, float* values) : shape(shape), size(size), values(values),
+gradient(false), function(NULL)
 {
 }
 
-const std::vector<int>& Tensor::getShape() {
+Tensor::~Tensor()
+{
+	if (function != NULL) delete function;
+}
+
+const std::vector<int>& Tensor::getShape() const {
 	return shape;
 }
 
-int Tensor::getSize() {
+int Tensor::getSize() const {
 	return size;
 }
 
-bool Tensor::getGradient() {
+bool Tensor::getGradient() const {
 	return gradient;
 }
 
@@ -21,13 +28,18 @@ void Tensor::setGradient(bool gradient) {
 	this->gradient = gradient;
 }
 
-float Tensor::item() {
+float Tensor::item() const {
 	if (size > 1) throw std::length_error("Item can only be used on tensors of size 1.");
 	return values[0];
 }
 
-float Tensor::at(int index) {
+float Tensor::at(int index) const {
 	return values[index];
+}
+
+const GradientFunction* Tensor::getFunction() const
+{
+	return function;
 }
 
 Tensor& Tensor::reshape(const std::vector<int>& shape) {
@@ -39,7 +51,7 @@ Tensor& Tensor::reshape(const std::vector<int>& shape) {
 	return *this;
 }
 
-Tensor Tensor::get(const std::vector<int>& indices) {
+Tensor Tensor::get(const std::vector<int>& indices) const {
 	int index = getIndex(indices);
 	std::vector<int> newShape(shape.begin() + indices.size(), shape.end());
 	int newSize = calculateSize(newShape);
@@ -47,7 +59,12 @@ Tensor Tensor::get(const std::vector<int>& indices) {
 	for (int i = 0; i < newSize; i++) {
 		newValues[i] = values[i + index];
 	}
-	return Tensor(newShape, newSize, newValues);
+	Tensor newTensor(newShape, newSize, newValues);
+	if (gradient) {
+		newTensor.gradient = true;
+		newTensor.function = new GetFunction(this, index, size);
+	}
+	return newTensor;
 }
 
 Tensor& Tensor::set(float value) {
@@ -99,7 +116,7 @@ int Tensor::calculateSize(const std::vector<int>& shape) {
 	return size;
 }
 
-int Tensor::getIndex(const std::vector<int>& indices) {
+int Tensor::getIndex(const std::vector<int>& indices) const {
 	//Ensure indices are valid
 	if (indices.size() > shape.size()) throw std::length_error("Number of indices cannot be greater than number of dimensions.");
 	for (int i = 0; i < indices.size(); i++) {

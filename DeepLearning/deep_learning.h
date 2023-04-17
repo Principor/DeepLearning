@@ -1,5 +1,7 @@
-#pragma once
+#pragma 
 #include <vector>
+
+#include "gradient_function.h"
 
 class Tensor {
 private:
@@ -7,22 +9,26 @@ private:
 	int size;
 	float* values;
 	bool gradient;
+	GradientFunction* function;
 
 	Tensor(const std::vector<int>& shape, int size, float* values);
 
-	int getIndex(const std::vector<int>& indices);
+	int getIndex(const std::vector<int>& indices) const;
 
 	static int calculateSize(const std::vector<int>& shape);
 public:
-	const std::vector<int>& getShape();
-	int getSize();
-	bool getGradient();
+	~Tensor();
+
+	const std::vector<int>& getShape() const;
+	int getSize() const;
+	bool getGradient() const;
 	void setGradient(bool gradient);
-	float item();
-	float at(int index);
+	float item() const;
+	float at(int index) const;
+	const GradientFunction* getFunction() const;
 
 	Tensor& reshape(const std::vector<int>& shape);
-	Tensor get(const std::vector<int>& indices);
+	Tensor get(const std::vector<int>& indices) const;
 	Tensor& set(const std::vector<int>& indices, float value);
 	Tensor& set(float value);
 

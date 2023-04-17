@@ -18,9 +18,15 @@
     <ClInclude Include="deep_learning.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="gradient_function.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="deep_learning.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gradient_function.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

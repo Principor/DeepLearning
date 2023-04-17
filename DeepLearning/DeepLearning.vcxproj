@@ -140,9 +140,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="deep_learning.h" />
+    <ClInclude Include="gradient_function.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="deep_learning.cpp" />
+    <ClCompile Include="gradient_function.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
