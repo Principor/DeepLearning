@@ -184,6 +184,64 @@ namespace TensorTest
 		}
 	};
 
+	TEST_CLASS(FromValuesTest)
+	{
+	public:
+		TEST_METHOD(Shape)
+		{
+			Assert::AreEqual(1, Tensor::fromValues(new float[1], { 1 }).getShape()[0]);
+
+			Assert::AreEqual(3, Tensor::fromValues(new float[3], { 3 }).getShape()[0]);
+
+			Assert::AreEqual(5, Tensor::fromValues(new float[10], { 5, 2 }).getShape()[0]);
+			Assert::AreEqual(2, Tensor::fromValues(new float[10], { 5, 2 }).getShape()[1]);
+
+			Assert::AreEqual(3, Tensor::fromValues(new float[105], { 3,7,5 }).getShape()[0]);
+			Assert::AreEqual(7, Tensor::fromValues(new float[105], { 3,7,5 }).getShape()[1]);
+			Assert::AreEqual(5, Tensor::fromValues(new float[105], { 3,7,5 }).getShape()[2]);
+		}
+
+		TEST_METHOD(Size)
+		{
+			Assert::AreEqual(1, Tensor::fromValues(new float[1], {}).getSize());
+			Assert::AreEqual(1, Tensor::fromValues(new float[1], { 1 }).getSize());
+			Assert::AreEqual(1, Tensor::fromValues(new float[1], { 1, 1, 1 }).getSize());
+			Assert::AreEqual(2, Tensor::fromValues(new float[2], { 2 }).getSize());
+			Assert::AreEqual(9, Tensor::fromValues(new float[9], { 3, 3 }).getSize());
+			Assert::AreEqual(105, Tensor::fromValues(new float[105], { 3, 7, 5 }).getSize());
+		}
+
+		TEST_METHOD(Values)
+		{
+			Tensor tensor1 = Tensor::fromValues(new float[3]{ 1.0f, 2.0f, 3.0f }, { 3 });
+			CompareFloats(tensor1.get({ 0 }).item(), 1.0f);
+			CompareFloats(tensor1.get({ 1 }).item(), 2.0f);
+			CompareFloats(tensor1.get({ 2 }).item(), 3.0f);
+
+			Tensor tensor2 = Tensor::fromValues(new float[6] {-1.0f, -2.0f, -3.0f, -4.0f, -5.0f, -6.0f}, { 2, 3 });
+			CompareFloats(tensor2.get({ 0, 0 }).item(), -1.0f);
+			CompareFloats(tensor2.get({ 0, 1 }).item(), -2.0f);
+			CompareFloats(tensor2.get({ 0, 2 }).item(), -3.0f);
+			CompareFloats(tensor2.get({ 1, 0 }).item(), -4.0f);
+			CompareFloats(tensor2.get({ 1, 1 }).item(), -5.0f);
+			CompareFloats(tensor2.get({ 1, 2 }).item(), -6.0f);
+		}
+
+		TEST_METHOD(InvalidShape)
+		{
+			Assert::ExpectException<std::invalid_argument>([]() { Tensor::fromValues(new float[1], { -1 }); });
+			Assert::ExpectException<std::invalid_argument>([]() { Tensor::fromValues(new float[1], { 0 }); });
+			Assert::ExpectException<std::invalid_argument>([]() { Tensor::fromValues(new float[1], { 1, 0, 3 }); });
+		}
+
+		TEST_METHOD(RequiresGradient)
+		{
+			Assert::IsFalse(Tensor::fromValues(new float[24], { 4, 3, 2 }).getGradient());
+			Assert::IsFalse(Tensor::fromValues(new float[1], {  }).getGradient());
+			Assert::IsFalse(Tensor::fromValues(new float[10], { 10 }).getGradient());
+		}
+	};
+
 	TEST_CLASS(ItemTest)
 	{
 	public:
@@ -204,7 +262,9 @@ namespace TensorTest
 		}
 	};
 
-	TEST_CLASS(AtTest) {
+	TEST_CLASS(AtTest)
+	{
+	public:
 		TEST_METHOD(Value) {
 			Tensor tensor1 = Tensor::zeroes({});
 			CompareFloats(tensor1.at(0), 0.0f);
@@ -222,6 +282,7 @@ namespace TensorTest
 
 	TEST_CLASS(ReshapeTest)
 	{
+	public:
 		TEST_METHOD(InvalidShape)
 		{
 			Assert::ExpectException<std::invalid_argument>([]() { Tensor::zeroes({ 1 }).reshape({ -1 }); });
@@ -251,6 +312,7 @@ namespace TensorTest
 
 	TEST_CLASS(GetTest)
 	{
+	public:
 		TEST_METHOD(TooManyIndices) {
 			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ }).get({ 0 }); });
 			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ 2 }).get({ 1, 1 }); });
@@ -290,6 +352,7 @@ namespace TensorTest
 
 	TEST_CLASS(SetTest)
 	{
+	public:
 		TEST_METHOD(TooManyIndices) {
 			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ }).set({ 0 }, 0.0f); });
 			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ 2 }).set({ 1, 1 }, 0.0f); });
@@ -320,7 +383,9 @@ namespace TensorTest
 		}
 	};
 
-	TEST_CLASS(GradientTest) {
+	TEST_CLASS(GradientTest) 
+	{
+	public:
 		TEST_METHOD(Value) {
 			Tensor tensor1 = Tensor::zeroes({});
 			tensor1.setGradient(true);

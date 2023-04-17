@@ -85,6 +85,11 @@ Tensor Tensor::full(const std::vector<int>& shape, float value)
 	return Tensor(shape, size, values);
 }
 
+Tensor Tensor::fromValues(float* values, const std::vector<int>& shape)
+{
+	return Tensor(shape, calculateSize(shape), values);
+}
+
 int Tensor::calculateSize(const std::vector<int>& shape) {
 	int size = 1;
 	for (int dim : shape) {
