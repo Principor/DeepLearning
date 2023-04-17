@@ -19,6 +19,7 @@ public:
 	bool getGradient();
 	void setGradient(bool gradient);
 	float item();
+	float at(int index);
 
 	Tensor& reshape(const std::vector<int>& shape);
 	Tensor get(const std::vector<int>& indices);

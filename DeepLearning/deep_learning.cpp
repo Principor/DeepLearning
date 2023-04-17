@@ -26,6 +26,10 @@ float Tensor::item() {
 	return values[0];
 }
 
+float Tensor::at(int index) {
+	return values[index];
+}
+
 Tensor& Tensor::reshape(const std::vector<int>& shape) {
 	int size = calculateSize(shape);
 	if (this->size != size) {

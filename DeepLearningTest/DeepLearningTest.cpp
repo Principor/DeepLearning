@@ -6,6 +6,10 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace TensorTest
 {
+	void CompareFloats(float x, float y) {
+		Assert::IsTrue(std::abs(x - y) < 1e-10);
+	}
+
 	TEST_CLASS(ZeroesTest)
 	{
 	public:
@@ -36,17 +40,17 @@ namespace TensorTest
 		TEST_METHOD(Values)
 		{
 			Tensor tensor1 = Tensor::zeroes({ 3 });
-			Assert::IsTrue(std::abs(tensor1.get({ 0 }).item()) < 1e-10);
-			Assert::IsTrue(std::abs(tensor1.get({ 1 }).item()) < 1e-10);
-			Assert::IsTrue(std::abs(tensor1.get({ 2 }).item()) < 1e-10);
+			CompareFloats(tensor1.get({ 0 }).item(), 0.0f);
+			CompareFloats(tensor1.get({ 1 }).item(), 0.0f);
+			CompareFloats(tensor1.get({ 2 }).item(), 0.0f);
 
 			Tensor tensor2 = Tensor::zeroes({ 2, 3 });
-			Assert::IsTrue(std::abs(tensor2.get({ 0, 0 }).item()) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 0, 1 }).item()) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 0, 2 }).item()) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 1, 0 }).item()) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 1, 1 }).item()) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 1, 2 }).item()) < 1e-10);
+			CompareFloats(tensor2.get({ 0, 0 }).item(), 0.0f);
+			CompareFloats(tensor2.get({ 0, 1 }).item(), 0.0f);
+			CompareFloats(tensor2.get({ 0, 2 }).item(), 0.0f);
+			CompareFloats(tensor2.get({ 1, 0 }).item(), 0.0f);
+			CompareFloats(tensor2.get({ 1, 1 }).item(), 0.0f);
+			CompareFloats(tensor2.get({ 1, 2 }).item(), 0.0f);
 		}
 
 		TEST_METHOD(InvalidShape)
@@ -94,17 +98,17 @@ namespace TensorTest
 		TEST_METHOD(Values)
 		{
 			Tensor tensor1 = Tensor::ones({ 3 });
-			Assert::IsTrue(std::abs(tensor1.get({ 0 }).item() - 1.0f) < 1e-10);
-			Assert::IsTrue(std::abs(tensor1.get({ 1 }).item() - 1.0f) < 1e-10);
-			Assert::IsTrue(std::abs(tensor1.get({ 2 }).item() - 1.0f) < 1e-10);
+			CompareFloats(tensor1.get({ 0 }).item(), 1.0f);
+			CompareFloats(tensor1.get({ 1 }).item(), 1.0f);
+			CompareFloats(tensor1.get({ 2 }).item(), 1.0f);
 
 			Tensor tensor2 = Tensor::ones({ 2, 3 });
-			Assert::IsTrue(std::abs(tensor2.get({ 0, 0 }).item() - 1.0f) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 0, 1 }).item() - 1.0f) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 0, 2 }).item() - 1.0f) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 1, 0 }).item() - 1.0f) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 1, 1 }).item() - 1.0f) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 1, 2 }).item() - 1.0f) < 1e-10);
+			CompareFloats(tensor2.get({ 0, 0 }).item(), 1.0f);
+			CompareFloats(tensor2.get({ 0, 1 }).item(), 1.0f);
+			CompareFloats(tensor2.get({ 0, 2 }).item(), 1.0f);
+			CompareFloats(tensor2.get({ 1, 0 }).item(), 1.0f);
+			CompareFloats(tensor2.get({ 1, 1 }).item(), 1.0f);
+			CompareFloats(tensor2.get({ 1, 2 }).item(), 1.0f);
 		}
 
 		TEST_METHOD(InvalidShape)
@@ -152,17 +156,17 @@ namespace TensorTest
 		TEST_METHOD(Values)
 		{
 			Tensor tensor1 = Tensor::full({ 3 }, 4.0f);
-			Assert::IsTrue(std::abs(tensor1.get({ 0 }).item() - 4.0f) < 1e-10);
-			Assert::IsTrue(std::abs(tensor1.get({ 1 }).item() - 4.0f) < 1e-10);
-			Assert::IsTrue(std::abs(tensor1.get({ 2 }).item() - 4.0f) < 1e-10);
+			CompareFloats(tensor1.get({ 0 }).item(), 4.0f);
+			CompareFloats(tensor1.get({ 1 }).item(), 4.0f);
+			CompareFloats(tensor1.get({ 2 }).item(), 4.0f);
 
 			Tensor tensor2 = Tensor::full({ 2, 3 }, 2.0f);
-			Assert::IsTrue(std::abs(tensor2.get({ 0, 0 }).item() - 2.0f) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 0, 1 }).item() - 2.0f) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 0, 2 }).item() - 2.0f) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 1, 0 }).item() - 2.0f) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 1, 1 }).item() - 2.0f) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 1, 2 }).item() - 2.0f) < 1e-10);
+			CompareFloats(tensor2.get({ 0, 0 }).item(), 2.0f);
+			CompareFloats(tensor2.get({ 0, 1 }).item(), 2.0f);
+			CompareFloats(tensor2.get({ 0, 2 }).item(), 2.0f);
+			CompareFloats(tensor2.get({ 1, 0 }).item(), 2.0f);
+			CompareFloats(tensor2.get({ 1, 1 }).item(), 2.0f);
+			CompareFloats(tensor2.get({ 1, 2 }).item(), 2.0f);
 		}
 
 		TEST_METHOD(InvalidShape)
@@ -191,12 +195,28 @@ namespace TensorTest
 		}
 
 		TEST_METHOD(Value) {
-			Assert::IsTrue(std::abs(Tensor::zeroes({ }).item()) < 1e-10);
-			Assert::IsTrue(std::abs(Tensor::zeroes({ 1, 1, 1 }).item()) < 1e-10);
+			CompareFloats(Tensor::zeroes({ }).item(), 0.0f);
+			CompareFloats(Tensor::zeroes({ 1, 1, 1 }).item(), 0.0f);
 
 			Tensor tensor = Tensor::zeroes({ 2,3 });
 			tensor.set({ 1 }, -1.0f);
-			Assert::IsTrue(std::abs(tensor.get({ 1,2 }).item() + 1.0f) < 1e-10);
+			CompareFloats(tensor.get({ 1,2 }).item(), -1.0f);
+		}
+	};
+
+	TEST_CLASS(AtTest) {
+		TEST_METHOD(Value) {
+			Tensor tensor1 = Tensor::zeroes({});
+			CompareFloats(tensor1.at(0), 0.0f);
+
+			Tensor tensor2 = Tensor::full({ 2,3 }, 2.0f);
+			tensor2.set({ 1 }, -2.0f);
+			CompareFloats(tensor2.at(0), 2.0f);
+			CompareFloats(tensor2.at(1), 2.0f);
+			CompareFloats(tensor2.at(2), 2.0f);
+			CompareFloats(tensor2.at(3), -2.0f);
+			CompareFloats(tensor2.at(4), -2.0f);
+			CompareFloats(tensor2.at(5), -2.0f);
 		}
 	};
 
@@ -285,18 +305,18 @@ namespace TensorTest
 		TEST_METHOD(NewValue) {
 			Tensor tensor1 = Tensor::zeroes({ 3 });
 			tensor1.set(1.0f);
-			Assert::IsTrue(std::abs(tensor1.get({ 0 }).item() - 1.0f) < 1e-10);
-			Assert::IsTrue(std::abs(tensor1.get({ 1 }).item() - 1.0f) < 1e-10);
-			Assert::IsTrue(std::abs(tensor1.get({ 2 }).item() - 1.0f) < 1e-10);
+			CompareFloats(tensor1.get({ 0 }).item(), 1.0f);
+			CompareFloats(tensor1.get({ 1 }).item(), 1.0f);
+			CompareFloats(tensor1.get({ 2 }).item(), 1.0f);
 
 			Tensor tensor2 = Tensor::zeroes({ 2, 3 });
 			tensor2.set({ 1 }, 1.0f);
-			Assert::IsTrue(std::abs(tensor2.get({ 0, 0 }).item()) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 0, 1 }).item()) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 0, 2 }).item()) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 1, 0 }).item() - 1.0f) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 1, 1 }).item() - 1.0f) < 1e-10);
-			Assert::IsTrue(std::abs(tensor2.get({ 1, 2 }).item() - 1.0f) < 1e-10);
+			CompareFloats(tensor2.get({ 0, 0 }).item(), 0.0f);
+			CompareFloats(tensor2.get({ 0, 1 }).item(), 0.0f);
+			CompareFloats(tensor2.get({ 0, 2 }).item(), 0.0f);
+			CompareFloats(tensor2.get({ 1, 0 }).item(), 1.0f);
+			CompareFloats(tensor2.get({ 1, 1 }).item(), 1.0f);
+			CompareFloats(tensor2.get({ 1, 2 }).item(), 1.0f);
 		}
 	};
 
