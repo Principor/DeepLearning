@@ -1,7 +1,7 @@
 #include "deep_learning.h"
 #include <stdexcept>
 
-Tensor::Tensor(const std::vector<int>& shape, int size, float* values) : shape(shape), size(size), values(values)
+Tensor::Tensor(const std::vector<int>& shape, int size, float* values) : shape(shape), size(size), values(values), gradient(false)
 {
 }
 
@@ -11,6 +11,14 @@ const std::vector<int>& Tensor::getShape() {
 
 int Tensor::getSize() {
 	return size;
+}
+
+bool Tensor::getGradient() {
+	return gradient;
+}
+
+void Tensor::setGradient(bool gradient) {
+	this->gradient = gradient;
 }
 
 float Tensor::item() {
@@ -25,15 +33,6 @@ Tensor& Tensor::reshape(const std::vector<int>& shape) {
 	}
 	this->shape = shape;
 	return *this;
-}
-
-int Tensor::calculateSize(const std::vector<int>& shape) {
-	int size = 1;
-	for (int dim : shape) {
-		if (dim < 1) throw std::invalid_argument("Length of all dimensions must be greater than or equal to 1.");
-		size *= dim;
-	}
-	return size;
 }
 
 Tensor Tensor::get(const std::vector<int>& indices) {
@@ -64,6 +63,33 @@ Tensor& Tensor::set(const std::vector<int>& indices, float value) {
 	return *this;
 }
 
+Tensor Tensor::zeroes(const std::vector<int>& shape) {
+	return full(shape, 0.0f);
+}
+
+Tensor Tensor::ones(const std::vector<int>& shape) {
+	return full(shape, 1.0f);
+}
+
+Tensor Tensor::full(const std::vector<int>& shape, float value)
+{
+	int size = calculateSize(shape);
+	float* values = new float[size];
+	for (int i = 0; i < size; i++) {
+		values[i] = value;
+	}
+	return Tensor(shape, size, values);
+}
+
+int Tensor::calculateSize(const std::vector<int>& shape) {
+	int size = 1;
+	for (int dim : shape) {
+		if (dim < 1) throw std::invalid_argument("Length of all dimensions must be greater than or equal to 1.");
+		size *= dim;
+	}
+	return size;
+}
+
 int Tensor::getIndex(const std::vector<int>& indices) {
 	//Ensure indices are valid
 	if (indices.size() > shape.size()) throw std::length_error("Number of indices cannot be greater than number of dimensions.");
@@ -82,22 +108,4 @@ int Tensor::getIndex(const std::vector<int>& indices) {
 	}
 
 	return index;
-}
-
-Tensor Tensor::zeroes(const std::vector<int>& shape) {
-	return full(shape, 0.0f);
-}
-
-Tensor Tensor::ones(const std::vector<int>& shape) {
-	return full(shape, 1.0f);
-}
-
-Tensor Tensor::full(const std::vector<int>& shape, float value)
-{
-	int size = calculateSize(shape);
-	float* values = new float[size];
-	for (int i = 0; i < size; i++) {
-		values[i] = value;
-	}
-	return Tensor(shape, size, values);
 }

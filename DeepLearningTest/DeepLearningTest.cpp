@@ -55,6 +55,13 @@ namespace TensorTest
 			Assert::ExpectException<std::invalid_argument>([]() { Tensor::zeroes({ 0 }); });
 			Assert::ExpectException<std::invalid_argument>([]() { Tensor::zeroes({ 1, 0, 3 }); });
 		}
+
+		TEST_METHOD(RequiresGradient)
+		{
+			Assert::IsFalse(Tensor::zeroes({ 4, 3, 2 }).getGradient());
+			Assert::IsFalse(Tensor::zeroes({  }).getGradient());
+			Assert::IsFalse(Tensor::zeroes({ 10 }).getGradient());
+		}
 	};
 
 	TEST_CLASS(OnesTest)
@@ -106,6 +113,13 @@ namespace TensorTest
 			Assert::ExpectException<std::invalid_argument>([]() { Tensor::ones({ 0 }); });
 			Assert::ExpectException<std::invalid_argument>([]() { Tensor::ones({ 1, 0, 3 }); });
 		}
+
+		TEST_METHOD(RequiresGradient)
+		{
+			Assert::IsFalse(Tensor::ones({ 4, 3, 2 }).getGradient());
+			Assert::IsFalse(Tensor::ones({  }).getGradient());
+			Assert::IsFalse(Tensor::ones({ 10 }).getGradient());
+		}
 	};
 
 	TEST_CLASS(FullTest)
@@ -156,6 +170,13 @@ namespace TensorTest
 			Assert::ExpectException<std::invalid_argument>([]() { Tensor::full({ -1 }, 0.0f); });
 			Assert::ExpectException<std::invalid_argument>([]() { Tensor::full({ 0 }, 2.0f); });
 			Assert::ExpectException<std::invalid_argument>([]() { Tensor::full({ 1, 0, 3 }, 10.0f); });
+		}
+
+		TEST_METHOD(RequiresGradient)
+		{
+			Assert::IsFalse(Tensor::full({ 4, 3, 2 }, 0.0f).getGradient());
+			Assert::IsFalse(Tensor::full({  }, 5.0f).getGradient());
+			Assert::IsFalse(Tensor::full({ 10 }, -3.0f).getGradient());
 		}
 	};
 
@@ -276,6 +297,25 @@ namespace TensorTest
 			Assert::IsTrue(std::abs(tensor2.get({ 1, 0 }).item() - 1.0f) < 1e-10);
 			Assert::IsTrue(std::abs(tensor2.get({ 1, 1 }).item() - 1.0f) < 1e-10);
 			Assert::IsTrue(std::abs(tensor2.get({ 1, 2 }).item() - 1.0f) < 1e-10);
+		}
+	};
+
+	TEST_CLASS(GradientTest) {
+		TEST_METHOD(Value) {
+			Tensor tensor1 = Tensor::zeroes({});
+			tensor1.setGradient(true);
+			Assert::IsTrue(tensor1.getGradient());
+
+			Tensor tensor2 = Tensor::ones({ 4, 3 });
+			tensor2.setGradient(false);
+			Assert::IsFalse(tensor2.getGradient());
+
+			Tensor tensor3 = Tensor::full({ 10 }, 1.0f);
+			tensor3.setGradient(true);
+			tensor3.setGradient(true);
+			Assert::IsTrue(tensor3.getGradient());
+			tensor3.setGradient(false);
+			Assert::IsFalse(tensor3.getGradient());
 		}
 	};
 }

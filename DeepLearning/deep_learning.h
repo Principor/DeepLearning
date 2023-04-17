@@ -6,6 +6,7 @@ private:
 	std::vector<int> shape;
 	int size;
 	float* values;
+	bool gradient;
 
 	Tensor(const std::vector<int>& shape, int size, float* values);
 
@@ -15,6 +16,8 @@ private:
 public:
 	const std::vector<int>& getShape();
 	int getSize();
+	bool getGradient();
+	void setGradient(bool gradient);
 	float item();
 
 	Tensor& reshape(const std::vector<int>& shape);
