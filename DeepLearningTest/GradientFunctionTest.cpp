@@ -66,7 +66,7 @@ namespace GradientFunctionTest
 			tensor1a.setGradient(true);
 			Tensor tensor1b = tensor1a.set(0.0f);
 			Tensor gradient1 = tensor1b.getFunction()->calculateGradient(
-				Tensor::fromValues(new float[3], { 2,1,3 })
+				Tensor::fromValues(new float[6], { 2,1,3 })
 			);
 			Assert::AreEqual(gradient1.getShape()[0], tensor1a.getShape()[0]);
 			Assert::AreEqual(gradient1.getShape()[1], tensor1a.getShape()[1]);
@@ -79,6 +79,34 @@ namespace GradientFunctionTest
 				Tensor::fromValues(new float[10], { 10 })
 			);
 			Assert::AreEqual(gradient2.getShape()[0], tensor2a.getShape()[0]);
+		}
+
+		TEST_METHOD(Values)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 4, 2 });
+			tensor1a.setGradient(true);
+			Tensor tensor1b = tensor1a.set(0.0f, {1});
+			Tensor gradient1 = tensor1b.getFunction()->calculateGradient(
+				Tensor::fromValues(new float[8] {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f}, { 4, 2 })
+			);
+			CompareFloats(gradient1.at(0), 1.0f);
+			CompareFloats(gradient1.at(1), 2.0f);
+			CompareFloats(gradient1.at(2), 0.0f);
+			CompareFloats(gradient1.at(3), 0.0f);
+			CompareFloats(gradient1.at(4), 5.0f);
+			CompareFloats(gradient1.at(5), 6.0f);
+			CompareFloats(gradient1.at(6), 7.0f);
+			CompareFloats(gradient1.at(7), 8.0f);
+
+			Tensor tensor2a = Tensor::ones({ 3 });
+			tensor2a.setGradient(true);
+			Tensor tensor2b = tensor2a.set(1.0f);
+			Tensor gradient2 = tensor2b.getFunction()->calculateGradient(
+				Tensor::fromValues(new float[3]{1.0f, 2.0f, 3.0f}, {3})
+			);
+			CompareFloats(gradient2.at(0), 0.0f);
+			CompareFloats(gradient2.at(1), 0.0f);
+			CompareFloats(gradient2.at(2), 0.0f);
 		}
 	};
 }

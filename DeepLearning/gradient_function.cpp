@@ -9,16 +9,16 @@ GetFunction::GetFunction(const Tensor* original, int index, int size) : original
 Tensor GetFunction::calculateGradient(const Tensor& previousGradient) const {
 	int gradientSize = original->getSize();
 	const std::vector<int>& gradientShape = original->getShape();
-	float* gradient = new float[gradientSize];
+	float* gradientValues = new float[gradientSize];
 	for (int i = 0; i < gradientSize; i++) {
 		if (i - index >= 0 && i - index < size) {
-			gradient[i] = previousGradient.at(i - index);
+			gradientValues[i] = previousGradient.at(i - index);
 		}
-		else {
-			gradient[i] = 0.0f;
+		else{
+			gradientValues[i] = 0.0f;
 		}
 	}
-	return Tensor::fromValues(gradient, gradientShape);
+	return Tensor::fromValues(gradientValues, gradientShape);
 }
 
 SetSingleFunction::SetSingleFunction(const Tensor* original, int index, int size) : original(original), index(index), size(size)
@@ -27,6 +27,16 @@ SetSingleFunction::SetSingleFunction(const Tensor* original, int index, int size
 }
 
 Tensor SetSingleFunction::calculateGradient(const Tensor& previousGradient) const {
+	int gradientSize = original->getSize();
 	const std::vector<int>& gradientShape = original->getShape();
-	return Tensor::zeroes(gradientShape);
+	float* gradientValues = new float[gradientSize];
+	for (int i = 0; i < gradientSize; i++) {
+		if (i - index >= 0 && i - index < size) {
+			gradientValues[i] = 0.0f;
+		}
+		else {
+			gradientValues[i] = previousGradient.at(i);
+		}
+	}
+	return Tensor::fromValues(gradientValues, gradientShape);
 }
