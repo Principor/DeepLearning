@@ -357,7 +357,7 @@ namespace TensorTest
 		}
 	};
 
-	TEST_CLASS(SetTest)
+	TEST_CLASS(SetSingleTest)
 	{
 	public:
 		TEST_METHOD(TooManyIndices)
@@ -408,6 +408,24 @@ namespace TensorTest
 			Tensor tensor3 = tensor1.set(0);
 			Assert::IsTrue(tensor3.getGradient());
 			Assert::IsNotNull((const SetSingleFunction*)tensor3.getFunction());
+		}
+	};
+
+	TEST_CLASS(SetTensorTest)
+	{
+	public:
+		TEST_METHOD(TooManyIndices)
+		{
+			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ }).set(Tensor::zeroes({}), { 0 }); });
+			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ 2 }).set(Tensor::zeroes({}), { 1, 1 }); });
+			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ 2, 4, 6 }).set(Tensor::zeroes({}), { 1, 1, 2, 2 }); });
+		}
+
+		TEST_METHOD(IndexOutOfBounds)
+		{
+			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 1, 3 }).set(Tensor::zeroes({}), { 2, 1 }); });
+			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 3 }).set(Tensor::zeroes({}), { 4 }); });
+			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 4, 2, 8, 1, 2 }).set(Tensor::zeroes({}), { 3, 1, 5, 4 }); });
 		}
 	};
 
