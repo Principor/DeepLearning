@@ -27,5 +27,6 @@ SetSingleFunction::SetSingleFunction(const Tensor* original, int index, int size
 }
 
 Tensor SetSingleFunction::calculateGradient(const Tensor& previousGradient) const {
-	return Tensor::zeroes({});
+	const std::vector<int>& gradientShape = original->getShape();
+	return Tensor::zeroes(gradientShape);
 }
