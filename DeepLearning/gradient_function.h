@@ -16,3 +16,13 @@ public:
 	GetFunction(const Tensor* original, int index, int size);
 	Tensor calculateGradient(const Tensor& previousGradient) const override;
 };
+
+class SetSingleFunction : public GradientFunction {
+private:
+	const Tensor* original;
+	int index;
+	int size;
+public:
+	SetSingleFunction(const Tensor* original, int index, int size);
+	Tensor calculateGradient(const Tensor& previousGradient) const override;
+};

@@ -2,7 +2,8 @@
 #include "deep_learning.h"
 #include "util.h"
 
-namespace GradientFunctionTest {
+namespace GradientFunctionTest
+{
 	TEST_CLASS(GetFunctionTest) 
 	{
 	public:

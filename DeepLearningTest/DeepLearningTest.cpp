@@ -396,6 +396,19 @@ namespace TensorTest
 			Tensor tensor2 = tensor1.set(1.0f, {});
 			Assert::AreEqual(tensor1.at(0), 0.0f);
 		}
+
+		TEST_METHOD(Gradient)
+		{
+			Tensor tensor1 = Tensor::zeroes({ 10, 3 });
+			Tensor tensor2 = tensor1.set(0);
+			Assert::IsFalse(tensor2.getGradient());
+			Assert::IsNull(tensor2.getFunction());
+
+			tensor1.setGradient(true);
+			Tensor tensor3 = tensor1.set(0);
+			Assert::IsTrue(tensor3.getGradient());
+			Assert::IsNotNull((const SetSingleFunction*)tensor3.getFunction());
+		}
 	};
 
 	TEST_CLASS(GradientTest)

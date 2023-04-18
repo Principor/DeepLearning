@@ -20,3 +20,12 @@ Tensor GetFunction::calculateGradient(const Tensor& previousGradient) const {
 	}
 	return Tensor::fromValues(gradient, gradientShape);
 }
+
+SetSingleFunction::SetSingleFunction(const Tensor* original, int index, int size) : original(original), index(index), size(size)
+{
+
+}
+
+Tensor SetSingleFunction::calculateGradient(const Tensor& previousGradient) const {
+	return Tensor::zeroes({});
+}
