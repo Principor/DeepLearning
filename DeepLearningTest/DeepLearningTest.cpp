@@ -1,15 +1,10 @@
 #include "pch.h"
-#include "CppUnitTest.h"
 #include "deep_learning.h"
+#include "util.h"
 
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace TensorTest
 {
-	void CompareFloats(float x, float y) {
-		Assert::IsTrue(std::abs(x - y) < 1e-10);
-	}
-
 	TEST_CLASS(ZeroesTest)
 	{
 	public:
