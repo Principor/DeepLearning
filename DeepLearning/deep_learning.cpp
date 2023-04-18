@@ -62,7 +62,7 @@ Tensor Tensor::get(const std::vector<int>& indices) const {
 	Tensor newTensor(newShape, newSize, newValues);
 	if (gradient) {
 		newTensor.gradient = true;
-		newTensor.function = new GetFunction(this, index, size);
+		newTensor.function = new GetFunction(this, index, newSize);
 	}
 	return newTensor;
 }
