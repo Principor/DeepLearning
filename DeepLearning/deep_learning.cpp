@@ -67,21 +67,25 @@ Tensor Tensor::get(const std::vector<int>& indices) const {
 	return newTensor;
 }
 
-Tensor& Tensor::set(float value) {
-	return set({}, value);
-}
-
-Tensor& Tensor::set(const std::vector<int>& indices, float value) {
+Tensor Tensor::set(float value, const std::vector<int>& indices) {
 	int index = getIndex(indices);
 
 	std::vector<int> assignmentShape(shape.begin() + indices.size(), shape.end());
 	int assignmentSize = 1;
 	for (int dim : assignmentShape) assignmentSize *= dim;
 
-	for (int i = index; i < index + assignmentSize; i++) {
-		values[i] = value;
+	float* newValues = new float[size];
+	for (int i = 0; i < size; i++) {
+		if (i - index >= 0 && i - index < assignmentSize) newValues[i] = value;
+		else newValues[i] = values[i];
 	}
-	return *this;
+
+	Tensor newTensor(shape, size, newValues);
+	if (gradient) {
+		newTensor.gradient = true;
+		newTensor.function = new SetSingleFunction(this, index, assignmentSize);
+	}
+	return newTensor;
 }
 
 Tensor Tensor::zeroes(const std::vector<int>& shape) {

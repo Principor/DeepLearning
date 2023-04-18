@@ -28,9 +28,9 @@ public:
 	const GradientFunction* getFunction() const;
 
 	Tensor& reshape(const std::vector<int>& shape);
+
 	Tensor get(const std::vector<int>& indices) const;
-	Tensor& set(const std::vector<int>& indices, float value);
-	Tensor& set(float value);
+	Tensor set(float value, const std::vector<int>& indices = {});
 
 	static Tensor zeroes(const std::vector<int>& shape);
 	static Tensor ones(const std::vector<int>& shape);

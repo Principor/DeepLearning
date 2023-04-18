@@ -208,7 +208,7 @@ namespace TensorTest
 
 		TEST_METHOD(Values)
 		{
-			Tensor tensor1 = Tensor::fromValues(new float[3]{ 1.0f, 2.0f, 3.0f }, { 3 });
+			Tensor tensor1 = Tensor::fromValues(new float[3] { 1.0f, 2.0f, 3.0f }, { 3 });
 			CompareFloats(tensor1.get({ 0 }).item(), 1.0f);
 			CompareFloats(tensor1.get({ 1 }).item(), 2.0f);
 			CompareFloats(tensor1.get({ 2 }).item(), 3.0f);
@@ -247,12 +247,12 @@ namespace TensorTest
 			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ 1, 4, 1, 1 }).item(); });
 		}
 
-		TEST_METHOD(Value) {
+		TEST_METHOD(Value)
+		{
 			CompareFloats(Tensor::zeroes({ }).item(), 0.0f);
 			CompareFloats(Tensor::zeroes({ 1, 1, 1 }).item(), 0.0f);
 
-			Tensor tensor = Tensor::zeroes({ 2,3 });
-			tensor.set({ 1 }, -1.0f);
+			Tensor tensor = Tensor::zeroes({ 2,3 }).set(-1.0f, { 1 });
 			CompareFloats(tensor.get({ 1,2 }).item(), -1.0f);
 		}
 	};
@@ -260,12 +260,12 @@ namespace TensorTest
 	TEST_CLASS(AtTest)
 	{
 	public:
-		TEST_METHOD(Value) {
+		TEST_METHOD(Value)
+		{
 			Tensor tensor1 = Tensor::zeroes({});
 			CompareFloats(tensor1.at(0), 0.0f);
 
-			Tensor tensor2 = Tensor::full({ 2,3 }, 2.0f);
-			tensor2.set({ 1 }, -2.0f);
+			Tensor tensor2 = Tensor::full({ 2,3 }, 2.0f).set(-2.0f, { 1 });
 			CompareFloats(tensor2.at(0), 2.0f);
 			CompareFloats(tensor2.at(1), 2.0f);
 			CompareFloats(tensor2.at(2), 2.0f);
@@ -285,13 +285,15 @@ namespace TensorTest
 			Assert::ExpectException<std::invalid_argument>([]() { Tensor::zeroes({ 1 }).reshape({ 1, 0, 3 }); });
 		}
 
-		TEST_METHOD(WrongSize) {
+		TEST_METHOD(WrongSize)
+		{
 			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ 1 }).reshape({ 1, 2 }); });
 			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ 3, 2 }).reshape({ 5, 1 }); });
 			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ 7, 1, 3 }).reshape({ 5, 4, 1 }); });
 		}
 
-		TEST_METHOD(NewShape) {
+		TEST_METHOD(NewShape)
+		{
 			Assert::AreEqual(1, Tensor::zeroes({}).reshape({ 1 }).getShape()[0]);
 
 			Assert::AreEqual(3, Tensor::zeroes({ 1, 3, 1 }).reshape({ 3 }).getShape()[0]);
@@ -308,26 +310,30 @@ namespace TensorTest
 	TEST_CLASS(GetTest)
 	{
 	public:
-		TEST_METHOD(TooManyIndices) {
+		TEST_METHOD(TooManyIndices)
+		{
 			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ }).get({ 0 }); });
 			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ 2 }).get({ 1, 1 }); });
 			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ 2, 4, 6 }).get({ 1, 1, 2, 2 }); });
 		}
 
-		TEST_METHOD(IndexOutOfBounds) {
+		TEST_METHOD(IndexOutOfBounds)
+		{
 			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 1, 3 }).get({ 2, 1 }); });
 			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 3 }).get({ 4 }); });
 			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 4, 2, 8, 1, 2 }).get({ 3, 1, 5, 4 }); });
 		}
 
-		TEST_METHOD(NewShape) {
+		TEST_METHOD(NewShape)
+		{
 			Assert::AreEqual(5, Tensor::zeroes({ 1, 4, 5, 7 }).get({ 0, 0 }).getShape()[0]);
 			Assert::AreEqual(7, Tensor::zeroes({ 1, 4, 5, 7 }).get({ 0, 0 }).getShape()[1]);
 
 			Assert::AreEqual(2, Tensor::zeroes({ 3, 2 }).get({ 0 }).getShape()[0]);
 		}
 
-		TEST_METHOD(MatchingValue) {
+		TEST_METHOD(MatchingValue)
+		{
 			Tensor tensor1a = Tensor::full({ 2,3 }, 1.0f);
 			Tensor tensor1b = tensor1a.get({ 1 });
 			Assert::AreEqual(tensor1a.get({ 1,0 }).item(), tensor1b.get({ 0 }).item());
@@ -335,13 +341,6 @@ namespace TensorTest
 			Tensor tensor2a = Tensor::zeroes({ 5,4,3,7 });
 			Tensor tensor2b = tensor2a.get({ 2, 3 });
 			Assert::AreEqual(tensor2a.get({ 2, 3, 1, 5 }).item(), tensor2b.get({ 1, 5 }).item());
-		}
-
-		TEST_METHOD(IndependentValues) {
-			Tensor tensor1 = Tensor::zeroes({ 1 });
-			Tensor tensor2 = tensor1.get({});
-			tensor2.set(1.0f);
-			Assert::AreNotEqual(tensor1.item(), tensor2.item());
 		}
 
 		TEST_METHOD(Gradient)
@@ -361,27 +360,28 @@ namespace TensorTest
 	TEST_CLASS(SetTest)
 	{
 	public:
-		TEST_METHOD(TooManyIndices) {
-			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ }).set({ 0 }, 0.0f); });
-			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ 2 }).set({ 1, 1 }, 0.0f); });
-			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ 2, 4, 6 }).set({ 1, 1, 2, 2 }, 0.0f); });
+		TEST_METHOD(TooManyIndices)
+		{
+			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ }).set(0.0f, { 0 }); });
+			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ 2 }).set(0.0f, { 1, 1 }); });
+			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ 2, 4, 6 }).set(0.0f, { 1, 1, 2, 2 }); });
 		}
 
-		TEST_METHOD(IndexOutOfBounds) {
-			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 1, 3 }).set({ 2, 1 }, 0.0f); });
-			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 3 }).set({ 4 }, 0.0f); });
-			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 4, 2, 8, 1, 2 }).set({ 3, 1, 5, 4 }, 0.0f); });
+		TEST_METHOD(IndexOutOfBounds)
+		{
+			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 1, 3 }).set(0.0f, { 2, 1 }); });
+			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 3 }).set(0.0f, { 4 }); });
+			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 4, 2, 8, 1, 2 }).set(0.0f, { 3, 1, 5, 4 }); });
 		}
 
-		TEST_METHOD(NewValue) {
-			Tensor tensor1 = Tensor::zeroes({ 3 });
-			tensor1.set(1.0f);
+		TEST_METHOD(NewValue)
+		{
+			Tensor tensor1 = Tensor::zeroes({ 3 }).set(1.0f);
 			CompareFloats(tensor1.get({ 0 }).item(), 1.0f);
 			CompareFloats(tensor1.get({ 1 }).item(), 1.0f);
 			CompareFloats(tensor1.get({ 2 }).item(), 1.0f);
 
-			Tensor tensor2 = Tensor::zeroes({ 2, 3 });
-			tensor2.set({ 1 }, 1.0f);
+			Tensor tensor2 = Tensor::zeroes({ 2, 3 }).set(1.0f, { 1 });
 			CompareFloats(tensor2.get({ 0, 0 }).item(), 0.0f);
 			CompareFloats(tensor2.get({ 0, 1 }).item(), 0.0f);
 			CompareFloats(tensor2.get({ 0, 2 }).item(), 0.0f);
@@ -389,12 +389,20 @@ namespace TensorTest
 			CompareFloats(tensor2.get({ 1, 1 }).item(), 1.0f);
 			CompareFloats(tensor2.get({ 1, 2 }).item(), 1.0f);
 		}
+
+		TEST_METHOD(IndependentValues)
+		{
+			Tensor tensor1 = Tensor::zeroes({ 3 });
+			Tensor tensor2 = tensor1.set(1.0f, {});
+			Assert::AreEqual(tensor1.at(0), 0.0f);
+		}
 	};
 
-	TEST_CLASS(GradientTest) 
+	TEST_CLASS(GradientTest)
 	{
 	public:
-		TEST_METHOD(Value) {
+		TEST_METHOD(Value)
+		{
 			Tensor tensor1 = Tensor::zeroes({});
 			tensor1.setGradient(true);
 			Assert::IsTrue(tensor1.getGradient());
