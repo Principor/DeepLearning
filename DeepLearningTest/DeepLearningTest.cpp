@@ -427,6 +427,17 @@ namespace TensorTest
 			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 3 }).set(Tensor::zeroes({}), { 4 }); });
 			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 4, 2, 8, 1, 2 }).set(Tensor::zeroes({}), { 3, 1, 5, 4 }); });
 		}
+
+		TEST_METHOD(UnbroadcastableTensor)
+		{
+			Assert::ExpectException<std::invalid_argument>(
+				[]() {Tensor::zeroes({ 10, 3, 5 }).set(Tensor::zeroes({ 1, 2, 5 }), { 0 }); }
+			);
+
+			Assert::ExpectException<std::invalid_argument>(
+				[]() {Tensor::zeroes({ 10, 1, 3, 5 }).set(Tensor::zeroes({ 3, 10 }), { 0 }); }
+			);
+		}
 	};
 
 	TEST_CLASS(GradientTest)

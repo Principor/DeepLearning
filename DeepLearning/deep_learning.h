@@ -17,6 +17,7 @@ private:
 
 	static int calculateSize(const std::vector<int>& shape);
 	static std::vector<int> getSubShape(const std::vector<int>& shape, int frontRemoval, int endRemoval);
+	static std::vector<int> broadcastShapes(std::vector<int> shape0, std::vector<int> shape1);
 public:
 	~Tensor();
 

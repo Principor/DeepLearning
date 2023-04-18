@@ -71,8 +71,7 @@ Tensor Tensor::set(float value, const std::vector<int>& indices) {
 	int index = getIndex(indices);
 
 	std::vector<int> assignmentShape = getSubShape(shape, indices.size(), 0);
-	int assignmentSize = 1;
-	for (int dim : assignmentShape) assignmentSize *= dim;
+	int assignmentSize = calculateSize(assignmentShape);
 
 	float* newValues = new float[size];
 	for (int i = 0; i < size; i++) {
@@ -91,6 +90,8 @@ Tensor Tensor::set(float value, const std::vector<int>& indices) {
 Tensor Tensor::set(Tensor values, const std::vector<int>& indices)
 {
 	int index = getIndex(indices);
+
+	std::vector<int> broadcastedShape = broadcastShapes(values.shape, getSubShape(shape, indices.size(), 0));
 
 	return Tensor(shape, size, new float[size]);
 }
@@ -130,6 +131,23 @@ int Tensor::calculateSize(const std::vector<int>& shape) {
 std::vector<int> Tensor::getSubShape(const std::vector<int>& shape, int frontRemoval, int endRemoval)
 {
 	return std::vector<int>(shape.begin() + frontRemoval, shape.end() - endRemoval);
+}
+
+
+std::vector<int> Tensor::broadcastShapes(std::vector<int> shape1, std::vector<int> shape2) {
+	while(shape1.size() > shape2.size()) shape2.insert(shape2.begin(), 1);
+	while(shape1.size() < shape2.size()) shape1.insert(shape1.begin(), 1);
+	int dims = shape1.size();
+	for (int i = 0; i < dims; i++) {
+		if (shape1[i] == shape2[i]) continue;
+		if (shape1[i] < shape2[i]) {
+			if (shape1[i] == 1) shape1[i] = shape2[i];
+			else throw std::invalid_argument("Smaller dimension must have a size of 1.");
+		}
+		else {
+			throw std::invalid_argument("Shape 1 cannot have dimensions larger than shape 2.");
+		}
+	}
 }
 
 int Tensor::getIndex(const std::vector<int>& indices) const {
