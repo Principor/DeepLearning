@@ -4,7 +4,8 @@
 
 class Tensor;
 
-using gradientList = std::vector<std::tuple<Tensor*, Tensor>>;
+using gradientTuple = std::tuple<Tensor*, Tensor>;
+using gradientList = std::vector<gradientTuple>;
 
 class GradientFunction {
 public:
@@ -33,8 +34,15 @@ public:
 
 class SetTensorFunction : public GradientFunction
 {
+private:
+	Tensor* copyTo;
+	Tensor* copyFrom;
+	int index;
+	int size;
+	std::vector<int> broadcastShape;
+	std::vector<int> broadcastIndices;
 public:
-	SetTensorFunction(Tensor* copyTo, Tensor* copyFrom, int index, const std::vector<int>& broadcastShape,
+	SetTensorFunction(Tensor* copyTo, Tensor* copyFrom, int index, int size, const std::vector<int>& broadcastShape,
 		const std::vector<int>& broadcastIndices);
 	gradientList calculateGradient(const Tensor& previousGradient) const override;
 };

@@ -14,11 +14,11 @@ gradientList GetFunction::calculateGradient(const Tensor& previousGradient) cons
 		if (i - index >= 0 && i - index < size) {
 			gradientValues[i] = previousGradient.at(i - index);
 		}
-		else{
+		else {
 			gradientValues[i] = 0.0f;
 		}
 	}
-	return gradientList{ std::tuple<Tensor*, Tensor>(original, Tensor::fromValues(gradientValues, gradientShape))};
+	return gradientList{ gradientTuple(original, Tensor::fromValues(gradientValues, gradientShape)) };
 }
 
 SetSingleFunction::SetSingleFunction(Tensor* original, int index, int size) : original(original), index(index), size(size)
@@ -37,16 +37,39 @@ gradientList SetSingleFunction::calculateGradient(const Tensor& previousGradient
 			gradientValues[i] = previousGradient.at(i);
 		}
 	}
-	return gradientList{ std::tuple<Tensor*, Tensor>(original, Tensor::fromValues(gradientValues, gradientShape)) };
+	return gradientList{ gradientTuple(original, Tensor::fromValues(gradientValues, gradientShape)) };
 }
 
-SetTensorFunction::SetTensorFunction(Tensor* copyTo, Tensor* copyFrom, int index, const std::vector<int>& broadcastShape, 
-	const std::vector<int>& broadcastIndices) 
+SetTensorFunction::SetTensorFunction(Tensor* copyTo, Tensor* copyFrom, int index, int size, const std::vector<int>& broadcastShape,
+	const std::vector<int>& broadcastIndices) : copyTo(copyTo), copyFrom(copyFrom), index(index), size(size),
+	broadcastShape(broadcastShape), broadcastIndices(broadcastIndices)
 {
 
 }
 
 gradientList SetTensorFunction::calculateGradient(const Tensor& previousGradient) const
 {
-	return gradientList();
+	gradientList list{};
+
+	//Copy-To gradient
+	{
+		int gradientSize = copyTo->getSize();
+		const std::vector<int>& gradientShape = copyTo->getShape();
+		float* gradientValues = new float[gradientSize];
+		for (int i = 0; i < gradientSize; i++) {
+			if (i - index >= 0 && i - index < size) {
+				gradientValues[i] = 0.0f;
+			}
+			else {
+				gradientValues[i] = previousGradient.at(i);
+			}
+		}
+		list.push_back(gradientTuple{ copyTo, Tensor::fromValues(gradientValues, gradientShape) });
+	}
+
+	//Copy-From gradient
+	{
+
+	}
+	return list;
 }

@@ -91,8 +91,11 @@ Tensor Tensor::set(float value, const std::vector<int>& indices) {
 Tensor Tensor::set(Tensor& values, const std::vector<int>& indices)
 {
 	int index = getIndex(indices);
-	std::vector<int> broadcastedShape = broadcastShapes(values.shape, getSubShape(shape, indices.size(), 0));
-	int assignmentSize = calculateSize(broadcastedShape);
+
+	std::vector<int> assignmentShape = getSubShape(shape, indices.size(), 0);
+	int assignmentSize = calculateSize(assignmentShape);
+
+	std::vector<int> broadcastedShape = broadcastShapes(values.shape, assignmentShape);
 	auto broadcastedIndices = broadcastIndices(values.shape, broadcastedShape);
 
 	float* newValues = new float[size];
@@ -109,7 +112,7 @@ Tensor Tensor::set(Tensor& values, const std::vector<int>& indices)
 	Tensor newTensor(shape, size, newValues);
 	if (gradient) {
 		newTensor.gradient = true;
-		newTensor.function = new SetTensorFunction(this, &values, index, broadcastedShape, broadcastedIndices);
+		newTensor.function = new SetTensorFunction(this, &values, index, assignmentSize, broadcastedShape, broadcastedIndices);
 	}
 	return newTensor;
 }
