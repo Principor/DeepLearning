@@ -69,7 +69,18 @@ gradientList SetTensorFunction::calculateGradient(const Tensor& previousGradient
 
 	//Copy-From gradient
 	{
-
+		int gradientSize = copyFrom->getSize();
+		const std::vector<int>& gradientShape = copyFrom->getShape();
+		float* gradientValues = new float[gradientSize];
+		for (int i = 0; i < gradientSize; i++) {
+			gradientValues[i] = 0.0f;
+		}
+		for (int i = 0; i < size; i++) {
+			int j = broadcastIndices[i];
+			int k = index + i;
+			gradientValues[broadcastIndices[i]] += previousGradient.at(index + i);
+		}
+		list.push_back(gradientTuple{ copyTo, Tensor::fromValues(gradientValues, gradientShape) });
 	}
 	return list;
 }
