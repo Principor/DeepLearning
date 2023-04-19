@@ -438,6 +438,29 @@ namespace TensorTest
 				[]() {Tensor::zeroes({ 10, 1, 3, 5 }).set(Tensor::zeroes({ 3, 10 }), { 0 }); }
 			);
 		}
+
+		TEST_METHOD(NewValue)
+		{
+			Tensor tensor1 = Tensor::zeroes({ 3 }).set(Tensor::ones({ 1 }), { 2 });
+			CompareFloats(tensor1.get({ 0 }).item(), 0.0f);
+			CompareFloats(tensor1.get({ 1 }).item(), 0.0f);
+			CompareFloats(tensor1.get({ 2 }).item(), 1.0f);
+
+			Tensor tensor2 = Tensor::zeroes({ 2, 1, 3 }).set(Tensor::ones({ 1, 1 }), { 1 });
+			CompareFloats(tensor2.at(0), 0.0f);
+			CompareFloats(tensor2.at(1), 0.0f);
+			CompareFloats(tensor2.at(2), 0.0f);
+			CompareFloats(tensor2.at(3), 1.0f);
+			CompareFloats(tensor2.at(4), 1.0f);
+			CompareFloats(tensor2.at(5), 1.0f);
+		}
+
+		TEST_METHOD(Independentvalues)
+		{
+			Tensor tensor1 = Tensor::zeroes({ 3 });
+			Tensor tensor2 = tensor1.set(Tensor::ones({ 1 }), { 2 });
+			CompareFloats(tensor1.get({ 2 }).item(), 0.0f);
+		}
 	};
 
 	TEST_CLASS(GradientTest)

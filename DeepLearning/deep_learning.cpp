@@ -1,6 +1,7 @@
 #include <stdexcept>
 
 #include "deep_learning.h"
+#include <functional>
 
 Tensor::Tensor(const std::vector<int>& shape, int size, float* values) : shape(shape), size(size), values(values),
 gradient(false), function(NULL)
@@ -90,10 +91,22 @@ Tensor Tensor::set(float value, const std::vector<int>& indices) {
 Tensor Tensor::set(Tensor values, const std::vector<int>& indices)
 {
 	int index = getIndex(indices);
-
 	std::vector<int> broadcastedShape = broadcastShapes(values.shape, getSubShape(shape, indices.size(), 0));
+	int assignmentSize = calculateSize(broadcastedShape);
+	auto broadcastedIndices = broadcastIndices(values.shape, broadcastedShape);
 
-	return Tensor(shape, size, new float[size]);
+	float* newValues = new float[size];
+	for (int i = 0; i < size; i++) {
+		int assignmentIndex = i - index;
+		if (assignmentIndex >= 0 && assignmentIndex < assignmentSize) {
+			newValues[i] = values.at(broadcastedIndices[assignmentIndex]);
+		}
+		else {
+			newValues[i] = this->values[i];
+		}
+	}
+
+	return Tensor(shape, size, newValues);
 }
 
 Tensor Tensor::zeroes(const std::vector<int>& shape) {
@@ -135,8 +148,8 @@ std::vector<int> Tensor::getSubShape(const std::vector<int>& shape, int frontRem
 
 
 std::vector<int> Tensor::broadcastShapes(std::vector<int> shape1, std::vector<int> shape2) {
-	while(shape1.size() > shape2.size()) shape2.insert(shape2.begin(), 1);
-	while(shape1.size() < shape2.size()) shape1.insert(shape1.begin(), 1);
+	while (shape1.size() > shape2.size()) shape2.insert(shape2.begin(), 1);
+	while (shape1.size() < shape2.size()) shape1.insert(shape1.begin(), 1);
 	int dims = shape1.size();
 	for (int i = 0; i < dims; i++) {
 		if (shape1[i] == shape2[i]) continue;
@@ -148,6 +161,38 @@ std::vector<int> Tensor::broadcastShapes(std::vector<int> shape1, std::vector<in
 			throw std::invalid_argument("Shape 1 cannot have dimensions larger than shape 2.");
 		}
 	}
+	return shape1;
+}
+
+std::vector<int> Tensor::broadcastIndices(const std::vector<int>& originalShape, const std::vector<int>& broadcastedShape)
+{
+	std::vector<int> trueStrides(originalShape.size()), broadcastStrides(originalShape.size());
+	{
+		int stride = 1;
+		for (int i = originalShape.size() - 1; i >= 0; i--) {
+			if (originalShape[i] == 1) broadcastStrides[i] = 0;
+			else broadcastStrides[i] = stride;
+			trueStrides[i] = stride;
+			stride *= originalShape[i];
+		}
+	}
+
+	std::vector<int> broadcastedIndices(calculateSize(broadcastedShape));
+
+	std::function<void(int, int, int)> recursiveIterate = [&](int depth, int trueIndex, int broadcastedIndex) {
+		if (depth == trueStrides.size()) {
+			broadcastedIndices[trueIndex] = broadcastedIndex;
+			return;
+		}
+		for (int i = 0; i < broadcastedShape[depth]; i++) {
+			recursiveIterate(depth + 1, trueIndex + i * trueStrides[depth], broadcastedIndex + i * broadcastStrides[depth]);
+		}
+	};
+
+	if (originalShape.size() == 0) broadcastedIndices[0] = 0;
+	else recursiveIterate(0, 0, 0);
+
+	return broadcastedIndices;
 }
 
 int Tensor::getIndex(const std::vector<int>& indices) const {
