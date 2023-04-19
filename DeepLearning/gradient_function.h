@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 class Tensor;
 
@@ -24,5 +25,13 @@ private:
 	int size;
 public:
 	SetSingleFunction(const Tensor* original, int index, int size);
+	Tensor calculateGradient(const Tensor& previousGradient) const override;
+};
+
+class SetTensorFunction : public GradientFunction
+{
+public:
+	SetTensorFunction(Tensor* copyTo, Tensor* copyFrom, int index, const std::vector<int>& broadcastShape,
+		const std::vector<int>& broadcastIndices);
 	Tensor calculateGradient(const Tensor& previousGradient) const override;
 };

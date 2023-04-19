@@ -40,3 +40,14 @@ Tensor SetSingleFunction::calculateGradient(const Tensor& previousGradient) cons
 	}
 	return Tensor::fromValues(gradientValues, gradientShape);
 }
+
+SetTensorFunction::SetTensorFunction(Tensor* copyTo, Tensor* copyFrom, int index, const std::vector<int>& broadcastShape, 
+	const std::vector<int>& broadcastIndices) 
+{
+
+}
+
+Tensor SetTensorFunction::calculateGradient(const Tensor& previousGradient) const
+{
+	return Tensor::zeroes({});
+}

@@ -461,6 +461,19 @@ namespace TensorTest
 			Tensor tensor2 = tensor1.set(Tensor::ones({ 1 }), { 2 });
 			CompareFloats(tensor1.get({ 2 }).item(), 0.0f);
 		}
+
+		TEST_METHOD(Gradient)
+		{
+			Tensor tensor1 = Tensor::zeroes({ 10, 3 });
+			Tensor tensor2 = tensor1.set(Tensor::zeroes({}));
+			Assert::IsFalse(tensor2.getGradient());
+			Assert::IsNull(tensor2.getFunction());
+
+			tensor1.setGradient(true);
+			Tensor tensor3 = tensor1.set(Tensor::zeroes({}));
+			Assert::IsTrue(tensor3.getGradient());
+			Assert::IsNotNull((const SetTensorFunction*)tensor3.getFunction());
+		}
 	};
 
 	TEST_CLASS(GradientTest)

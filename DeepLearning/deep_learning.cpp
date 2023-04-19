@@ -88,7 +88,7 @@ Tensor Tensor::set(float value, const std::vector<int>& indices) {
 	return newTensor;
 }
 
-Tensor Tensor::set(Tensor values, const std::vector<int>& indices)
+Tensor Tensor::set(Tensor& values, const std::vector<int>& indices)
 {
 	int index = getIndex(indices);
 	std::vector<int> broadcastedShape = broadcastShapes(values.shape, getSubShape(shape, indices.size(), 0));
@@ -106,7 +106,12 @@ Tensor Tensor::set(Tensor values, const std::vector<int>& indices)
 		}
 	}
 
-	return Tensor(shape, size, newValues);
+	Tensor newTensor(shape, size, newValues);
+	if (gradient) {
+		newTensor.gradient = true;
+		newTensor.function = new SetTensorFunction(this, &values, index, broadcastedShape, broadcastedIndices);
+	}
+	return newTensor;
 }
 
 Tensor Tensor::zeroes(const std::vector<int>& shape) {
