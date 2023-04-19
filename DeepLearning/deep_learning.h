@@ -35,6 +35,7 @@ public:
 	Tensor get(const std::vector<int>& indices);
 	Tensor set(float value, const std::vector<int>& indices = {});
 	Tensor set(Tensor& values, const std::vector<int>& indices = {});
+	Tensor add(float value);
 
 	static Tensor zeroes(const std::vector<int>& shape);
 	static Tensor ones(const std::vector<int>& shape);

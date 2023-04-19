@@ -117,6 +117,14 @@ Tensor Tensor::set(Tensor& values, const std::vector<int>& indices)
 	return newTensor;
 }
 
+Tensor Tensor::add(float value) {
+	float* values = new float[size];
+	for (int i = 0; i < size; i++) {
+		values[i] = this->values[i] + value;
+	}
+	return Tensor(shape, size, values);
+}
+
 Tensor Tensor::zeroes(const std::vector<int>& shape) {
 	return full(shape, 0.0f);
 }
@@ -138,6 +146,26 @@ Tensor Tensor::full(const std::vector<int>& shape, float value)
 Tensor Tensor::fromValues(float* values, const std::vector<int>& shape)
 {
 	return Tensor(shape, calculateSize(shape), values);
+}
+
+int Tensor::getIndex(const std::vector<int>& indices) const {
+	//Ensure indices are valid
+	if (indices.size() > shape.size()) throw std::length_error("Number of indices cannot be greater than number of dimensions.");
+	for (int i = 0; i < indices.size(); i++) {
+		if (indices[i] >= shape[i] || indices[i] < 0) throw std::out_of_range("Index is not in the range of the tensor.");
+	}
+
+	//Calculate starting index
+	std::vector<int> fullIndices(indices);
+	fullIndices.resize(shape.size());
+	int index = 0;
+	int stepSize = 1;
+	for (int i = shape.size() - 1; i >= 0; i--) {
+		index += fullIndices[i] * stepSize;
+		stepSize *= shape[i];
+	}
+
+	return index;
 }
 
 int Tensor::calculateSize(const std::vector<int>& shape) {
@@ -201,24 +229,4 @@ std::vector<int> Tensor::broadcastIndices(const std::vector<int>& originalShape,
 	else recursiveIterate(0, 0, 0);
 
 	return broadcastedIndices;
-}
-
-int Tensor::getIndex(const std::vector<int>& indices) const {
-	//Ensure indices are valid
-	if (indices.size() > shape.size()) throw std::length_error("Number of indices cannot be greater than number of dimensions.");
-	for (int i = 0; i < indices.size(); i++) {
-		if (indices[i] >= shape[i] || indices[i] < 0) throw std::out_of_range("Index is not in the range of the tensor.");
-	}
-
-	//Calculate starting index
-	std::vector<int> fullIndices(indices);
-	fullIndices.resize(shape.size());
-	int index = 0;
-	int stepSize = 1;
-	for (int i = shape.size() - 1; i >= 0; i--) {
-		index += fullIndices[i] * stepSize;
-		stepSize *= shape[i];
-	}
-
-	return index;
 }

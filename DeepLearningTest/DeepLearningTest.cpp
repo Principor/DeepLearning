@@ -476,6 +476,38 @@ namespace TensorTest
 		}
 	};
 
+	TEST_CLASS(AddSingleTest)
+	{
+	public:
+		TEST_METHOD(NewValue)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 3,1 });
+			Tensor tensor1b = tensor1a.add(3.0f);
+			Assert::AreEqual(tensor1b.at(0), 3.0f);
+			Assert::AreEqual(tensor1b.at(1), 3.0f);
+			Assert::AreEqual(tensor1b.at(2), 3.0f);
+
+			Tensor tensor2a = Tensor::ones({ 2 }).set(-1, { 0 });
+			Tensor tensor2b = tensor2a.add(-1.0f);
+			Assert::AreEqual(tensor2b.at(0), -2.0f);
+			Assert::AreEqual(tensor2b.at(1), 0.0f);
+		}
+
+		TEST_METHOD(IndependentValues)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 3,1 });
+			Tensor tensor1b = tensor1a.add(3.0f);
+			Assert::AreEqual(tensor1a.at(0), 0.0f);
+			Assert::AreEqual(tensor1a.at(1), 0.0f);
+			Assert::AreEqual(tensor1a.at(2), 0.0f);
+
+			Tensor tensor2a = Tensor::ones({ 2 }).set(-1, { 0 });
+			Tensor tensor2b = tensor2a.add(-1.0f);
+			Assert::AreEqual(tensor2a.at(0), -1.0f);
+			Assert::AreEqual(tensor2a.at(1), 1.0f);
+		}
+	};
+
 	TEST_CLASS(GradientTest)
 	{
 	public:
