@@ -1,31 +1,34 @@
 #pragma once
 #include <vector>
+#include <tuple>
 
 class Tensor;
 
+using gradientList = std::vector<std::tuple<Tensor*, Tensor>>;
+
 class GradientFunction {
 public:
-	virtual Tensor calculateGradient(const Tensor& previousGradient) const = 0;
+	virtual gradientList calculateGradient(const Tensor& previousGradient) const = 0;
 };
 
 class GetFunction : public GradientFunction {
 private:
-	const Tensor* original;
+	Tensor* original;
 	int index;
 	int size;
 public:
-	GetFunction(const Tensor* original, int index, int size);
-	Tensor calculateGradient(const Tensor& previousGradient) const override;
+	GetFunction(Tensor* original, int index, int size);
+	gradientList calculateGradient(const Tensor& previousGradient) const override;
 };
 
 class SetSingleFunction : public GradientFunction {
 private:
-	const Tensor* original;
+	Tensor* original;
 	int index;
 	int size;
 public:
-	SetSingleFunction(const Tensor* original, int index, int size);
-	Tensor calculateGradient(const Tensor& previousGradient) const override;
+	SetSingleFunction(Tensor* original, int index, int size);
+	gradientList calculateGradient(const Tensor& previousGradient) const override;
 };
 
 class SetTensorFunction : public GradientFunction
@@ -33,5 +36,5 @@ class SetTensorFunction : public GradientFunction
 public:
 	SetTensorFunction(Tensor* copyTo, Tensor* copyFrom, int index, const std::vector<int>& broadcastShape,
 		const std::vector<int>& broadcastIndices);
-	Tensor calculateGradient(const Tensor& previousGradient) const override;
+	gradientList calculateGradient(const Tensor& previousGradient) const override;
 };

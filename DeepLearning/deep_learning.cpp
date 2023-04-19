@@ -52,7 +52,7 @@ Tensor& Tensor::reshape(const std::vector<int>& shape) {
 	return *this;
 }
 
-Tensor Tensor::get(const std::vector<int>& indices) const {
+Tensor Tensor::get(const std::vector<int>& indices) {
 	int index = getIndex(indices);
 	std::vector<int> newShape(shape.begin() + indices.size(), shape.end());
 	int newSize = calculateSize(newShape);

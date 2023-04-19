@@ -1,12 +1,12 @@
 #include "gradient_function.h"
 #include "deep_learning.h"
 
-GetFunction::GetFunction(const Tensor* original, int index, int size) : original(original), index(index), size(size)
+GetFunction::GetFunction(Tensor* original, int index, int size) : original(original), index(index), size(size)
 {
 
 }
 
-Tensor GetFunction::calculateGradient(const Tensor& previousGradient) const {
+gradientList GetFunction::calculateGradient(const Tensor& previousGradient) const {
 	int gradientSize = original->getSize();
 	const std::vector<int>& gradientShape = original->getShape();
 	float* gradientValues = new float[gradientSize];
@@ -18,15 +18,14 @@ Tensor GetFunction::calculateGradient(const Tensor& previousGradient) const {
 			gradientValues[i] = 0.0f;
 		}
 	}
-	return Tensor::fromValues(gradientValues, gradientShape);
+	return gradientList{ std::tuple<Tensor*, Tensor>(original, Tensor::fromValues(gradientValues, gradientShape))};
 }
 
-SetSingleFunction::SetSingleFunction(const Tensor* original, int index, int size) : original(original), index(index), size(size)
+SetSingleFunction::SetSingleFunction(Tensor* original, int index, int size) : original(original), index(index), size(size)
 {
 
 }
-
-Tensor SetSingleFunction::calculateGradient(const Tensor& previousGradient) const {
+gradientList SetSingleFunction::calculateGradient(const Tensor& previousGradient) const {
 	int gradientSize = original->getSize();
 	const std::vector<int>& gradientShape = original->getShape();
 	float* gradientValues = new float[gradientSize];
@@ -38,7 +37,7 @@ Tensor SetSingleFunction::calculateGradient(const Tensor& previousGradient) cons
 			gradientValues[i] = previousGradient.at(i);
 		}
 	}
-	return Tensor::fromValues(gradientValues, gradientShape);
+	return gradientList{ std::tuple<Tensor*, Tensor>(original, Tensor::fromValues(gradientValues, gradientShape)) };
 }
 
 SetTensorFunction::SetTensorFunction(Tensor* copyTo, Tensor* copyFrom, int index, const std::vector<int>& broadcastShape, 
@@ -47,7 +46,7 @@ SetTensorFunction::SetTensorFunction(Tensor* copyTo, Tensor* copyFrom, int index
 
 }
 
-Tensor SetTensorFunction::calculateGradient(const Tensor& previousGradient) const
+gradientList SetTensorFunction::calculateGradient(const Tensor& previousGradient) const
 {
-	return Tensor::zeroes({});
+	return gradientList();
 }
