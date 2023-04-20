@@ -35,17 +35,17 @@ namespace TensorTest
 		TEST_METHOD(Values)
 		{
 			Tensor tensor1 = Tensor::zeroes({ 3 });
-			CompareFloats(tensor1.get({ 0 }).item(), 0.0f);
-			CompareFloats(tensor1.get({ 1 }).item(), 0.0f);
-			CompareFloats(tensor1.get({ 2 }).item(), 0.0f);
+			CompareFloats(tensor1.at(0), 0.0f);
+			CompareFloats(tensor1.at(1), 0.0f);
+			CompareFloats(tensor1.at(2), 0.0f);
 
 			Tensor tensor2 = Tensor::zeroes({ 2, 3 });
-			CompareFloats(tensor2.get({ 0, 0 }).item(), 0.0f);
-			CompareFloats(tensor2.get({ 0, 1 }).item(), 0.0f);
-			CompareFloats(tensor2.get({ 0, 2 }).item(), 0.0f);
-			CompareFloats(tensor2.get({ 1, 0 }).item(), 0.0f);
-			CompareFloats(tensor2.get({ 1, 1 }).item(), 0.0f);
-			CompareFloats(tensor2.get({ 1, 2 }).item(), 0.0f);
+			CompareFloats(tensor2.at({0, 0}), 0.0f);
+			CompareFloats(tensor2.at({0, 1}), 0.0f);
+			CompareFloats(tensor2.at({0, 2}), 0.0f);
+			CompareFloats(tensor2.at({1, 0}), 0.0f);
+			CompareFloats(tensor2.at({1, 1}), 0.0f);
+			CompareFloats(tensor2.at({1, 2}), 0.0f);
 		}
 
 		TEST_METHOD(InvalidShape)
@@ -93,17 +93,17 @@ namespace TensorTest
 		TEST_METHOD(Values)
 		{
 			Tensor tensor1 = Tensor::ones({ 3 });
-			CompareFloats(tensor1.get({ 0 }).item(), 1.0f);
-			CompareFloats(tensor1.get({ 1 }).item(), 1.0f);
-			CompareFloats(tensor1.get({ 2 }).item(), 1.0f);
+			CompareFloats(tensor1.at(0), 1.0f);
+			CompareFloats(tensor1.at(1), 1.0f);
+			CompareFloats(tensor1.at(2), 1.0f);
 
 			Tensor tensor2 = Tensor::ones({ 2, 3 });
-			CompareFloats(tensor2.get({ 0, 0 }).item(), 1.0f);
-			CompareFloats(tensor2.get({ 0, 1 }).item(), 1.0f);
-			CompareFloats(tensor2.get({ 0, 2 }).item(), 1.0f);
-			CompareFloats(tensor2.get({ 1, 0 }).item(), 1.0f);
-			CompareFloats(tensor2.get({ 1, 1 }).item(), 1.0f);
-			CompareFloats(tensor2.get({ 1, 2 }).item(), 1.0f);
+			CompareFloats(tensor2.at({0, 0}), 1.0f);
+			CompareFloats(tensor2.at({0, 1}), 1.0f);
+			CompareFloats(tensor2.at({0, 2}), 1.0f);
+			CompareFloats(tensor2.at({1, 0}), 1.0f);
+			CompareFloats(tensor2.at({1, 1}), 1.0f);
+			CompareFloats(tensor2.at({1, 2}), 1.0f);
 		}
 
 		TEST_METHOD(InvalidShape)
@@ -151,17 +151,17 @@ namespace TensorTest
 		TEST_METHOD(Values)
 		{
 			Tensor tensor1 = Tensor::full({ 3 }, 4.0f);
-			CompareFloats(tensor1.get({ 0 }).item(), 4.0f);
-			CompareFloats(tensor1.get({ 1 }).item(), 4.0f);
-			CompareFloats(tensor1.get({ 2 }).item(), 4.0f);
+			CompareFloats(tensor1.at(0), 4.0f);
+			CompareFloats(tensor1.at(1), 4.0f);
+			CompareFloats(tensor1.at(2), 4.0f);
 
 			Tensor tensor2 = Tensor::full({ 2, 3 }, 2.0f);
-			CompareFloats(tensor2.get({ 0, 0 }).item(), 2.0f);
-			CompareFloats(tensor2.get({ 0, 1 }).item(), 2.0f);
-			CompareFloats(tensor2.get({ 0, 2 }).item(), 2.0f);
-			CompareFloats(tensor2.get({ 1, 0 }).item(), 2.0f);
-			CompareFloats(tensor2.get({ 1, 1 }).item(), 2.0f);
-			CompareFloats(tensor2.get({ 1, 2 }).item(), 2.0f);
+			CompareFloats(tensor2.at({0, 0}), 2.0f);
+			CompareFloats(tensor2.at({0, 1}), 2.0f);
+			CompareFloats(tensor2.at({0, 2}), 2.0f);
+			CompareFloats(tensor2.at({1, 0}), 2.0f);
+			CompareFloats(tensor2.at({1, 1}), 2.0f);
+			CompareFloats(tensor2.at({1, 2}), 2.0f);
 		}
 
 		TEST_METHOD(InvalidShape)
@@ -209,17 +209,17 @@ namespace TensorTest
 		TEST_METHOD(Values)
 		{
 			Tensor tensor1 = Tensor::range({ 3 });
-			CompareFloats(tensor1.get({ 0 }).item(), 0.0f);
-			CompareFloats(tensor1.get({ 1 }).item(), 1.0f);
-			CompareFloats(tensor1.get({ 2 }).item(), 2.0f);
+			CompareFloats(tensor1.at(0), 0.0f);
+			CompareFloats(tensor1.at(1), 1.0f);
+			CompareFloats(tensor1.at(2), 2.0f);
 
 			Tensor tensor2 = Tensor::range({ 2, 3 }, 5, -1);
-			CompareFloats(tensor2.get({ 0, 0 }).item(), 5.0f);
-			CompareFloats(tensor2.get({ 0, 1 }).item(), 4.0f);
-			CompareFloats(tensor2.get({ 0, 2 }).item(), 3.0f);
-			CompareFloats(tensor2.get({ 1, 0 }).item(), 2.0f);
-			CompareFloats(tensor2.get({ 1, 1 }).item(), 1.0f);
-			CompareFloats(tensor2.get({ 1, 2 }).item(), 0.0f);
+			CompareFloats(tensor2.at({0, 0}), 5.0f);
+			CompareFloats(tensor2.at({0, 1}), 4.0f);
+			CompareFloats(tensor2.at({0, 2}), 3.0f);
+			CompareFloats(tensor2.at({1, 0}), 2.0f);
+			CompareFloats(tensor2.at({1, 1}), 1.0f);
+			CompareFloats(tensor2.at({1, 2}), 0.0f);
 		}
 
 		TEST_METHOD(InvalidShape)
@@ -267,17 +267,17 @@ namespace TensorTest
 		TEST_METHOD(Values)
 		{
 			Tensor tensor1 = Tensor::fromValues(new float[3] { 1.0f, 2.0f, 3.0f }, { 3 });
-			CompareFloats(tensor1.get({ 0 }).item(), 1.0f);
-			CompareFloats(tensor1.get({ 1 }).item(), 2.0f);
-			CompareFloats(tensor1.get({ 2 }).item(), 3.0f);
+			CompareFloats(tensor1.at(0), 1.0f);
+			CompareFloats(tensor1.at(1), 2.0f);
+			CompareFloats(tensor1.at(2), 3.0f);
 
 			Tensor tensor2 = Tensor::fromValues(new float[6] {-1.0f, -2.0f, -3.0f, -4.0f, -5.0f, -6.0f}, { 2, 3 });
-			CompareFloats(tensor2.get({ 0, 0 }).item(), -1.0f);
-			CompareFloats(tensor2.get({ 0, 1 }).item(), -2.0f);
-			CompareFloats(tensor2.get({ 0, 2 }).item(), -3.0f);
-			CompareFloats(tensor2.get({ 1, 0 }).item(), -4.0f);
-			CompareFloats(tensor2.get({ 1, 1 }).item(), -5.0f);
-			CompareFloats(tensor2.get({ 1, 2 }).item(), -6.0f);
+			CompareFloats(tensor2.at({0, 0}), -1.0f);
+			CompareFloats(tensor2.at({0, 1}), -2.0f);
+			CompareFloats(tensor2.at({0, 2}), -3.0f);
+			CompareFloats(tensor2.at({1, 0}), -4.0f);
+			CompareFloats(tensor2.at({1, 1}), -5.0f);
+			CompareFloats(tensor2.at({1, 2}), -6.0f);
 		}
 
 		TEST_METHOD(InvalidShape)
@@ -318,36 +318,58 @@ namespace TensorTest
 	TEST_CLASS(AtIndexTest)
 	{
 	public:
+		TEST_METHOD(IndexOutOfBounds)
+		{
+			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 1, 3 }).at(3); });
+			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 3 }).at(-1); });
+			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 4, 2, 8, 1, 2 }).at(200); });
+		}
+
 		TEST_METHOD(Value)
 		{
 			Tensor tensor1 = Tensor::zeroes({});
 			CompareFloats(tensor1.at(0), 0.0f);
 
-			Tensor tensor2 = Tensor::full({ 2,3 }, 2.0f).set(-2.0f, { 1 });
-			CompareFloats(tensor2.at(0), 2.0f);
-			CompareFloats(tensor2.at(1), 2.0f);
+			Tensor tensor2 = Tensor::range({ 2,3 });
+			CompareFloats(tensor2.at(0), 0.0f);
+			CompareFloats(tensor2.at(1), 1.0f);
 			CompareFloats(tensor2.at(2), 2.0f);
-			CompareFloats(tensor2.at(3), -2.0f);
-			CompareFloats(tensor2.at(4), -2.0f);
-			CompareFloats(tensor2.at(5), -2.0f);
+			CompareFloats(tensor2.at(3), 3.0f);
+			CompareFloats(tensor2.at(4), 4.0f);
+			CompareFloats(tensor2.at(5), 5.0f);
 		}
 	};
 
 	TEST_CLASS(AtIndicesTest)
 	{
 	public:
+		TEST_METHOD(WrongNumberOfIndices)
+		{
+			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ }).at({ 5,2 }); });
+			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ 2, 1, 1 }).at({ 1, 1 }); });
+			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({ 2, 4, 6 }).at({ 1, 1, 2, 2 }); });
+		}
+
+		TEST_METHOD(IndexOutOfBounds)
+		{
+			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 1, 3 }).at({ 2, 1 }); });
+			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 5 }).at({ -1 }); });
+			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 3 }).at({ 4 }); });
+			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 4, 2, 8, 1, 2 }).at({ 3, 1, 5, 4, 1 }); });
+		}
+
 		TEST_METHOD(Value)
 		{
 			Tensor tensor1 = Tensor::zeroes({});
 			CompareFloats(tensor1.at({ 0 }), 0.0f);
 
-			Tensor tensor2 = Tensor::full({ 2,3 }, 2.0f).set(-2.0f, { 1 });
-			CompareFloats(tensor2.at({ 0, 0 }), 2.0f);
-			CompareFloats(tensor2.at({ 0, 1 }), 2.0f);
+			Tensor tensor2 = Tensor::range({ 2,3 });
+			CompareFloats(tensor2.at({ 0, 0 }), 0.0f);
+			CompareFloats(tensor2.at({ 0, 1 }), 1.0f);
 			CompareFloats(tensor2.at({ 0, 2 }), 2.0f);
-			CompareFloats(tensor2.at({ 1, 0 }), -2.0f);
-			CompareFloats(tensor2.at({ 1, 1 }), -2.0f);
-			CompareFloats(tensor2.at({ 1, 2 }), -2.0f);
+			CompareFloats(tensor2.at({ 1, 0 }), 3.0f);
+			CompareFloats(tensor2.at({ 1, 1 }), 4.0f);
+			CompareFloats(tensor2.at({ 1, 2 }), 5.0f);
 		}
 	};
 
@@ -410,13 +432,13 @@ namespace TensorTest
 
 		TEST_METHOD(MatchingValue)
 		{
-			Tensor tensor1a = Tensor::full({ 2,3 }, 1.0f);
+			Tensor tensor1a = Tensor::range({ 2,3 });
 			Tensor tensor1b = tensor1a.get({ 1 });
-			Assert::AreEqual(tensor1a.get({ 1,0 }).item(), tensor1b.get({ 0 }).item());
+			Assert::AreEqual(tensor1a.at({ 1,0 }), tensor1b.at(0));
 
-			Tensor tensor2a = Tensor::zeroes({ 5,4,3,7 });
+			Tensor tensor2a = Tensor::range({ 5,4,3,7 });
 			Tensor tensor2b = tensor2a.get({ 2, 3 });
-			Assert::AreEqual(tensor2a.get({ 2, 3, 1, 5 }).item(), tensor2b.get({ 1, 5 }).item());
+			Assert::AreEqual(tensor2a.at({2, 3, 1, 5}), tensor2b.at({1, 5}));
 		}
 
 		TEST_METHOD(Gradient)
@@ -453,17 +475,17 @@ namespace TensorTest
 		TEST_METHOD(NewValue)
 		{
 			Tensor tensor1 = Tensor::zeroes({ 3 }).set(1.0f);
-			CompareFloats(tensor1.get({ 0 }).item(), 1.0f);
-			CompareFloats(tensor1.get({ 1 }).item(), 1.0f);
-			CompareFloats(tensor1.get({ 2 }).item(), 1.0f);
+			CompareFloats(tensor1.at(0), 1.0f);
+			CompareFloats(tensor1.at(1), 1.0f);
+			CompareFloats(tensor1.at(2), 1.0f);
 
-			Tensor tensor2 = Tensor::zeroes({ 2, 3 }).set(1.0f, { 1 });
-			CompareFloats(tensor2.get({ 0, 0 }).item(), 0.0f);
-			CompareFloats(tensor2.get({ 0, 1 }).item(), 0.0f);
-			CompareFloats(tensor2.get({ 0, 2 }).item(), 0.0f);
-			CompareFloats(tensor2.get({ 1, 0 }).item(), 1.0f);
-			CompareFloats(tensor2.get({ 1, 1 }).item(), 1.0f);
-			CompareFloats(tensor2.get({ 1, 2 }).item(), 1.0f);
+			Tensor tensor2 = Tensor::range({ 2, 3 }).set(-1.0f, { 1 });
+			CompareFloats(tensor2.at({0, 0}), 0.0f);
+			CompareFloats(tensor2.at({0, 1}), 1.0f);
+			CompareFloats(tensor2.at({0, 2}), 2.0f);
+			CompareFloats(tensor2.at({1, 0}), -1.0f);
+			CompareFloats(tensor2.at({1, 1}), -1.0f);
+			CompareFloats(tensor2.at({1, 2}), -1.0f);
 		}
 
 		TEST_METHOD(IndependentValues)
@@ -518,24 +540,24 @@ namespace TensorTest
 		TEST_METHOD(NewValue)
 		{
 			Tensor tensor1 = Tensor::zeroes({ 3 }).set(Tensor::ones({ 1 }), { 2 });
-			CompareFloats(tensor1.get({ 0 }).item(), 0.0f);
-			CompareFloats(tensor1.get({ 1 }).item(), 0.0f);
-			CompareFloats(tensor1.get({ 2 }).item(), 1.0f);
+			CompareFloats(tensor1.at(0), 0.0f);
+			CompareFloats(tensor1.at(1), 0.0f);
+			CompareFloats(tensor1.at(2), 1.0f);
 
-			Tensor tensor2 = Tensor::zeroes({ 2, 1, 3 }).set(Tensor::ones({ 1, 1 }), { 1 });
-			CompareFloats(tensor2.at(0), 0.0f);
-			CompareFloats(tensor2.at(1), 0.0f);
-			CompareFloats(tensor2.at(2), 0.0f);
-			CompareFloats(tensor2.at(3), 1.0f);
-			CompareFloats(tensor2.at(4), 1.0f);
-			CompareFloats(tensor2.at(5), 1.0f);
+			Tensor tensor2 = Tensor::range({ 2, 1, 3 }, 0, -1).set(Tensor::ones({ 1, 1 }), { 1 });
+			CompareFloats(tensor2.at({ 0,0,0 }), 0.0f);
+			CompareFloats(tensor2.at({ 0,0,1 }), -1.0f);
+			CompareFloats(tensor2.at({ 0,0,2 }), -2.0f);
+			CompareFloats(tensor2.at({ 1,0,0 }), 1.0f);
+			CompareFloats(tensor2.at({ 1,0,1 }), 1.0f);
+			CompareFloats(tensor2.at({ 1,0,2 }), 1.0f);
 		}
 
 		TEST_METHOD(Independentvalues)
 		{
 			Tensor tensor1 = Tensor::zeroes({ 3 });
 			Tensor tensor2 = tensor1.set(Tensor::ones({ 1 }), { 2 });
-			CompareFloats(tensor1.get({ 2 }).item(), 0.0f);
+			CompareFloats(tensor1.at(2), 0.0f);
 		}
 
 		TEST_METHOD(Gradient)
@@ -563,16 +585,16 @@ namespace TensorTest
 	public:
 		TEST_METHOD(NewValue)
 		{
-			Tensor tensor1a = Tensor::zeroes({ 3,1 });
+			Tensor tensor1a = Tensor::range({ 3,1 });
 			Tensor tensor1b = tensor1a.add(3.0f);
 			Assert::AreEqual(tensor1b.at(0), 3.0f);
-			Assert::AreEqual(tensor1b.at(1), 3.0f);
-			Assert::AreEqual(tensor1b.at(2), 3.0f);
+			Assert::AreEqual(tensor1b.at(1), 4.0f);
+			Assert::AreEqual(tensor1b.at(2), 5.0f);
 
-			Tensor tensor2a = Tensor::ones({ 2 }).set(-1, { 0 });
+			Tensor tensor2a = Tensor::range({ 2 }, 1);
 			Tensor tensor2b = tensor2a.add(-1.0f);
-			Assert::AreEqual(tensor2b.at(0), -2.0f);
-			Assert::AreEqual(tensor2b.at(1), 0.0f);
+			Assert::AreEqual(tensor2b.at(0), 0.0f);
+			Assert::AreEqual(tensor2b.at(1), 1.0f);
 		}
 
 		TEST_METHOD(IndependentValues)
@@ -619,18 +641,18 @@ namespace TensorTest
 
 		TEST_METHOD(NewValue)
 		{
-			Tensor tensor1 = Tensor::zeroes({ 3 }).set(Tensor::ones({ 1 }), { 2 }).add(Tensor::ones({ 1 }));
-			CompareFloats(tensor1.get({ 0 }).item(), 1.0f);
-			CompareFloats(tensor1.get({ 1 }).item(), 1.0f);
-			CompareFloats(tensor1.get({ 2 }).item(), 2.0f);
+			Tensor tensor1 = Tensor::range({ 3 }).add(Tensor::ones({ 1 }));
+			CompareFloats(tensor1.at(0), 1.0f);
+			CompareFloats(tensor1.at(1), 2.0f);
+			CompareFloats(tensor1.at(2), 3.0f);
 
-			Tensor tensor2 = Tensor::zeroes({ 2, 1, 3 }).add(Tensor::ones({ 1, 1 }));
-			CompareFloats(tensor2.at(0), 1.0f);
-			CompareFloats(tensor2.at(1), 1.0f);
-			CompareFloats(tensor2.at(2), 1.0f);
-			CompareFloats(tensor2.at(3), 1.0f);
-			CompareFloats(tensor2.at(4), 1.0f);
-			CompareFloats(tensor2.at(5), 1.0f);
+			Tensor tensor2 = Tensor::range({ 2, 1, 3 }).add(Tensor::range({ 1, 3 }));
+			CompareFloats(tensor2.at({ 0,0,0 }), 0.0f);
+			CompareFloats(tensor2.at({ 0,0,1 }), 2.0f);
+			CompareFloats(tensor2.at({ 0,0,2 }), 4.0f);
+			CompareFloats(tensor2.at({ 1,0,0 }), 3.0f);
+			CompareFloats(tensor2.at({ 1,0,1 }), 5.0f);
+			CompareFloats(tensor2.at({ 1,0,2 }), 7.0f);
 		}
 
 		TEST_METHOD(Independentvalues)

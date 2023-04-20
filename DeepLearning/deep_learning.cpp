@@ -36,11 +36,13 @@ float Tensor::item() const {
 }
 
 float Tensor::at(int index) const {
+	if (index < 0 || index >= size) throw std::out_of_range("Index must be within the range of the values.");
 	return values[index];
 }
 
 float Tensor::at(const std::vector<int>& indices) const {
-	return at(getIndex(indices));
+	if(indices.size() < shape.size()) throw std::length_error("Number of indices cannot be less than number of dimensions.");
+	return values[getIndex(indices)];
 }
 
 const GradientFunction* Tensor::getFunction() const
@@ -238,8 +240,9 @@ std::vector<int> Tensor::broadcastShapes(std::vector<int> shape1, std::vector<in
 	return shape1;
 }
 
-std::vector<int> Tensor::broadcastIndices(const std::vector<int>& originalShape, const std::vector<int>& broadcastedShape)
+std::vector<int> Tensor::broadcastIndices(std::vector<int> originalShape, const std::vector<int>& broadcastedShape)
 {
+	while (broadcastedShape.size() > originalShape.size()) originalShape.insert(originalShape.begin(), 1);
 	std::vector<int> originalShapeStrides(originalShape.size()), broadcastedShapeStrides(originalShape.size());
 	{
 		int originalShapeStride=1, broadcastedShapeStride=1;
