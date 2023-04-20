@@ -41,6 +41,7 @@ public:
 	static Tensor zeroes(const std::vector<int>& shape);
 	static Tensor ones(const std::vector<int>& shape);
 	static Tensor full(const std::vector<int>& shape, float value);
+	static Tensor range(const std::vector<int>& shape, float start=0, float step=1);
 
 	static Tensor fromValues(float* values, const std::vector<int>& shape);
 };

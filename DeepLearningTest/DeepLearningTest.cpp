@@ -179,6 +179,64 @@ namespace TensorTest
 		}
 	};
 
+	TEST_CLASS(RangeTest)
+	{
+	public:
+		TEST_METHOD(Shape)
+		{
+			Assert::AreEqual(1, Tensor::range({ 1 }).getShape()[0]);
+
+			Assert::AreEqual(3, Tensor::range({ 3 }).getShape()[0]);
+
+			Assert::AreEqual(5, Tensor::range({ 5, 2 }).getShape()[0]);
+			Assert::AreEqual(2, Tensor::range({ 5, 2 }).getShape()[1]);
+
+			Assert::AreEqual(3, Tensor::range({ 3,7,5 }).getShape()[0]);
+			Assert::AreEqual(7, Tensor::range({ 3,7,5 }).getShape()[1]);
+			Assert::AreEqual(5, Tensor::range({ 3,7,5 }).getShape()[2]);
+		}
+
+		TEST_METHOD(Size)
+		{
+			Assert::AreEqual(1, Tensor::range({}).getSize());
+			Assert::AreEqual(1, Tensor::range({ 1 }).getSize());
+			Assert::AreEqual(1, Tensor::range({ 1, 1, 1 }).getSize());
+			Assert::AreEqual(2, Tensor::range({ 2 }).getSize());
+			Assert::AreEqual(9, Tensor::range({ 3, 3 }).getSize());
+			Assert::AreEqual(105, Tensor::range({ 3, 7, 5 }).getSize());
+		}
+
+		TEST_METHOD(Values)
+		{
+			Tensor tensor1 = Tensor::range({ 3 });
+			CompareFloats(tensor1.get({ 0 }).item(), 0.0f);
+			CompareFloats(tensor1.get({ 1 }).item(), 1.0f);
+			CompareFloats(tensor1.get({ 2 }).item(), 2.0f);
+
+			Tensor tensor2 = Tensor::range({ 2, 3 }, 5, -1);
+			CompareFloats(tensor2.get({ 0, 0 }).item(), 5.0f);
+			CompareFloats(tensor2.get({ 0, 1 }).item(), 4.0f);
+			CompareFloats(tensor2.get({ 0, 2 }).item(), 3.0f);
+			CompareFloats(tensor2.get({ 1, 0 }).item(), 2.0f);
+			CompareFloats(tensor2.get({ 1, 1 }).item(), 1.0f);
+			CompareFloats(tensor2.get({ 1, 2 }).item(), 0.0f);
+		}
+
+		TEST_METHOD(InvalidShape)
+		{
+			Assert::ExpectException<std::invalid_argument>([]() { Tensor::range({ -1 }); });
+			Assert::ExpectException<std::invalid_argument>([]() { Tensor::range({ 0 }); });
+			Assert::ExpectException<std::invalid_argument>([]() { Tensor::range({ 1, 0, 3 }); });
+		}
+
+		TEST_METHOD(RequiresGradient)
+		{
+			Assert::IsFalse(Tensor::range({ 4, 3, 2 }).getGradient());
+			Assert::IsFalse(Tensor::range({  }).getGradient());
+			Assert::IsFalse(Tensor::range({ 10 }).getGradient());
+		}
+	};
+
 	TEST_CLASS(FromValuesTest)
 	{
 	public:

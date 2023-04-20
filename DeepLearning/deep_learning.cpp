@@ -170,6 +170,16 @@ Tensor Tensor::full(const std::vector<int>& shape, float value)
 	return Tensor(shape, size, values);
 }
 
+Tensor Tensor::range(const std::vector<int>& shape, float start, float step)
+{
+	int size = calculateSize(shape);
+	float* values = new float[size];
+	for (int i = 0; i < size; i++) {
+		values[i] = start + i * step;
+	}
+	return Tensor(shape, size, values);
+}
+
 Tensor Tensor::fromValues(float* values, const std::vector<int>& shape)
 {
 	return Tensor(shape, calculateSize(shape), values);
