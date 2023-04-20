@@ -225,26 +225,29 @@ std::vector<int> Tensor::broadcastShapes(std::vector<int> shape1, std::vector<in
 
 std::vector<int> Tensor::broadcastIndices(const std::vector<int>& originalShape, const std::vector<int>& broadcastedShape)
 {
-	std::vector<int> trueStrides(originalShape.size()), broadcastStrides(originalShape.size());
+	std::vector<int> originalShapeStrides(originalShape.size()), broadcastedShapeStrides(originalShape.size());
 	{
-		int stride = 1;
+		int originalShapeStride=1, broadcastedShapeStride=1;
 		for (int i = originalShape.size() - 1; i >= 0; i--) {
-			if (originalShape[i] == 1) broadcastStrides[i] = 0;
-			else broadcastStrides[i] = stride;
-			trueStrides[i] = stride;
-			stride *= originalShape[i];
+			if (originalShape[i] == 1) broadcastedShapeStrides[i] = 0;
+			else broadcastedShapeStrides[i] = originalShapeStride;
+			originalShapeStrides[i] = broadcastedShapeStride;
+			originalShapeStride *= originalShape[i];
+			broadcastedShapeStride *= broadcastedShape[i];
 		}
 	}
 
 	std::vector<int> broadcastedIndices(calculateSize(broadcastedShape));
 
 	std::function<void(int, int, int)> recursiveIterate = [&](int depth, int trueIndex, int broadcastedIndex) {
-		if (depth == trueStrides.size()) {
+		if (depth == originalShapeStrides.size()) {
 			broadcastedIndices[trueIndex] = broadcastedIndex;
 			return;
 		}
 		for (int i = 0; i < broadcastedShape[depth]; i++) {
-			recursiveIterate(depth + 1, trueIndex + i * trueStrides[depth], broadcastedIndex + i * broadcastStrides[depth]);
+			recursiveIterate(depth + 1, 
+				trueIndex + i * originalShapeStrides[depth], 
+				broadcastedIndex + i * broadcastedShapeStrides[depth]);
 		}
 	};
 

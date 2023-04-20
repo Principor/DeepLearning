@@ -215,7 +215,7 @@ namespace GradientFunctionTest
 			Tensor tensor1b = Tensor::zeroes({ 1,2,1 });
 			Tensor tensor1c = tensor1a.set(tensor1b, { 0 });
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
-				Tensor::fromValues(new float[8]{ 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f }, { 4, 2, 1 })
+				Tensor::fromValues(new float[8] { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f }, { 4, 2, 1 })
 			);
 			Tensor& gradient1 = std::get<1>(gradients1[1]);
 			CompareFloats(gradient1.at(0), 1.0f);
@@ -265,7 +265,7 @@ namespace GradientFunctionTest
 			tensor1a.setGradient(true);
 			Tensor tensor1b = tensor1a.add(2.0f);
 			gradientList gradients1 = tensor1b.getFunction()->calculateGradient(
-				Tensor::fromValues(new float[6]{1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f}, {2,1,3})
+				Tensor::fromValues(new float[6] {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f}, { 2,1,3 })
 			);
 			Tensor& gradient1 = std::get<1>(gradients1[0]);
 			CompareFloats(gradient1.at(0), 1.0f);
@@ -279,7 +279,7 @@ namespace GradientFunctionTest
 			tensor2a.setGradient(true);
 			Tensor tensor2b = tensor2a.add(2.0f);
 			gradientList gradients2 = tensor2b.getFunction()->calculateGradient(
-				Tensor::fromValues(new float[5]{1.0f, 2.0f, 3.0f, 4.0f, 5.0f}, {5})
+				Tensor::fromValues(new float[5] {1.0f, 2.0f, 3.0f, 4.0f, 5.0f}, { 5 })
 			);
 			Tensor& gradient2 = std::get<1>(gradients2[0]);
 			CompareFloats(gradient2.at(0), 1.0f);
@@ -341,6 +341,62 @@ namespace GradientFunctionTest
 			Assert::AreEqual(2, gradient2.getShape()[0]);
 			Assert::AreEqual(3, gradient2.getShape()[1]);
 			Assert::AreEqual(1, gradient2.getShape()[2]);
+		}
+
+		TEST_METHOD(Values1)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
+			Tensor tensor1b = Tensor::zeroes({ 4, 1 });
+			tensor1a.setGradient(true);
+			Tensor tensor1c = tensor1a.add(tensor1b);
+			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
+				Tensor::ones({ 4, 3 })
+			);
+			Tensor& gradient1 = std::get<1>(gradients1[0]);
+			CompareFloats(gradient1.at(0), 4.0f);
+			CompareFloats(gradient1.at(1), 4.0f);
+			CompareFloats(gradient1.at(2), 4.0f);
+
+			Tensor tensor2a = Tensor::zeroes({ 1, });
+			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 });
+			tensor2a.setGradient(true);
+			Tensor tensor2c = tensor2a.add(tensor2b);
+			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
+				Tensor::ones({ 2, 3, 1 })
+			);
+			Tensor& gradient2 = std::get<1>(gradients2[0]);
+			CompareFloats(gradient2.at(0), 6.0f);
+		}
+
+		TEST_METHOD(Values2)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
+			Tensor tensor1b = Tensor::zeroes({ 4, 1 });
+			tensor1a.setGradient(true);
+			Tensor tensor1c = tensor1a.add(tensor1b);
+			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
+				Tensor::ones({ 4, 3 })
+			);
+			Tensor& gradient1 = std::get<1>(gradients1[1]);
+			CompareFloats(gradient1.at(0), 3.0f);
+			CompareFloats(gradient1.at(1), 3.0f);
+			CompareFloats(gradient1.at(2), 3.0f);
+			CompareFloats(gradient1.at(3), 3.0f);
+
+			Tensor tensor2a = Tensor::zeroes({ 1, });
+			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 });
+			tensor2a.setGradient(true);
+			Tensor tensor2c = tensor2a.add(tensor2b);
+			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
+				Tensor::ones({ 2, 3, 1 })
+			);
+			Tensor& gradient2 = std::get<1>(gradients2[1]);
+			CompareFloats(gradient2.at(0), 1.0f);
+			CompareFloats(gradient2.at(1), 1.0f);
+			CompareFloats(gradient2.at(2), 1.0f);
+			CompareFloats(gradient2.at(3), 1.0f);
+			CompareFloats(gradient2.at(4), 1.0f);
+			CompareFloats(gradient2.at(5), 1.0f);
 		}
 	};
 }
