@@ -92,5 +92,11 @@ AddSingleFunction::AddSingleFunction(Tensor* original) : original(original)
 
 gradientList AddSingleFunction::calculateGradient(const Tensor& previousGradient) const
 {
-	return gradientList();
+	int gradientSize = original->getSize();
+	const std::vector<int>& gradientShape = original->getShape();
+	float* gradientValues = new float[gradientSize];
+	for (int i = 0; i < gradientSize; i++) {
+		gradientValues[i] = previousGradient.at(i);
+	}
+	return gradientList{ gradientTuple{original, Tensor::fromValues(gradientValues, gradientShape)} };
 }
