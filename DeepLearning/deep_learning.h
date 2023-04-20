@@ -28,6 +28,7 @@ public:
 	void setGradient(bool gradient);
 	float item() const;
 	float at(int index) const;
+	float at(const std::vector<int>& indices) const;
 	const GradientFunction* getFunction() const;
 
 	Tensor& reshape(const std::vector<int>& shape);

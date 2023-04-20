@@ -38,6 +38,10 @@ float Tensor::at(int index) const {
 	return values[index];
 }
 
+float Tensor::at(const std::vector<int>& indices) const {
+	return at(getIndex(indices));
+}
+
 const GradientFunction* Tensor::getFunction() const
 {
 	return function;

@@ -315,7 +315,7 @@ namespace TensorTest
 		}
 	};
 
-	TEST_CLASS(AtTest)
+	TEST_CLASS(AtIndexTest)
 	{
 	public:
 		TEST_METHOD(Value)
@@ -330,6 +330,24 @@ namespace TensorTest
 			CompareFloats(tensor2.at(3), -2.0f);
 			CompareFloats(tensor2.at(4), -2.0f);
 			CompareFloats(tensor2.at(5), -2.0f);
+		}
+	};
+
+	TEST_CLASS(AtIndicesTest)
+	{
+	public:
+		TEST_METHOD(Value)
+		{
+			Tensor tensor1 = Tensor::zeroes({});
+			CompareFloats(tensor1.at({ 0 }), 0.0f);
+
+			Tensor tensor2 = Tensor::full({ 2,3 }, 2.0f).set(-2.0f, { 1 });
+			CompareFloats(tensor2.at({ 0, 0 }), 2.0f);
+			CompareFloats(tensor2.at({ 0, 1 }), 2.0f);
+			CompareFloats(tensor2.at({ 0, 2 }), 2.0f);
+			CompareFloats(tensor2.at({ 1, 0 }), -2.0f);
+			CompareFloats(tensor2.at({ 1, 1 }), -2.0f);
+			CompareFloats(tensor2.at({ 1, 2 }), -2.0f);
 		}
 	};
 
