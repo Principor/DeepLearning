@@ -57,9 +57,9 @@ namespace TensorTest
 
 		TEST_METHOD(RequiresGradient)
 		{
-			Assert::IsFalse(Tensor::zeroes({ 4, 3, 2 }).getGradient());
-			Assert::IsFalse(Tensor::zeroes({  }).getGradient());
-			Assert::IsFalse(Tensor::zeroes({ 10 }).getGradient());
+			Assert::IsFalse(Tensor::zeroes({ 4, 3, 2 }).requiresGradient());
+			Assert::IsFalse(Tensor::zeroes({  }).requiresGradient());
+			Assert::IsFalse(Tensor::zeroes({ 10 }).requiresGradient());
 		}
 	};
 
@@ -115,9 +115,9 @@ namespace TensorTest
 
 		TEST_METHOD(RequiresGradient)
 		{
-			Assert::IsFalse(Tensor::ones({ 4, 3, 2 }).getGradient());
-			Assert::IsFalse(Tensor::ones({  }).getGradient());
-			Assert::IsFalse(Tensor::ones({ 10 }).getGradient());
+			Assert::IsFalse(Tensor::ones({ 4, 3, 2 }).requiresGradient());
+			Assert::IsFalse(Tensor::ones({  }).requiresGradient());
+			Assert::IsFalse(Tensor::ones({ 10 }).requiresGradient());
 		}
 	};
 
@@ -173,9 +173,9 @@ namespace TensorTest
 
 		TEST_METHOD(RequiresGradient)
 		{
-			Assert::IsFalse(Tensor::full({ 4, 3, 2 }, 0.0f).getGradient());
-			Assert::IsFalse(Tensor::full({  }, 5.0f).getGradient());
-			Assert::IsFalse(Tensor::full({ 10 }, -3.0f).getGradient());
+			Assert::IsFalse(Tensor::full({ 4, 3, 2 }, 0.0f).requiresGradient());
+			Assert::IsFalse(Tensor::full({  }, 5.0f).requiresGradient());
+			Assert::IsFalse(Tensor::full({ 10 }, -3.0f).requiresGradient());
 		}
 	};
 
@@ -231,9 +231,9 @@ namespace TensorTest
 
 		TEST_METHOD(RequiresGradient)
 		{
-			Assert::IsFalse(Tensor::range({ 4, 3, 2 }).getGradient());
-			Assert::IsFalse(Tensor::range({  }).getGradient());
-			Assert::IsFalse(Tensor::range({ 10 }).getGradient());
+			Assert::IsFalse(Tensor::range({ 4, 3, 2 }).requiresGradient());
+			Assert::IsFalse(Tensor::range({  }).requiresGradient());
+			Assert::IsFalse(Tensor::range({ 10 }).requiresGradient());
 		}
 	};
 
@@ -289,9 +289,9 @@ namespace TensorTest
 
 		TEST_METHOD(RequiresGradient)
 		{
-			Assert::IsFalse(Tensor::fromValues(new float[24], { 4, 3, 2 }).getGradient());
-			Assert::IsFalse(Tensor::fromValues(new float[1], {  }).getGradient());
-			Assert::IsFalse(Tensor::fromValues(new float[10], { 10 }).getGradient());
+			Assert::IsFalse(Tensor::fromValues(new float[24], { 4, 3, 2 }).requiresGradient());
+			Assert::IsFalse(Tensor::fromValues(new float[1], {  }).requiresGradient());
+			Assert::IsFalse(Tensor::fromValues(new float[10], { 10 }).requiresGradient());
 		}
 	};
 
@@ -423,12 +423,12 @@ namespace TensorTest
 		{
 			Tensor tensor1 = Tensor::zeroes({ 10, 3 });
 			Tensor tensor2 = tensor1.get({});
-			Assert::IsFalse(tensor2.getGradient());
+			Assert::IsFalse(tensor2.requiresGradient());
 			Assert::IsNull(tensor2.getFunction());
 
-			tensor1.setGradient(true);
+			tensor1.requireGradient();
 			Tensor tensor3 = tensor1.get({});
-			Assert::IsTrue(tensor3.getGradient());
+			Assert::IsTrue(tensor3.requiresGradient());
 			Assert::IsNotNull((const GetFunction*)tensor3.getFunction());
 		}
 	};
@@ -477,12 +477,12 @@ namespace TensorTest
 		{
 			Tensor tensor1 = Tensor::zeroes({ 10, 3 });
 			Tensor tensor2 = tensor1.set(0);
-			Assert::IsFalse(tensor2.getGradient());
+			Assert::IsFalse(tensor2.requiresGradient());
 			Assert::IsNull(tensor2.getFunction());
 
-			tensor1.setGradient(true);
+			tensor1.requireGradient();
 			Tensor tensor3 = tensor1.set(0);
-			Assert::IsTrue(tensor3.getGradient());
+			Assert::IsTrue(tensor3.requiresGradient());
 			Assert::IsNotNull((const SetSingleFunction*)tensor3.getFunction());
 		}
 	};
@@ -542,20 +542,18 @@ namespace TensorTest
 		{
 			Tensor tensor1a = Tensor::zeroes({ 10, 3 });
 			Tensor tensor1b = tensor1a.set(Tensor::zeroes({}));
-			Assert::IsFalse(tensor1b.getGradient());
+			Assert::IsFalse(tensor1b.requiresGradient());
 			Assert::IsNull(tensor1b.getFunction());
 
 			Tensor tensor2a = Tensor::zeroes({ 10,3 });
-			Tensor tensor2b = Tensor::ones({ 3 });
-			tensor2b.setGradient(true);
+			Tensor tensor2b = Tensor::ones({ 3 }).requireGradient();
 			Tensor tensor2c = tensor2a.set(tensor2b);
-			Assert::IsTrue(tensor2c.getGradient());
+			Assert::IsTrue(tensor2c.requiresGradient());
 			Assert::IsNotNull((const SetTensorFunction*)tensor2c.getFunction());
 
-			Tensor tensor3a = Tensor::zeroes({ 10, 3 });
-			tensor3a.setGradient(true);
+			Tensor tensor3a = Tensor::zeroes({ 10, 3 }).requireGradient();
 			Tensor tensor3b = tensor3a.set(Tensor::zeroes({}));
-			Assert::IsTrue(tensor3b.getGradient());
+			Assert::IsTrue(tensor3b.requiresGradient());
 			Assert::IsNotNull((const SetTensorFunction*)tensor3b.getFunction());
 		}
 	};
@@ -595,13 +593,12 @@ namespace TensorTest
 		{
 			Tensor tensor1a = Tensor::zeroes({ 3,1 });
 			Tensor tensor1b = tensor1a.add(3.0f);
-			Assert::IsFalse(tensor1b.getGradient());
+			Assert::IsFalse(tensor1b.requiresGradient());
 			Assert::IsNull(tensor1b.getFunction());
 
-			Tensor tensor2a = Tensor::ones({ 2 }).set(-1, { 0 });
-			tensor2a.setGradient(true);
+			Tensor tensor2a = Tensor::ones({ 2 }).set(-1, { 0 }).requireGradient();
 			Tensor tensor2b = tensor2a.add(-1.0f);
-			Assert::IsTrue(tensor2b.getGradient());
+			Assert::IsTrue(tensor2b.requiresGradient());
 			Assert::IsNotNull((AddSingleFunction*)tensor2b.getFunction());
 		}
 	};
@@ -649,20 +646,18 @@ namespace TensorTest
 		{
 			Tensor tensor1a = Tensor::zeroes({ 3,1 });
 			Tensor tensor1b = tensor1a.add(Tensor::zeroes({ 1 }));
-			Assert::IsFalse(tensor1b.getGradient());
+			Assert::IsFalse(tensor1b.requiresGradient());
 			Assert::IsNull(tensor1b.getFunction());
 
 			Tensor tensor2a = Tensor::zeroes({ 1 });
-			Tensor tensor2b = Tensor::ones({ 3 });
-			tensor2b.setGradient(true);
+			Tensor tensor2b = Tensor::ones({ 3 }).requireGradient();
 			Tensor tensor2c = tensor2a.add(tensor2b);
-			Assert::IsTrue(tensor2c.getGradient());
+			Assert::IsTrue(tensor2c.requiresGradient());
 			Assert::IsNotNull((AddTensorFunction*)tensor2c.getFunction());
 
-			Tensor tensor3a = Tensor::ones({ 2, 1, 3 });
-			tensor3a.setGradient(true);
+			Tensor tensor3a = Tensor::ones({ 2, 1, 3 }).requireGradient();
 			Tensor tensor3b = tensor3a.add(Tensor::ones({ 1, 1 }));
-			Assert::IsTrue(tensor3b.getGradient());
+			Assert::IsTrue(tensor3b.requiresGradient());
 			Assert::IsNotNull((AddTensorFunction*)tensor3b.getFunction());
 		}
 	};
@@ -673,19 +668,14 @@ namespace TensorTest
 		TEST_METHOD(Value)
 		{
 			Tensor tensor1 = Tensor::zeroes({});
-			tensor1.setGradient(true);
-			Assert::IsTrue(tensor1.getGradient());
+			Assert::IsFalse(tensor1.requiresGradient());
+			tensor1.requireGradient();
+			Assert::IsTrue(tensor1.requiresGradient());
 
 			Tensor tensor2 = Tensor::ones({ 4, 3 });
-			tensor2.setGradient(false);
-			Assert::IsFalse(tensor2.getGradient());
-
-			Tensor tensor3 = Tensor::full({ 10 }, 1.0f);
-			tensor3.setGradient(true);
-			tensor3.setGradient(true);
-			Assert::IsTrue(tensor3.getGradient());
-			tensor3.setGradient(false);
-			Assert::IsFalse(tensor3.getGradient());
+			Assert::IsFalse(tensor2.requiresGradient());
+			tensor2.requireGradient();
+			Assert::IsTrue(tensor2.requiresGradient());
 		}
 	};
 }

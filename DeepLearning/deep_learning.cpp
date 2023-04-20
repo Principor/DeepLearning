@@ -21,12 +21,13 @@ int Tensor::getSize() const {
 	return size;
 }
 
-bool Tensor::getGradient() const {
+bool Tensor::requiresGradient() const {
 	return gradient;
 }
 
-void Tensor::setGradient(bool gradient) {
-	this->gradient = gradient;
+Tensor& Tensor::requireGradient() {
+	this->gradient = true;
+	return *this;
 }
 
 float Tensor::item() const {

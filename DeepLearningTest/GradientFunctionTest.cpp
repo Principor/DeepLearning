@@ -9,8 +9,7 @@ namespace GradientFunctionTest
 	public:
 		TEST_METHOD(Shape)
 		{
-			Tensor tensor1a = Tensor::zeroes({ 2,1,3 });
-			tensor1a.setGradient(true);
+			Tensor tensor1a = Tensor::zeroes({ 2,1,3 }).requireGradient();
 			Tensor tensor1b = tensor1a.get({ 0 });
 			gradientList gradients1 = tensor1b.getFunction()->calculateGradient(
 				Tensor::fromValues(new float[3], { 1,3 })
@@ -20,8 +19,7 @@ namespace GradientFunctionTest
 			Assert::AreEqual(gradient1.getShape()[1], tensor1a.getShape()[1]);
 			Assert::AreEqual(gradient1.getShape()[2], tensor1a.getShape()[2]);
 
-			Tensor tensor2a = Tensor::zeroes({ 10 });
-			tensor2a.setGradient(true);
+			Tensor tensor2a = Tensor::zeroes({ 10 }).requireGradient();
 			Tensor tensor2b = tensor2a.get({});
 			gradientList gradients2 = tensor2b.getFunction()->calculateGradient(
 				Tensor::fromValues(new float[10], { 10 })
@@ -32,8 +30,7 @@ namespace GradientFunctionTest
 
 		TEST_METHOD(Values)
 		{
-			Tensor tensor1a = Tensor::zeroes({ 4, 2 });
-			tensor1a.setGradient(true);
+			Tensor tensor1a = Tensor::zeroes({ 4, 2 }).requireGradient();
 			Tensor tensor1b = tensor1a.get({ 1 });
 			gradientList gradients1 = tensor1b.getFunction()->calculateGradient(
 				Tensor::fromValues(new float[2] {1.0f, 2.0f}, { 1,3 })
@@ -48,8 +45,7 @@ namespace GradientFunctionTest
 			CompareFloats(gradient1.at(6), 0.0f);
 			CompareFloats(gradient1.at(7), 0.0f);
 
-			Tensor tensor2a = Tensor::ones({ 3 });
-			tensor2a.setGradient(true);
+			Tensor tensor2a = Tensor::ones({ 3 }).requireGradient();
 			Tensor tensor2b = tensor1a.get({});
 			gradientList gradients2 = tensor2b.getFunction()->calculateGradient(
 				Tensor::fromValues(new float[3] {3.0f, 2.0f, 1.0f}, { 3 })
@@ -66,8 +62,7 @@ namespace GradientFunctionTest
 	public:
 		TEST_METHOD(Shape)
 		{
-			Tensor tensor1a = Tensor::zeroes({ 2,1,3 });
-			tensor1a.setGradient(true);
+			Tensor tensor1a = Tensor::zeroes({ 2,1,3 }).requireGradient();
 			Tensor tensor1b = tensor1a.set(0.0f);
 			gradientList gradients1 = tensor1b.getFunction()->calculateGradient(
 				Tensor::fromValues(new float[6], { 2,1,3 })
@@ -77,8 +72,7 @@ namespace GradientFunctionTest
 			Assert::AreEqual(gradient1.getShape()[1], tensor1a.getShape()[1]);
 			Assert::AreEqual(gradient1.getShape()[2], tensor1a.getShape()[2]);
 
-			Tensor tensor2a = Tensor::zeroes({ 10 });
-			tensor2a.setGradient(true);
+			Tensor tensor2a = Tensor::zeroes({ 10 }).requireGradient();
 			Tensor tensor2b = tensor2a.set(1.0f);
 			gradientList gradients2 = tensor2b.getFunction()->calculateGradient(
 				Tensor::fromValues(new float[10], { 10 })
@@ -89,8 +83,7 @@ namespace GradientFunctionTest
 
 		TEST_METHOD(Values)
 		{
-			Tensor tensor1a = Tensor::zeroes({ 4, 2 });
-			tensor1a.setGradient(true);
+			Tensor tensor1a = Tensor::zeroes({ 4, 2 }).requireGradient();
 			Tensor tensor1b = tensor1a.set(0.0f, { 1 });
 			gradientList gradients1 = tensor1b.getFunction()->calculateGradient(
 				Tensor::fromValues(new float[8] {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f}, { 4, 2 })
@@ -105,8 +98,7 @@ namespace GradientFunctionTest
 			CompareFloats(gradient1.at(6), 7.0f);
 			CompareFloats(gradient1.at(7), 8.0f);
 
-			Tensor tensor2a = Tensor::ones({ 3 });
-			tensor2a.setGradient(true);
+			Tensor tensor2a = Tensor::ones({ 3 }).requireGradient();
 			Tensor tensor2b = tensor2a.set(1.0f);
 			gradientList gradients2 = tensor2b.getFunction()->calculateGradient(
 				Tensor::fromValues(new float[3] {1.0f, 2.0f, 3.0f}, { 3 })
@@ -123,8 +115,7 @@ namespace GradientFunctionTest
 	public:
 		TEST_METHOD(CopyToShape)
 		{
-			Tensor tensor1a = Tensor::zeroes({ 4,2 });
-			tensor1a.setGradient(true);
+			Tensor tensor1a = Tensor::zeroes({ 4,2 }).requireGradient();
 			Tensor tensor1b = Tensor::zeroes({ 1 });
 			Tensor tensor1c = tensor1a.set(tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
@@ -134,8 +125,7 @@ namespace GradientFunctionTest
 			Assert::AreEqual(gradient1.getShape()[0], 4);
 			Assert::AreEqual(gradient1.getShape()[1], 2);
 
-			Tensor tensor2a = Tensor::zeroes({ 10, 1, 3 });
-			tensor2a.setGradient(true);
+			Tensor tensor2a = Tensor::zeroes({ 10, 1, 3 }).requireGradient();
 			Tensor tensor2b = Tensor::zeroes({ 1, 1, 3 });
 			Tensor tensor2c = tensor2a.set(tensor2b, { 3, 0 });
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
@@ -150,8 +140,7 @@ namespace GradientFunctionTest
 
 		TEST_METHOD(CopyToValues)
 		{
-			Tensor tensor1a = Tensor::zeroes({ 4,2 });
-			tensor1a.setGradient(true);
+			Tensor tensor1a = Tensor::zeroes({ 4,2 }).requireGradient();
 			Tensor tensor1b = Tensor::zeroes({ 1 });
 			Tensor tensor1c = tensor1a.set(tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
@@ -167,8 +156,7 @@ namespace GradientFunctionTest
 			CompareFloats(gradient1.at(6), 0.0f);
 			CompareFloats(gradient1.at(7), 0.0f);
 
-			Tensor tensor2a = Tensor::zeroes({ 2, 1, 3 });
-			tensor2a.setGradient(true);
+			Tensor tensor2a = Tensor::zeroes({ 2, 1, 3 }).requireGradient();
 			Tensor tensor2b = Tensor::zeroes({ 1, 1, 3 });
 			Tensor tensor2c = tensor2a.set(tensor2b, { 1, 0 });
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
@@ -185,8 +173,7 @@ namespace GradientFunctionTest
 
 		TEST_METHOD(CopyFromShape)
 		{
-			Tensor tensor1a = Tensor::zeroes({ 4,2,1 });
-			tensor1a.setGradient(true);
+			Tensor tensor1a = Tensor::zeroes({ 4,2,1 }).requireGradient();
 			Tensor tensor1b = Tensor::zeroes({ 1,2,1 });
 			Tensor tensor1c = tensor1a.set(tensor1b, { 0 });
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
@@ -197,8 +184,7 @@ namespace GradientFunctionTest
 			Assert::AreEqual(gradient1.getShape()[1], 2);
 			Assert::AreEqual(gradient1.getShape()[2], 1);
 
-			Tensor tensor2a = Tensor::zeroes({ 6,3 });
-			tensor2a.setGradient(true);
+			Tensor tensor2a = Tensor::zeroes({ 6,3 }).requireGradient();
 			Tensor tensor2b = Tensor::zeroes({});
 			Tensor tensor2c = tensor2a.set(tensor2b, {});
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
@@ -210,8 +196,7 @@ namespace GradientFunctionTest
 
 		TEST_METHOD(CopyFromValues)
 		{
-			Tensor tensor1a = Tensor::zeroes({ 4,2,1 });
-			tensor1a.setGradient(true);
+			Tensor tensor1a = Tensor::zeroes({ 4,2,1 }).requireGradient();
 			Tensor tensor1b = Tensor::zeroes({ 1,2,1 });
 			Tensor tensor1c = tensor1a.set(tensor1b, { 0 });
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
@@ -221,8 +206,7 @@ namespace GradientFunctionTest
 			CompareFloats(gradient1.at(0), 1.0f);
 			CompareFloats(gradient1.at(1), 2.0f);
 
-			Tensor tensor2a = Tensor::zeroes({ 6,3 });
-			tensor2a.setGradient(true);
+			Tensor tensor2a = Tensor::zeroes({ 6,3 }).requireGradient();
 			Tensor tensor2b = Tensor::zeroes({});
 			Tensor tensor2c = tensor2a.set(tensor2b, {});
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
@@ -238,8 +222,7 @@ namespace GradientFunctionTest
 	public:
 		TEST_METHOD(Shape)
 		{
-			Tensor tensor1a = Tensor::zeroes({ 2,1,3 });
-			tensor1a.setGradient(true);
+			Tensor tensor1a = Tensor::zeroes({ 2,1,3 }).requireGradient();
 			Tensor tensor1b = tensor1a.add(2.0f);
 			gradientList gradients1 = tensor1b.getFunction()->calculateGradient(
 				Tensor::fromValues(new float[6], { 2,1,3 })
@@ -249,8 +232,7 @@ namespace GradientFunctionTest
 			Assert::AreEqual(gradient1.getShape()[1], tensor1a.getShape()[1]);
 			Assert::AreEqual(gradient1.getShape()[2], tensor1a.getShape()[2]);
 
-			Tensor tensor2a = Tensor::zeroes({ 10 });
-			tensor2a.setGradient(true);
+			Tensor tensor2a = Tensor::zeroes({ 10 }).requireGradient();
 			Tensor tensor2b = tensor2a.add(2.0f);
 			gradientList gradients2 = tensor2b.getFunction()->calculateGradient(
 				Tensor::fromValues(new float[10], { 10 })
@@ -261,8 +243,7 @@ namespace GradientFunctionTest
 
 		TEST_METHOD(Values)
 		{
-			Tensor tensor1a = Tensor::zeroes({ 2,1,3 });
-			tensor1a.setGradient(true);
+			Tensor tensor1a = Tensor::zeroes({ 2,1,3 }).requireGradient();
 			Tensor tensor1b = tensor1a.add(2.0f);
 			gradientList gradients1 = tensor1b.getFunction()->calculateGradient(
 				Tensor::fromValues(new float[6] {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f}, { 2,1,3 })
@@ -275,8 +256,7 @@ namespace GradientFunctionTest
 			CompareFloats(gradient1.at(4), 5.0f);
 			CompareFloats(gradient1.at(5), 6.0f);
 
-			Tensor tensor2a = Tensor::zeroes({ 5 });
-			tensor2a.setGradient(true);
+			Tensor tensor2a = Tensor::zeroes({ 5 }).requireGradient();
 			Tensor tensor2b = tensor2a.add(2.0f);
 			gradientList gradients2 = tensor2b.getFunction()->calculateGradient(
 				Tensor::fromValues(new float[5] {1.0f, 2.0f, 3.0f, 4.0f, 5.0f}, { 5 })
@@ -296,8 +276,7 @@ namespace GradientFunctionTest
 		TEST_METHOD(Shape1)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
-			Tensor tensor1b = Tensor::zeroes({ 4, 1 });
-			tensor1a.setGradient(true);
+			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
 			Tensor tensor1c = tensor1a.add(tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 4,3 })
@@ -307,8 +286,7 @@ namespace GradientFunctionTest
 			Assert::AreEqual(3, gradient1.getShape()[1]);
 
 			Tensor tensor2a = Tensor::zeroes({ 1, });
-			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 });
-			tensor2a.setGradient(true);
+			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
 			Tensor tensor2c = tensor2a.add(tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 2, 3, 1 })
@@ -320,8 +298,7 @@ namespace GradientFunctionTest
 		TEST_METHOD(Shape2)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
-			Tensor tensor1b = Tensor::zeroes({ 4, 1 });
-			tensor1a.setGradient(true);
+			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
 			Tensor tensor1c = tensor1a.add(tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 4,3 })
@@ -331,8 +308,7 @@ namespace GradientFunctionTest
 			Assert::AreEqual(1, gradient1.getShape()[1]);
 
 			Tensor tensor2a = Tensor::zeroes({ 1, });
-			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 });
-			tensor2a.setGradient(true);
+			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
 			Tensor tensor2c = tensor2a.add(tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 2, 3, 1 })
@@ -346,8 +322,7 @@ namespace GradientFunctionTest
 		TEST_METHOD(Values1)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
-			Tensor tensor1b = Tensor::zeroes({ 4, 1 });
-			tensor1a.setGradient(true);
+			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
 			Tensor tensor1c = tensor1a.add(tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::ones({ 4, 3 })
@@ -358,8 +333,7 @@ namespace GradientFunctionTest
 			CompareFloats(gradient1.at(2), 4.0f);
 
 			Tensor tensor2a = Tensor::zeroes({ 1, });
-			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 });
-			tensor2a.setGradient(true);
+			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
 			Tensor tensor2c = tensor2a.add(tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::ones({ 2, 3, 1 })
@@ -371,8 +345,7 @@ namespace GradientFunctionTest
 		TEST_METHOD(Values2)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
-			Tensor tensor1b = Tensor::zeroes({ 4, 1 });
-			tensor1a.setGradient(true);
+			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
 			Tensor tensor1c = tensor1a.add(tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::ones({ 4, 3 })
@@ -384,8 +357,7 @@ namespace GradientFunctionTest
 			CompareFloats(gradient1.at(3), 3.0f);
 
 			Tensor tensor2a = Tensor::zeroes({ 1, });
-			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 });
-			tensor2a.setGradient(true);
+			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
 			Tensor tensor2c = tensor2a.add(tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::ones({ 2, 3, 1 })

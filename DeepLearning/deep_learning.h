@@ -24,8 +24,8 @@ public:
 
 	const std::vector<int>& getShape() const;
 	int getSize() const;
-	bool getGradient() const;
-	void setGradient(bool gradient);
+	bool requiresGradient() const;
+	Tensor& requireGradient();
 	float item() const;
 	float at(int index) const;
 	float at(const std::vector<int>& indices) const;
