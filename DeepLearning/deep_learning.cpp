@@ -122,7 +122,13 @@ Tensor Tensor::add(float value) {
 	for (int i = 0; i < size; i++) {
 		values[i] = this->values[i] + value;
 	}
-	return Tensor(shape, size, values);
+	Tensor newTensor(shape, size, values);
+	if (gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new AddSingleFunction(this);
+	}
+	return newTensor;
 }
 
 Tensor Tensor::zeroes(const std::vector<int>& shape) {

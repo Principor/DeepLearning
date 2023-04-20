@@ -84,3 +84,13 @@ gradientList SetTensorFunction::calculateGradient(const Tensor& previousGradient
 	}
 	return list;
 }
+
+AddSingleFunction::AddSingleFunction(Tensor* original) : original(original)
+{
+
+}
+
+gradientList AddSingleFunction::calculateGradient(const Tensor& previousGradient) const
+{
+	return gradientList();
+}

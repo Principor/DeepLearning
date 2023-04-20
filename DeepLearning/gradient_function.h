@@ -46,3 +46,11 @@ public:
 		const std::vector<int>& broadcastIndices);
 	gradientList calculateGradient(const Tensor& previousGradient) const override;
 };
+
+class AddSingleFunction : public GradientFunction {
+private:
+	Tensor* original;
+public:
+	AddSingleFunction(Tensor* original);
+	gradientList calculateGradient(const Tensor& previousGradient) const override;
+};
