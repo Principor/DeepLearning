@@ -95,7 +95,7 @@ Tensor Tensor::set(Tensor& values, const std::vector<int>& indices)
 	std::vector<int> assignmentShape = getSubShape(shape, indices.size(), 0);
 	int assignmentSize = calculateSize(assignmentShape);
 
-	std::vector<int> broadcastedShape = broadcastShapes(values.shape, assignmentShape);
+	std::vector<int> broadcastedShape = broadcastShapes(values.shape, assignmentShape, true);
 	auto broadcastedIndices = broadcastIndices(values.shape, broadcastedShape);
 
 	float* newValues = new float[size];
@@ -129,6 +129,20 @@ Tensor Tensor::add(float value) {
 		newTensor.function = new AddSingleFunction(this);
 	}
 	return newTensor;
+}
+
+Tensor Tensor::add(Tensor& values) {
+	auto broadcastedShape = broadcastShapes(shape, values.shape);
+	int broadcastedSize = calculateSize(broadcastedShape);
+	auto broadcastedIndices1 = broadcastIndices(shape, broadcastedShape);
+	auto broadcastedIndices2 = broadcastIndices(values.shape, broadcastedShape);
+	
+	float* newValues = new float[broadcastedSize];
+	
+	for (int i = 0; i < broadcastedSize; i++) {
+		newValues[i] = this->values[broadcastedIndices1[i]] + values.values[broadcastedIndices2[i]];
+	}
+	return Tensor(broadcastedShape, broadcastedSize, newValues);
 }
 
 Tensor Tensor::zeroes(const std::vector<int>& shape) {
@@ -189,19 +203,15 @@ std::vector<int> Tensor::getSubShape(const std::vector<int>& shape, int frontRem
 }
 
 
-std::vector<int> Tensor::broadcastShapes(std::vector<int> shape1, std::vector<int> shape2) {
+std::vector<int> Tensor::broadcastShapes(std::vector<int> shape1, std::vector<int> shape2, bool oneWay) {
 	while (shape1.size() > shape2.size()) shape2.insert(shape2.begin(), 1);
 	while (shape1.size() < shape2.size()) shape1.insert(shape1.begin(), 1);
 	int dims = shape1.size();
 	for (int i = 0; i < dims; i++) {
 		if (shape1[i] == shape2[i]) continue;
-		if (shape1[i] < shape2[i]) {
-			if (shape1[i] == 1) shape1[i] = shape2[i];
-			else throw std::invalid_argument("Smaller dimension must have a size of 1.");
-		}
-		else {
-			throw std::invalid_argument("Shape 1 cannot have dimensions larger than shape 2.");
-		}
+		if (shape1[i] > shape2[i] && oneWay) throw std::invalid_argument("Shape 1 cannot have dimensions larger than shape 2.");
+		if (shape1[i] == 1) shape1[i] = shape2[i];
+		else if (shape2[i] != 1) throw std::invalid_argument("Smaller dimension must have a size of 1.");
 	}
 	return shape1;
 }

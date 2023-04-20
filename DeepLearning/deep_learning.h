@@ -17,7 +17,7 @@ private:
 
 	static int calculateSize(const std::vector<int>& shape);
 	static std::vector<int> getSubShape(const std::vector<int>& shape, int frontRemoval, int endRemoval);
-	static std::vector<int> broadcastShapes(std::vector<int> shape0, std::vector<int> shape1);
+	static std::vector<int> broadcastShapes(std::vector<int> shape0, std::vector<int> shape1, bool oneWay = false);
 	static std::vector<int> broadcastIndices(const std::vector<int>& originalShape, const std::vector<int>& broadcastedShape);
 public:
 	~Tensor();
@@ -36,6 +36,7 @@ public:
 	Tensor set(float value, const std::vector<int>& indices = {});
 	Tensor set(Tensor& values, const std::vector<int>& indices = {});
 	Tensor add(float value);
+	Tensor add(Tensor& values);
 
 	static Tensor zeroes(const std::vector<int>& shape);
 	static Tensor ones(const std::vector<int>& shape);

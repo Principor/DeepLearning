@@ -522,6 +522,46 @@ namespace TensorTest
 		}
 	};
 
+	TEST_CLASS(AddTensorTest)
+	{
+	public:
+		TEST_METHOD(UnbroadcastableTensor)
+		{
+			Assert::ExpectException<std::invalid_argument>(
+				[]() {Tensor::zeroes({ 10, 3, 5 }).add(Tensor::zeroes({ 1, 2, 5 })); }
+			);
+
+			Assert::ExpectException<std::invalid_argument>(
+				[]() {Tensor::zeroes({ 10, 1, 3, 5 }).add(Tensor::zeroes({ 3, 10 })); }
+			);
+		}
+
+		TEST_METHOD(NewValue)
+		{
+			Tensor tensor1 = Tensor::zeroes({ 3 }).set(Tensor::ones({ 1 }), { 2 }).add(Tensor::ones({ 1 }));
+			CompareFloats(tensor1.get({ 0 }).item(), 1.0f);
+			CompareFloats(tensor1.get({ 1 }).item(), 1.0f);
+			CompareFloats(tensor1.get({ 2 }).item(), 2.0f);
+
+			Tensor tensor2 = Tensor::zeroes({ 2, 1, 3 }).add(Tensor::ones({ 1, 1 }));
+			CompareFloats(tensor2.at(0), 1.0f);
+			CompareFloats(tensor2.at(1), 1.0f);
+			CompareFloats(tensor2.at(2), 1.0f);
+			CompareFloats(tensor2.at(3), 1.0f);
+			CompareFloats(tensor2.at(4), 1.0f);
+			CompareFloats(tensor2.at(5), 1.0f);
+		}
+
+		TEST_METHOD(Independentvalues)
+		{
+			Tensor tensor1 = Tensor::zeroes({ 3 }).set(Tensor::ones({ 1 }), { 2 });
+			Tensor tensor2 = tensor1.add(Tensor::ones({ 1 }));
+			CompareFloats(tensor1.at(0), 0.0f);
+			CompareFloats(tensor1.at(1), 0.0f);
+			CompareFloats(tensor1.at(2), 1.0f);
+		}
+	};
+
 	TEST_CLASS(GradientTest)
 	{
 	public:
