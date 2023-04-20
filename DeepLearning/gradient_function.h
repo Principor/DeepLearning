@@ -54,3 +54,14 @@ public:
 	AddSingleFunction(Tensor* original);
 	gradientList calculateGradient(const Tensor& previousGradient) const override;
 };
+
+class AddTensorFunction : public GradientFunction
+{
+private:
+	Tensor* original1, * original2;
+	std::vector<int> broadcastIndices1, broadcastIndices2;
+public:
+	AddTensorFunction(Tensor* original1, Tensor* original2,
+		const std::vector<int>& broadcastIndices1, const std::vector<int>& broadcastIndices2);
+	gradientList calculateGradient(const Tensor& previousGradient) const override;
+};

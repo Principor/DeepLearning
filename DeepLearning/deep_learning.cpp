@@ -142,7 +142,14 @@ Tensor Tensor::add(Tensor& values) {
 	for (int i = 0; i < broadcastedSize; i++) {
 		newValues[i] = this->values[broadcastedIndices1[i]] + values.values[broadcastedIndices2[i]];
 	}
-	return Tensor(broadcastedShape, broadcastedSize, newValues);
+
+	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
+	if (gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new AddTensorFunction(this, &values, broadcastedIndices1, broadcastedIndices2);
+	}
+	return newTensor;
 }
 
 Tensor Tensor::zeroes(const std::vector<int>& shape) {

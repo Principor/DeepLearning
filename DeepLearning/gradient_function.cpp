@@ -100,3 +100,15 @@ gradientList AddSingleFunction::calculateGradient(const Tensor& previousGradient
 	}
 	return gradientList{ gradientTuple{original, Tensor::fromValues(gradientValues, gradientShape)} };
 }
+
+AddTensorFunction::AddTensorFunction(Tensor* original1, Tensor* original2, const std::vector<int>& broadcastIndices1,
+	const std::vector<int>& broadcastIndices2) : original1(original1), original2(original2),
+	broadcastIndices1(broadcastIndices1), broadcastIndices2(broadcastIndices2)
+{
+
+}
+
+gradientList AddTensorFunction::calculateGradient(const Tensor& previousGradient) const
+{
+	return gradientList();
+}

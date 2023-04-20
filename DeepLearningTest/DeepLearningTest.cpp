@@ -518,7 +518,7 @@ namespace TensorTest
 			tensor2a.setGradient(true);
 			Tensor tensor2b = tensor2a.add(-1.0f);
 			Assert::IsTrue(tensor2b.getGradient());
-			Assert::IsNotNull(tensor2b.getFunction());
+			Assert::IsNotNull((AddSingleFunction*)tensor2b.getFunction());
 		}
 	};
 
@@ -559,6 +559,20 @@ namespace TensorTest
 			CompareFloats(tensor1.at(0), 0.0f);
 			CompareFloats(tensor1.at(1), 0.0f);
 			CompareFloats(tensor1.at(2), 1.0f);
+		}
+
+		TEST_METHOD(Gradient)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 3,1 });
+			Tensor tensor1b = tensor1a.add(Tensor::zeroes({ 1 }));
+			Assert::IsFalse(tensor1b.getGradient());
+			Assert::IsNull(tensor1b.getFunction());
+
+			Tensor tensor2a = Tensor::ones({ 2, 1, 3 });
+			tensor2a.setGradient(true);
+			Tensor tensor2b = tensor2a.add(Tensor::ones({ 1, 1 }));
+			Assert::IsTrue(tensor2b.getGradient());
+			Assert::IsNotNull((AddTensorFunction*)tensor2b.getFunction());
 		}
 	};
 
