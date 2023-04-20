@@ -464,15 +464,23 @@ namespace TensorTest
 
 		TEST_METHOD(Gradient)
 		{
-			Tensor tensor1 = Tensor::zeroes({ 10, 3 });
-			Tensor tensor2 = tensor1.set(Tensor::zeroes({}));
-			Assert::IsFalse(tensor2.getGradient());
-			Assert::IsNull(tensor2.getFunction());
+			Tensor tensor1a = Tensor::zeroes({ 10, 3 });
+			Tensor tensor1b = tensor1a.set(Tensor::zeroes({}));
+			Assert::IsFalse(tensor1b.getGradient());
+			Assert::IsNull(tensor1b.getFunction());
 
-			tensor1.setGradient(true);
-			Tensor tensor3 = tensor1.set(Tensor::zeroes({}));
-			Assert::IsTrue(tensor3.getGradient());
-			Assert::IsNotNull((const SetTensorFunction*)tensor3.getFunction());
+			Tensor tensor2a = Tensor::zeroes({ 10,3 });
+			Tensor tensor2b = Tensor::ones({ 3 });
+			tensor2b.setGradient(true);
+			Tensor tensor2c = tensor2a.set(tensor2b);
+			Assert::IsTrue(tensor2c.getGradient());
+			Assert::IsNotNull((const SetTensorFunction*)tensor2c.getFunction());
+
+			Tensor tensor3a = Tensor::zeroes({ 10, 3 });
+			tensor3a.setGradient(true);
+			Tensor tensor3b = tensor3a.set(Tensor::zeroes({}));
+			Assert::IsTrue(tensor3b.getGradient());
+			Assert::IsNotNull((const SetTensorFunction*)tensor3b.getFunction());
 		}
 	};
 
@@ -568,11 +576,18 @@ namespace TensorTest
 			Assert::IsFalse(tensor1b.getGradient());
 			Assert::IsNull(tensor1b.getFunction());
 
-			Tensor tensor2a = Tensor::ones({ 2, 1, 3 });
-			tensor2a.setGradient(true);
-			Tensor tensor2b = tensor2a.add(Tensor::ones({ 1, 1 }));
-			Assert::IsTrue(tensor2b.getGradient());
-			Assert::IsNotNull((AddTensorFunction*)tensor2b.getFunction());
+			Tensor tensor2a = Tensor::zeroes({ 1 });
+			Tensor tensor2b = Tensor::ones({ 3 });
+			tensor2b.setGradient(true);
+			Tensor tensor2c = tensor2a.add(tensor2b);
+			Assert::IsTrue(tensor2c.getGradient());
+			Assert::IsNotNull((AddTensorFunction*)tensor2c.getFunction());
+
+			Tensor tensor3a = Tensor::ones({ 2, 1, 3 });
+			tensor3a.setGradient(true);
+			Tensor tensor3b = tensor3a.add(Tensor::ones({ 1, 1 }));
+			Assert::IsTrue(tensor3b.getGradient());
+			Assert::IsNotNull((AddTensorFunction*)tensor3b.getFunction());
 		}
 	};
 

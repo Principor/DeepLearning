@@ -110,7 +110,7 @@ Tensor Tensor::set(Tensor& values, const std::vector<int>& indices)
 	}
 
 	Tensor newTensor(shape, size, newValues);
-	if (gradient) {
+	if (gradient || values.gradient) {
 		newTensor.gradient = true;
 		newTensor.function = new SetTensorFunction(this, &values, index, assignmentSize, broadcastedShape, broadcastedIndices);
 	}
@@ -144,7 +144,7 @@ Tensor Tensor::add(Tensor& values) {
 	}
 
 	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
-	if (gradient)
+	if (gradient || values.gradient)
 	{
 		newTensor.gradient = true;
 		newTensor.function = new AddTensorFunction(this, &values, broadcastedIndices1, broadcastedIndices2);
