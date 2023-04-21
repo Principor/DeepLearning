@@ -38,6 +38,8 @@ public:
 	Tensor set(Tensor& values, const std::vector<int>& indices = {});
 	Tensor add(float value);
 	Tensor add(Tensor& values);
+	Tensor subtract(float value);
+	Tensor subtract(Tensor& values);
 
 	static Tensor zeroes(const std::vector<int>& shape);
 	static Tensor ones(const std::vector<int>& shape);

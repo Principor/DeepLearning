@@ -159,6 +159,41 @@ Tensor Tensor::add(Tensor& values) {
 	return newTensor;
 }
 
+Tensor Tensor::subtract(float value) {
+	float* values = new float[size];
+	for (int i = 0; i < size; i++) {
+		values[i] = this->values[i] - value;
+	}
+	Tensor newTensor(shape, size, values);
+	if (gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new SubtractSingleFunction(this);
+	}
+	return newTensor;
+}
+
+Tensor Tensor::subtract(Tensor& values) {
+	auto broadcastedShape = broadcastShapes(shape, values.shape);
+	int broadcastedSize = calculateSize(broadcastedShape);
+	auto broadcastedIndices1 = broadcastIndices(shape, broadcastedShape);
+	auto broadcastedIndices2 = broadcastIndices(values.shape, broadcastedShape);
+
+	float* newValues = new float[broadcastedSize];
+
+	for (int i = 0; i < broadcastedSize; i++) {
+		newValues[i] = this->values[broadcastedIndices1[i]] - values.values[broadcastedIndices2[i]];
+	}
+
+	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
+	if (gradient || values.gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new SubtractTensorFunction(this, &values, broadcastedIndices1, broadcastedIndices2);
+	}
+	return newTensor;
+}
+
 Tensor Tensor::zeroes(const std::vector<int>& shape) {
 	return full(shape, 0.0f);
 }
