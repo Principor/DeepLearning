@@ -788,6 +788,110 @@ namespace TensorTest
 		}
 	};
 
+	TEST_CLASS(MultiplySingleTest)
+	{
+	public:
+		TEST_METHOD(NewValue)
+		{
+			Tensor tensor1a = Tensor::range({ 3,1 });
+			Tensor tensor1b = tensor1a.multiply(3.0f);
+			Assert::AreEqual(tensor1b.at(0), 0.0f);
+			Assert::AreEqual(tensor1b.at(1), 3.0f);
+			Assert::AreEqual(tensor1b.at(2), 6.0f);
+
+			Tensor tensor2a = Tensor::range({ 2 }, 1);
+			Tensor tensor2b = tensor2a.multiply(-1.0f);
+			Assert::AreEqual(tensor2b.at(0), -1.0f);
+			Assert::AreEqual(tensor2b.at(1), -2.0f);
+		}
+
+		TEST_METHOD(IndependentValues)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 3,1 });
+			Tensor tensor1b = tensor1a.multiply(3.0f);
+			Assert::AreEqual(tensor1a.at(0), 0.0f);
+			Assert::AreEqual(tensor1a.at(1), 0.0f);
+			Assert::AreEqual(tensor1a.at(2), 0.0f);
+
+			Tensor tensor2a = Tensor::ones({ 2 }).set(-1, { 0 });
+			Tensor tensor2b = tensor2a.multiply(-1.0f);
+			Assert::AreEqual(tensor2a.at(0), -1.0f);
+			Assert::AreEqual(tensor2a.at(1), 1.0f);
+		}
+
+		TEST_METHOD(Gradient)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 3,1 });
+			Tensor tensor1b = tensor1a.multiply(3.0f);
+			Assert::IsFalse(tensor1b.requiresGradient());
+			Assert::IsNull(tensor1b.getFunction());
+
+			Tensor tensor2a = Tensor::ones({ 2 }).set(-1, { 0 }).requireGradient();
+			Tensor tensor2b = tensor2a.multiply(-1.0f);
+			Assert::IsTrue(tensor2b.requiresGradient());
+			Assert::IsNotNull((AddSingleFunction*)tensor2b.getFunction());
+		}
+	};
+
+	TEST_CLASS(MultiplyTensorTest)
+	{
+	public:
+		TEST_METHOD(UnbroadcastableTensor)
+		{
+			Assert::ExpectException<std::invalid_argument>(
+				[]() {Tensor::zeroes({ 10, 3, 5 }).multiply(Tensor::zeroes({ 1, 2, 5 })); }
+			);
+
+			Assert::ExpectException<std::invalid_argument>(
+				[]() {Tensor::zeroes({ 10, 1, 3, 5 }).multiply(Tensor::zeroes({ 3, 10 })); }
+			);
+		}
+
+		TEST_METHOD(NewValue)
+		{
+			Tensor tensor1 = Tensor::range({ 3 }).multiply(Tensor::full({ 1 }, 2));
+			CompareFloats(tensor1.at(0), 0.0f);
+			CompareFloats(tensor1.at(1), 2.0f);
+			CompareFloats(tensor1.at(2), 4.0f);
+
+			Tensor tensor2 = Tensor::range({ 2, 1, 3 }).multiply(Tensor::range({ 1, 3 }));
+			CompareFloats(tensor2.at({ 0,0,0 }), 0.0f);
+			CompareFloats(tensor2.at({ 0,0,1 }), 1.0f);
+			CompareFloats(tensor2.at({ 0,0,2 }), 4.0f);
+			CompareFloats(tensor2.at({ 1,0,0 }), 0.0f);
+			CompareFloats(tensor2.at({ 1,0,1 }), 4.0f);
+			CompareFloats(tensor2.at({ 1,0,2 }), 10.0f);
+		}
+
+		TEST_METHOD(Independentvalues)
+		{
+			Tensor tensor1 = Tensor::zeroes({ 3 }).set(Tensor::ones({ 1 }), { 2 });
+			Tensor tensor2 = tensor1.multiply(Tensor::ones({ 1 }));
+			CompareFloats(tensor1.at(0), 0.0f);
+			CompareFloats(tensor1.at(1), 0.0f);
+			CompareFloats(tensor1.at(2), 1.0f);
+		}
+
+		TEST_METHOD(Gradient)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 3,1 });
+			Tensor tensor1b = tensor1a.multiply(Tensor::zeroes({ 1 }));
+			Assert::IsFalse(tensor1b.requiresGradient());
+			Assert::IsNull(tensor1b.getFunction());
+
+			Tensor tensor2a = Tensor::zeroes({ 1 });
+			Tensor tensor2b = Tensor::ones({ 3 }).requireGradient();
+			Tensor tensor2c = tensor2a.multiply(tensor2b);
+			Assert::IsTrue(tensor2c.requiresGradient());
+			Assert::IsNotNull((AddTensorFunction*)tensor2c.getFunction());
+
+			Tensor tensor3a = Tensor::ones({ 2, 1, 3 }).requireGradient();
+			Tensor tensor3b = tensor3a.multiply(Tensor::ones({ 1, 1 }));
+			Assert::IsTrue(tensor3b.requiresGradient());
+			Assert::IsNotNull((AddTensorFunction*)tensor3b.getFunction());
+		}
+	};
+
 	TEST_CLASS(GradientTest)
 	{
 	public:

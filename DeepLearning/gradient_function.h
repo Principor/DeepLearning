@@ -84,3 +84,23 @@ public:
 		const std::vector<int>& broadcastIndices1, const std::vector<int>& broadcastIndices2);
 	gradientList calculateGradient(const Tensor& previousGradient) const override;
 };
+
+class MultiplySingleFunction : public GradientFunction {
+private:
+	Tensor* original;
+	int value;
+public:
+	MultiplySingleFunction(Tensor* original, int value);
+	gradientList calculateGradient(const Tensor& previousGradient) const override;
+};
+
+class MultiplyTensorFunction : public GradientFunction
+{
+private:
+	Tensor* original1, * original2;
+	std::vector<int> broadcastIndices1, broadcastIndices2;
+public:
+	MultiplyTensorFunction(Tensor* original1, Tensor* original2,
+		const std::vector<int>& broadcastIndices1, const std::vector<int>& broadcastIndices2);
+	gradientList calculateGradient(const Tensor& previousGradient) const override;
+};
