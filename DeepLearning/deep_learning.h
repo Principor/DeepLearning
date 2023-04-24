@@ -42,6 +42,8 @@ public:
 	Tensor subtract(Tensor& values);
 	Tensor multiply(float value);
 	Tensor multiply(Tensor& values);
+	Tensor divide(float value);
+	Tensor divide(Tensor& values);
 
 	static Tensor zeroes(const std::vector<int>& shape);
 	static Tensor ones(const std::vector<int>& shape);

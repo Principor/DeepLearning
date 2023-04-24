@@ -88,9 +88,9 @@ public:
 class MultiplySingleFunction : public GradientFunction {
 private:
 	Tensor* original;
-	int value;
+	float value;
 public:
-	MultiplySingleFunction(Tensor* original, int value);
+	MultiplySingleFunction(Tensor* original, float value);
 	gradientList calculateGradient(const Tensor& previousGradient) const override;
 };
 
@@ -101,6 +101,26 @@ private:
 	std::vector<int> broadcastIndices1, broadcastIndices2;
 public:
 	MultiplyTensorFunction(Tensor* original1, Tensor* original2,
+		const std::vector<int>& broadcastIndices1, const std::vector<int>& broadcastIndices2);
+	gradientList calculateGradient(const Tensor& previousGradient) const override;
+};
+
+class DivideSingleFunction : public GradientFunction {
+private:
+	Tensor* original;
+	float value;
+public:
+	DivideSingleFunction(Tensor* original, float value);
+	gradientList calculateGradient(const Tensor& previousGradient) const override;
+};
+
+class DivideTensorFunction : public GradientFunction
+{
+private:
+	Tensor* original1, * original2;
+	std::vector<int> broadcastIndices1, broadcastIndices2;
+public:
+	DivideTensorFunction(Tensor* original1, Tensor* original2,
 		const std::vector<int>& broadcastIndices1, const std::vector<int>& broadcastIndices2);
 	gradientList calculateGradient(const Tensor& previousGradient) const override;
 };

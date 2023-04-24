@@ -189,7 +189,7 @@ gradientList SubtractTensorFunction::calculateGradient(const Tensor& previousGra
 
 
 
-MultiplySingleFunction::MultiplySingleFunction(Tensor* original, int value) : original(original), value(value)
+MultiplySingleFunction::MultiplySingleFunction(Tensor* original, float value) : original(original), value(value)
 {
 
 }
@@ -229,6 +229,56 @@ gradientList MultiplyTensorFunction::calculateGradient(const Tensor& previousGra
 		int index1 = broadcastIndices1[i], index2 = broadcastIndices2[i];
 		gradientValues1[index1] += previousGradient.at(i) * original2->at(index2);
 		gradientValues2[index2] += previousGradient.at(i) * original1->at(index1);
+	}
+
+	return gradientList{
+		gradientTuple(original1, Tensor::fromValues(gradientValues1, gradientShape1)),
+		gradientTuple(original2, Tensor::fromValues(gradientValues2, gradientShape2))
+	};
+}
+
+
+
+DivideSingleFunction::DivideSingleFunction(Tensor* original, float value) : original(original), value(value)
+{
+
+}
+
+gradientList DivideSingleFunction::calculateGradient(const Tensor& previousGradient) const
+{
+	int gradientSize = original->getSize();
+	const std::vector<int>& gradientShape = original->getShape();
+	float* gradientValues = new float[gradientSize];
+	for (int i = 0; i < gradientSize; i++) {
+		gradientValues[i] = previousGradient.at(i) / value;
+	}
+	return gradientList{ gradientTuple{original, Tensor::fromValues(gradientValues, gradientShape)} };
+}
+
+
+DivideTensorFunction::DivideTensorFunction(Tensor* original1, Tensor* original2, const std::vector<int>& broadcastIndices1,
+	const std::vector<int>& broadcastIndices2) : original1(original1), original2(original2),
+	broadcastIndices1(broadcastIndices1), broadcastIndices2(broadcastIndices2)
+{
+
+}
+
+gradientList DivideTensorFunction::calculateGradient(const Tensor& previousGradient) const
+{
+	int gradientSize1 = original1->getSize();
+	const std::vector<int>& gradientShape1 = original1->getShape();
+	float* gradientValues1 = new float[gradientSize1];
+	for (int i = 0; i < gradientSize1; i++) gradientValues1[i] = 0;
+
+	int gradientSize2 = original2->getSize();
+	const std::vector<int>& gradientShape2 = original2->getShape();
+	float* gradientValues2 = new float[gradientSize2];
+	for (int i = 0; i < gradientSize2; i++) gradientValues2[i] = 0;
+
+	for (int i = 0; i < previousGradient.getSize(); i++) {
+		int index1 = broadcastIndices1[i], index2 = broadcastIndices2[i];
+		gradientValues1[index1] += previousGradient.at(i) / original2->at(index2);
+		gradientValues2[index2] -= previousGradient.at(i) * original1->at(index1) / (original2->at(index2) * original2->at(index2));
 	}
 
 	return gradientList{
