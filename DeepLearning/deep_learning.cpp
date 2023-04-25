@@ -264,6 +264,13 @@ Tensor Tensor::divide(Tensor& values) {
 	return newTensor;
 }
 
+Tensor Tensor::transpose() {
+	if (shape.size() < 2) {
+		throw std::length_error("Must have at least 2 dimensions to transpose");
+	}
+	return Tensor({}, 1, new float[1]);
+}
+
 Tensor Tensor::zeroes(const std::vector<int>& shape) {
 	return full(shape, 0.0f);
 }
