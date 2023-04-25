@@ -275,8 +275,25 @@ Tensor Tensor::transpose() {
 	auto newShape = getSubShape(shape, 0, 2);
 	newShape.push_back(shape[numDims - 1]);
 	newShape.push_back(shape[numDims - 2]);
+	int transposeSize = shape[numDims - 1] * shape[numDims - 2];
 
-	return Tensor(newShape, newSize, new float[newSize]);
+	float* newValues = new float[newSize];
+
+	for (int i = 0; i < size; i += transposeSize)
+	{
+		for (int x = 0; x < shape[numDims - 1]; x++)
+		{
+			for (int y = 0; y < shape[numDims - 2]; y++)
+			{
+				int index1 = i + x + y * shape[numDims - 1];
+				int index2 = i + x * shape[numDims - 2] + y;
+#pragma warning(disable : 6386)
+				newValues[index2] = values[index1];
+			}
+		}
+	}
+
+	return Tensor(newShape, newSize, newValues);
 }
 
 Tensor Tensor::zeroes(const std::vector<int>& shape) {

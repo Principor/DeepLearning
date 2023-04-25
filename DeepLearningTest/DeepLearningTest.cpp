@@ -1008,7 +1008,7 @@ namespace TensorTest
 			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({}).transpose(); });
 		}
 
-		TEST_METHOD(NewShape) 
+		TEST_METHOD(NewShape)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 2,3 });
 			Tensor tensor1b = tensor1a.transpose();
@@ -1021,6 +1021,63 @@ namespace TensorTest
 			Assert::AreEqual(tensor2b.getShape()[1], 2);
 			Assert::AreEqual(tensor2b.getShape()[2], 5);
 			Assert::AreEqual(tensor2b.getShape()[3], 1);
+		}
+
+		TEST_METHOD(NewValues) {
+			Tensor tensor1a = Tensor::range({ 2,3 });
+			Tensor tensor1b = tensor1a.transpose();
+			CompareFloats(tensor1b.at({ 0,0 }), tensor1a.at({ 0,0 }));
+			CompareFloats(tensor1b.at({ 1,0 }), tensor1a.at({ 0,1 }));
+			CompareFloats(tensor1b.at({ 2,0 }), tensor1a.at({ 0,2 }));
+			CompareFloats(tensor1b.at({ 0,1 }), tensor1a.at({ 1,0 }));
+			CompareFloats(tensor1b.at({ 1,1 }), tensor1a.at({ 1,1 }));
+			CompareFloats(tensor1b.at({ 2,1 }), tensor1a.at({ 1,2 }));
+
+			Tensor tensor2a = Tensor::range({ 10, 2, 1, 5 });
+			Tensor tensor2b = tensor2a.transpose();
+			for (int i = 0; i < 10; i++) {
+				for (int j = 0; j < 2; j++) {
+					for (int k = 0; k < 1; k++) {
+						for (int l = 0; l < 5; l++) {
+							CompareFloats(tensor2a.at({ i,j,k,l }), tensor2b.at({ i,j,l,k }));
+						}
+					}
+				}
+			}
+
+		}
+
+		TEST_METHOD(IndepentShape)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 2,3 });
+			Tensor tensor1b = tensor1a.transpose();
+			Assert::AreEqual(tensor1a.getShape()[0], 2);
+			Assert::AreEqual(tensor1a.getShape()[1], 3);
+
+			Tensor tensor2a = Tensor::zeroes({ 10, 2, 1, 5 });
+			Tensor tensor2b = tensor2a.transpose();
+			Assert::AreEqual(tensor2a.getShape()[0], 10);
+			Assert::AreEqual(tensor2a.getShape()[1], 2);
+			Assert::AreEqual(tensor2a.getShape()[2], 1);
+			Assert::AreEqual(tensor2a.getShape()[3], 5);
+		}
+
+		TEST_METHOD(IndependentValues)
+		{
+			Tensor tensor1a = Tensor::range({ 2,3 });
+			Tensor tensor1b = tensor1a.transpose();
+			CompareFloats(tensor1a.at({ 0,0 }), 0);
+			CompareFloats(tensor1a.at({ 0,1 }), 1);
+			CompareFloats(tensor1a.at({ 0,2 }), 2);
+			CompareFloats(tensor1a.at({ 1,0 }), 3);
+			CompareFloats(tensor1a.at({ 1,1 }), 4);
+			CompareFloats(tensor1a.at({ 1,2 }), 5);
+
+			Tensor tensor2a = Tensor::range({ 10, 2, 1, 5 });
+			Tensor tensor2b = tensor2a.transpose();
+			for (int i = 0; i < 100; i++) {
+				CompareFloats(tensor2a.at(i), i);
+			}
 		}
 	};
 
