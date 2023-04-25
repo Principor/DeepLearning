@@ -1007,6 +1007,21 @@ namespace TensorTest
 
 			Assert::ExpectException<std::length_error>([]() {Tensor::zeroes({}).transpose(); });
 		}
+
+		TEST_METHOD(NewShape) 
+		{
+			Tensor tensor1a = Tensor::zeroes({ 2,3 });
+			Tensor tensor1b = tensor1a.transpose();
+			Assert::AreEqual(tensor1b.getShape()[0], 3);
+			Assert::AreEqual(tensor1b.getShape()[1], 2);
+
+			Tensor tensor2a = Tensor::zeroes({ 10, 2, 1, 5 });
+			Tensor tensor2b = tensor2a.transpose();
+			Assert::AreEqual(tensor2b.getShape()[0], 10);
+			Assert::AreEqual(tensor2b.getShape()[1], 2);
+			Assert::AreEqual(tensor2b.getShape()[2], 5);
+			Assert::AreEqual(tensor2b.getShape()[3], 1);
+		}
 	};
 
 	TEST_CLASS(GradientTest)

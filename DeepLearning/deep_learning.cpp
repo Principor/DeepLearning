@@ -265,10 +265,18 @@ Tensor Tensor::divide(Tensor& values) {
 }
 
 Tensor Tensor::transpose() {
-	if (shape.size() < 2) {
+	int numDims = shape.size();
+
+	if (numDims < 2) {
 		throw std::length_error("Must have at least 2 dimensions to transpose");
 	}
-	return Tensor({}, 1, new float[1]);
+
+	int newSize = size;
+	auto newShape = getSubShape(shape, 0, 2);
+	newShape.push_back(shape[numDims - 1]);
+	newShape.push_back(shape[numDims - 2]);
+
+	return Tensor(newShape, newSize, new float[newSize]);
 }
 
 Tensor Tensor::zeroes(const std::vector<int>& shape) {
