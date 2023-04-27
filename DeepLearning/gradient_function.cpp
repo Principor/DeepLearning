@@ -294,5 +294,5 @@ TransposeFunction::TransposeFunction(Tensor* original, const std::vector<int>& t
 
 gradientList TransposeFunction::calculateGradient(const Tensor& previousGradient) const
 {
-	return gradientList();
+	return gradientList{ gradientTuple(original, Tensor::zeroes(original->getShape())) };
 }

@@ -839,4 +839,31 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(5), -12.0f);
 		}
 	};
+
+	TEST_CLASS(TransposeFunctionTest)
+	{
+	public:
+		TEST_METHOD(Shape)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 4,3 }).requireGradient();
+			Tensor tensor1b = tensor1a.transpose();
+			gradientList gradients1 = tensor1b.getFunction()->calculateGradient(
+				Tensor::zeroes({ 3,4 })
+			);
+			Tensor& gradient1 = std::get<1>(gradients1[0]);
+			Assert::AreEqual(gradient1.getShape()[0], 4);
+			Assert::AreEqual(gradient1.getShape()[1], 3);
+
+			Tensor tensor2a = Tensor::zeroes({ 10, 1, 2, 5 }).requireGradient();
+			Tensor tensor2b = tensor2a.transpose();
+			gradientList gradients2 = tensor2b.getFunction()->calculateGradient(
+				Tensor::zeroes({ 3,4 })
+			);
+			Tensor& gradient2 = std::get<1>(gradients2[0]);
+			Assert::AreEqual(gradient2.getShape()[0], 10);
+			Assert::AreEqual(gradient2.getShape()[1], 1);
+			Assert::AreEqual(gradient2.getShape()[2], 2);
+			Assert::AreEqual(gradient2.getShape()[3], 5);
+		}
+	};
 }
