@@ -294,5 +294,11 @@ TransposeFunction::TransposeFunction(Tensor* original, const std::vector<int>& t
 
 gradientList TransposeFunction::calculateGradient(const Tensor& previousGradient) const
 {
-	return gradientList{ gradientTuple(original, Tensor::zeroes(original->getShape())) };
+	int gradientSize = original->getSize();
+	const std::vector<int>& gradientShape = original->getShape();
+	float* gradientValues = new float[gradientSize];
+	for (int i = 0; i < gradientSize; i++) {
+		gradientValues[i] = previousGradient.at(transposeIndices[i]);
+	}
+	return gradientList{ gradientTuple(original, Tensor::fromValues(gradientValues, gradientShape)) };
 }
