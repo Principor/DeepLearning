@@ -526,7 +526,7 @@ namespace TensorTest
 			Assert::ExpectException<std::out_of_range>([]() {Tensor::zeroes({ 4, 2, 8, 1, 2 }).set(Tensor::zeroes({}), { 3, 1, 5, 4 }); });
 		}
 
-		TEST_METHOD(UnbroadcastableTensor)
+		TEST_METHOD(UnbroadcastableDims)
 		{
 			Assert::ExpectException<std::invalid_argument>(
 				[]() {Tensor::zeroes({ 10, 3, 5 }).set(Tensor::zeroes({ 1, 2, 5 }), { 0 }); }
@@ -628,7 +628,7 @@ namespace TensorTest
 	TEST_CLASS(AddTensorTest)
 	{
 	public:
-		TEST_METHOD(UnbroadcastableTensor)
+		TEST_METHOD(UnbroadcastableDims)
 		{
 			Assert::ExpectException<std::invalid_argument>(
 				[]() {Tensor::zeroes({ 10, 3, 5 }).add(Tensor::zeroes({ 1, 2, 5 })); }
@@ -732,7 +732,7 @@ namespace TensorTest
 	TEST_CLASS(SubtractTensorTest)
 	{
 	public:
-		TEST_METHOD(UnbroadcastableTensor)
+		TEST_METHOD(UnbroadcastableDims)
 		{
 			Assert::ExpectException<std::invalid_argument>(
 				[]() {Tensor::zeroes({ 10, 3, 5 }).subtract(Tensor::zeroes({ 1, 2, 5 })); }
@@ -836,7 +836,7 @@ namespace TensorTest
 	TEST_CLASS(MultiplyTensorTest)
 	{
 	public:
-		TEST_METHOD(UnbroadcastableTensor)
+		TEST_METHOD(UnbroadcastableDims)
 		{
 			Assert::ExpectException<std::invalid_argument>(
 				[]() {Tensor::zeroes({ 10, 3, 5 }).multiply(Tensor::zeroes({ 1, 2, 5 })); }
@@ -940,7 +940,7 @@ namespace TensorTest
 	TEST_CLASS(DivideTensorTest)
 	{
 	public:
-		TEST_METHOD(UnbroadcastableTensor)
+		TEST_METHOD(UnbroadcastableDims)
 		{
 			Assert::ExpectException<std::invalid_argument>(
 				[]() {Tensor::zeroes({ 10, 3, 5 }).divide(Tensor::zeroes({ 1, 2, 5 })); }
@@ -1106,7 +1106,6 @@ namespace TensorTest
 			Assert::ExpectException<std::length_error>(
 				[]() { Tensor::zeroes({ 10, 2, 5 }).matrixMultiply(Tensor::zeroes({})); }
 			);
-
 		}
 
 		TEST_METHOD(WrongInnerDimsTest)
@@ -1117,6 +1116,17 @@ namespace TensorTest
 
 			Assert::ExpectException<std::invalid_argument>(
 				[]() {Tensor::zeroes({ 7, 2 }).matrixMultiply(Tensor::zeroes({ 5, 1, 4 })); }
+			);
+		}
+
+		TEST_METHOD(UnbroadcastableDims)
+		{
+			Assert::ExpectException<std::invalid_argument>(
+				[]() {Tensor::zeroes({ 10, 3, 1 }).matrixMultiply(Tensor::zeroes({ 2, 1, 3 })); }
+			);
+
+			Assert::ExpectException<std::invalid_argument>(
+				[]() {Tensor::zeroes({ 5, 1, 3, 1 }).matrixMultiply(Tensor::zeroes({ 5, 21, 3 })); }
 			);
 		}
 	};
