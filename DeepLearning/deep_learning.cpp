@@ -315,9 +315,18 @@ Tensor Tensor::matrixMultiply(Tensor& other)
 	if (matrixShape1[1] != matrixShape2[0])
 		throw std::invalid_argument("Inner dimensions of matrixes must match.");
 
-	std::vector<int> broadcastedShape = broadcastShapes(getSubShape(shape, 0, 2), getSubShape(other.shape, 0, 2));
+	int matrixWidth = matrixShape1[0];
+	int matrixInner = matrixShape1[1];
+	int matrixHeight = matrixShape2[1];
 
-	return Tensor({}, 1, new float);
+	std::vector<int> broadcastedShape = broadcastShapes(getSubShape(shape, 0, 2), getSubShape(other.shape, 0, 2));
+	std::vector<int> newShape(broadcastedShape);
+	newShape.push_back(matrixWidth);
+	newShape.push_back(matrixHeight);
+	int newSize = calculateSize(newShape);
+	float* newValues = new float[newSize];
+
+	return Tensor(newShape, newSize, newValues);
 }
 
 Tensor Tensor::zeroes(const std::vector<int>& shape) {

@@ -1126,8 +1126,26 @@ namespace TensorTest
 			);
 
 			Assert::ExpectException<std::invalid_argument>(
-				[]() {Tensor::zeroes({ 5, 1, 3, 1 }).matrixMultiply(Tensor::zeroes({ 5, 21, 3 })); }
+				[]() {Tensor::zeroes({ 5, 3, 3, 1 }).matrixMultiply(Tensor::zeroes({ 5, 1, 3 })); }
 			);
+		}
+
+		TEST_METHOD(NewShape)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 10, 3, 1 });
+			Tensor tensor1b = Tensor::zeroes({ 1, 1, 2 });
+			Tensor tensor1c = tensor1a.matrixMultiply(tensor1b);
+			Assert::AreEqual(tensor1c.getShape()[0], 10);
+			Assert::AreEqual(tensor1c.getShape()[1], 3);
+			Assert::AreEqual(tensor1c.getShape()[2], 2);
+
+			Tensor tensor2a = Tensor::zeroes({ 7, 5, 4, 2 });
+			Tensor tensor2b = Tensor::zeroes({ 5, 2, 3 });
+			Tensor tensor2c = tensor2a.matrixMultiply(tensor2b);
+			Assert::AreEqual(tensor2c.getShape()[0], 7);
+			Assert::AreEqual(tensor2c.getShape()[1], 5);
+			Assert::AreEqual(tensor2c.getShape()[2], 4);
+			Assert::AreEqual(tensor2c.getShape()[3], 3);
 		}
 	};
 
