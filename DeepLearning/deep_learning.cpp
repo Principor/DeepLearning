@@ -278,6 +278,7 @@ Tensor Tensor::transpose() {
 	int transposeSize = shape[numDims - 1] * shape[numDims - 2];
 
 	float* newValues = new float[newSize];
+	std::vector<int> transposeIndices(newSize);
 
 	for (int i = 0; i < size; i += transposeSize)
 	{
@@ -289,11 +290,18 @@ Tensor Tensor::transpose() {
 				int index2 = i + x * shape[numDims - 2] + y;
 #pragma warning(disable : 6386)
 				newValues[index2] = values[index1];
+				transposeIndices[index1] = index2;
 			}
 		}
 	}
 
-	return Tensor(newShape, newSize, newValues);
+	Tensor newTensor(newShape, newSize, newValues);
+	if (gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new TransposeFunction(this, transposeIndices);
+	}
+	return newTensor;
 }
 
 Tensor Tensor::zeroes(const std::vector<int>& shape) {

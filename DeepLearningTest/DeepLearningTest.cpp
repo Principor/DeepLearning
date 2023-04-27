@@ -1079,6 +1079,19 @@ namespace TensorTest
 				CompareFloats(tensor2a.at(i), i);
 			}
 		}
+
+		TEST_METHOD(Gradient)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 3,1 });
+			Tensor tensor1b = tensor1a.transpose();
+			Assert::IsFalse(tensor1b.requiresGradient());
+			Assert::IsNull(tensor1b.getFunction());
+
+			Tensor tensor2a = Tensor::ones({ 2, 1, 3 }).requireGradient();
+			Tensor tensor2b = tensor2a.transpose();
+			Assert::IsTrue(tensor2b.requiresGradient());
+			Assert::IsNotNull((TransposeFunction*)tensor2b.getFunction());
+		}
 	};
 
 	TEST_CLASS(GradientTest)

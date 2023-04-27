@@ -286,3 +286,13 @@ gradientList DivideTensorFunction::calculateGradient(const Tensor& previousGradi
 		gradientTuple(original2, Tensor::fromValues(gradientValues2, gradientShape2))
 	};
 }
+
+TransposeFunction::TransposeFunction(Tensor* original, const std::vector<int>& transposeIndices) : original(original), transposeIndices(transposeIndices)
+{
+
+}
+
+gradientList TransposeFunction::calculateGradient(const Tensor& previousGradient) const
+{
+	return gradientList();
+}

@@ -124,3 +124,13 @@ public:
 		const std::vector<int>& broadcastIndices1, const std::vector<int>& broadcastIndices2);
 	gradientList calculateGradient(const Tensor& previousGradient) const override;
 };
+
+class TransposeFunction : public GradientFunction
+{
+private:
+	Tensor* original;
+	std::vector<int> transposeIndices;
+public:
+	TransposeFunction(Tensor* original, const std::vector<int>& transposeIndices);
+	gradientList calculateGradient(const Tensor& previousGradient) const override;
+};
