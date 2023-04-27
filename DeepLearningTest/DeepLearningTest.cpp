@@ -1108,6 +1108,17 @@ namespace TensorTest
 			);
 
 		}
+
+		TEST_METHOD(WrongInnerDimsTest)
+		{
+			Assert::ExpectException<std::invalid_argument>(
+				[]() {Tensor::zeroes({ 10, 3, 1 }).matrixMultiply(Tensor::zeroes({ 2, 5 })); }
+			);
+
+			Assert::ExpectException<std::invalid_argument>(
+				[]() {Tensor::zeroes({ 7, 2 }).matrixMultiply(Tensor::zeroes({ 5, 1, 4 })); }
+			);
+		}
 	};
 
 	TEST_CLASS(GradientTest)

@@ -41,7 +41,7 @@ float Tensor::at(int index) const {
 }
 
 float Tensor::at(const std::vector<int>& indices) const {
-	if(indices.size() < shape.size()) throw std::length_error("Number of indices cannot be less than number of dimensions.");
+	if (indices.size() < shape.size()) throw std::length_error("Number of indices cannot be less than number of dimensions.");
 	return values[getIndex(indices)];
 }
 
@@ -143,9 +143,9 @@ Tensor Tensor::add(Tensor& values) {
 	int broadcastedSize = calculateSize(broadcastedShape);
 	auto broadcastedIndices1 = broadcastIndices(shape, broadcastedShape);
 	auto broadcastedIndices2 = broadcastIndices(values.shape, broadcastedShape);
-	
+
 	float* newValues = new float[broadcastedSize];
-	
+
 	for (int i = 0; i < broadcastedSize; i++) {
 		newValues[i] = this->values[broadcastedIndices1[i]] + values.values[broadcastedIndices2[i]];
 	}
@@ -308,6 +308,14 @@ Tensor Tensor::matrixMultiply(Tensor& other)
 {
 	if (shape.size() < 2 || other.shape.size() < 2)
 		throw std::length_error("Tensors must have at least 2 dims for matrix multiplication.");
+
+	std::vector<int> matrixShape1 = getSubShape(shape, shape.size() - 2, 0);
+	std::vector<int> matrixShape2 = getSubShape(other.shape, other.shape.size() - 2, 0);
+
+	if (matrixShape1[1] != matrixShape2[0])
+		throw std::invalid_argument("Inner dimensions of matrixes must match.");
+
+	return Tensor({}, 1, new float);
 }
 
 Tensor Tensor::zeroes(const std::vector<int>& shape) {
@@ -396,7 +404,7 @@ std::vector<int> Tensor::broadcastIndices(std::vector<int> originalShape, const 
 	while (broadcastedShape.size() > originalShape.size()) originalShape.insert(originalShape.begin(), 1);
 	std::vector<int> originalShapeStrides(originalShape.size()), broadcastedShapeStrides(originalShape.size());
 	{
-		int originalShapeStride=1, broadcastedShapeStride=1;
+		int originalShapeStride = 1, broadcastedShapeStride = 1;
 		for (int i = originalShape.size() - 1; i >= 0; i--) {
 			if (originalShape[i] == 1) broadcastedShapeStrides[i] = 0;
 			else broadcastedShapeStrides[i] = originalShapeStride;
@@ -414,8 +422,8 @@ std::vector<int> Tensor::broadcastIndices(std::vector<int> originalShape, const 
 			return;
 		}
 		for (int i = 0; i < broadcastedShape[depth]; i++) {
-			recursiveIterate(depth + 1, 
-				trueIndex + i * originalShapeStrides[depth], 
+			recursiveIterate(depth + 1,
+				trueIndex + i * originalShapeStrides[depth],
 				broadcastedIndex + i * broadcastedShapeStrides[depth]);
 		}
 	};
