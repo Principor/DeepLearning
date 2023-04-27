@@ -304,6 +304,12 @@ Tensor Tensor::transpose() {
 	return newTensor;
 }
 
+Tensor Tensor::matrixMultiply(Tensor& other)
+{
+	if (shape.size() < 2 || other.shape.size() < 2)
+		throw std::length_error("Tensors must have at least 2 dims for matrix multiplication.");
+}
+
 Tensor Tensor::zeroes(const std::vector<int>& shape) {
 	return full(shape, 0.0f);
 }

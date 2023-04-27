@@ -1094,6 +1094,22 @@ namespace TensorTest
 		}
 	};
 
+	TEST_CLASS(MatrixMultiplyTest)
+	{
+	public:
+		TEST_METHOD(InsufficientDims)
+		{
+			Assert::ExpectException<std::length_error>(
+				[]() {Tensor::zeroes({ 1 }).matrixMultiply(Tensor::zeroes({ 10, 3 })); }
+			);
+
+			Assert::ExpectException<std::length_error>(
+				[]() { Tensor::zeroes({ 10, 2, 5 }).matrixMultiply(Tensor::zeroes({})); }
+			);
+
+		}
+	};
+
 	TEST_CLASS(GradientTest)
 	{
 	public:
