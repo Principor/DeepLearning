@@ -1147,6 +1147,37 @@ namespace TensorTest
 			Assert::AreEqual(tensor2c.getShape()[2], 4);
 			Assert::AreEqual(tensor2c.getShape()[3], 3);
 		}
+
+		TEST_METHOD(NewValues)
+		{
+			Tensor tensor1a = Tensor::range({ 2, 3 }, 1);
+			Tensor tensor1b = Tensor::range({ 3, 4 }, 1);
+			Tensor tensor1c = tensor1a.matrixMultiply(tensor1b);
+			CompareFloats(tensor1c.at(0), 38);
+			CompareFloats(tensor1c.at(1), 44);
+			CompareFloats(tensor1c.at(2), 50);
+			CompareFloats(tensor1c.at(3), 56);
+			CompareFloats(tensor1c.at(4), 83);
+			CompareFloats(tensor1c.at(5), 98);
+			CompareFloats(tensor1c.at(6), 113);
+			CompareFloats(tensor1c.at(7), 128);
+
+			Tensor tensor2a = Tensor::range({ 2, 1, 1, 3 }, 1);
+			Tensor tensor2b = Tensor::range({ 1, 3 ,3, 2 }, 1);
+			Tensor tensor2c = tensor2a.matrixMultiply(tensor2b);
+			CompareFloats(tensor2c.at(0), 22);
+			CompareFloats(tensor2c.at(1), 28);
+			CompareFloats(tensor2c.at(2), 58);
+			CompareFloats(tensor2c.at(3), 64);
+			CompareFloats(tensor2c.at(4), 94);
+			CompareFloats(tensor2c.at(5), 100);
+			CompareFloats(tensor2c.at(6), 49);
+			CompareFloats(tensor2c.at(7), 64);
+			CompareFloats(tensor2c.at(8), 139);
+			CompareFloats(tensor2c.at(9), 154);
+			CompareFloats(tensor2c.at(10), 229);
+			CompareFloats(tensor2c.at(11), 244);
+		}
 	};
 
 	TEST_CLASS(GradientTest)

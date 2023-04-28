@@ -315,16 +315,37 @@ Tensor Tensor::matrixMultiply(Tensor& other)
 	if (matrixShape1[1] != matrixShape2[0])
 		throw std::invalid_argument("Inner dimensions of matrixes must match.");
 
+	std::vector<int> beforeShape1 = getSubShape(shape, 0, 2);
+	std::vector<int> beforeShape2 = getSubShape(other.shape, 0, 2);
+
+	std::vector<int> broadcastedShape = broadcastShapes(beforeShape1, beforeShape2);
+	std::vector<int> broadcastedIndices1 = broadcastIndices(beforeShape1, broadcastedShape);
+	std::vector<int> broadcastedIndices2 = broadcastIndices(beforeShape2, broadcastedShape);
+
 	int matrixWidth = matrixShape1[0];
 	int matrixInner = matrixShape1[1];
 	int matrixHeight = matrixShape2[1];
 
-	std::vector<int> broadcastedShape = broadcastShapes(getSubShape(shape, 0, 2), getSubShape(other.shape, 0, 2));
 	std::vector<int> newShape(broadcastedShape);
 	newShape.push_back(matrixWidth);
 	newShape.push_back(matrixHeight);
 	int newSize = calculateSize(newShape);
 	float* newValues = new float[newSize];
+
+	int broadcastedSize = calculateSize(broadcastedShape);
+	for (int i = 0; i < broadcastedSize; i++) {
+		int startIndex1 = broadcastedIndices1[i] * matrixWidth * matrixInner;
+		int startIndex2 = broadcastedIndices2[i] * matrixInner * matrixHeight;
+		for (int x = 0; x < matrixWidth; x++) {
+			for (int y = 0; y < matrixHeight; y++) {
+				int sum = 0;
+				for (int j = 0; j < matrixInner; j++) {
+					sum += values[startIndex1 + x * matrixInner + j] * other.values[startIndex2 + j * matrixHeight + y];
+				}
+				newValues[i * matrixWidth * matrixHeight + x * matrixHeight + y] = sum;
+			}
+		}
+	}
 
 	return Tensor(newShape, newSize, newValues);
 }
