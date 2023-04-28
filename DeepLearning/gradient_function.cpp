@@ -302,3 +302,17 @@ gradientList TransposeFunction::calculateGradient(const Tensor& previousGradient
 	}
 	return gradientList{ gradientTuple(original, Tensor::fromValues(gradientValues, gradientShape)) };
 }
+
+MatrixMultiplicationFunction::MatrixMultiplicationFunction(Tensor* original1, Tensor* original2,
+	const std::vector<int>& broadcastIndices1, const std::vector<int>& broadcastIndices2,
+	int matrixWidth, int matrixInner, int matrixHeight) : original1(original1), original2(original2),
+	broadcastIndices1(broadcastIndices1), broadcastIndices2(broadcastIndices2), matrixWidth(matrixWidth),
+	matrixInner(matrixInner), matrixHeight(matrixHeight)
+{
+
+}
+
+gradientList MatrixMultiplicationFunction::calculateGradient(const Tensor& previousGradient) const
+{
+	return gradientList{};
+}

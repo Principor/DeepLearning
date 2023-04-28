@@ -134,3 +134,16 @@ public:
 	TransposeFunction(Tensor* original, const std::vector<int>& transposeIndices);
 	gradientList calculateGradient(const Tensor& previousGradient) const override;
 };
+
+class MatrixMultiplicationFunction : public GradientFunction
+{
+private:
+	Tensor* original1, * original2;
+	std::vector<int> broadcastIndices1, broadcastIndices2;
+	int matrixWidth, matrixInner, matrixHeight;
+public:
+	MatrixMultiplicationFunction(Tensor* original1, Tensor* original2,
+		const std::vector<int>& broadcastIndices1, const std::vector<int>& broadcastIndices2,
+		int matrixWidth, int matrixInner, int matrixHeight);
+	gradientList calculateGradient(const Tensor& previousGradient) const override;
+};

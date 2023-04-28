@@ -1178,6 +1178,27 @@ namespace TensorTest
 			CompareFloats(tensor2c.at(10), 229);
 			CompareFloats(tensor2c.at(11), 244);
 		}
+
+		TEST_METHOD(Gradient)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 10, 3, 1 });
+			Tensor tensor1b = Tensor::zeroes({ 1, 1, 2 });
+			Tensor tensor1c = tensor1a.matrixMultiply(tensor1b);
+			Assert::IsFalse(tensor1c.requiresGradient());
+			Assert::IsNull(tensor1c.getFunction());
+
+			Tensor tensor2a = Tensor::zeroes({ 7, 5, 4, 2 }).requireGradient();
+			Tensor tensor2b = Tensor::zeroes({ 5, 2, 3 });
+			Tensor tensor2c = tensor2a.matrixMultiply(tensor2b);
+			Assert::IsTrue(tensor2c.requiresGradient());
+			Assert::IsNotNull((MatrixMultiplicationFunction*)tensor2c.getFunction());
+
+			Tensor tensor3a = Tensor::range({ 2, 1, 1, 3 }, 1);
+			Tensor tensor3b = Tensor::range({ 1, 3 ,3, 2 }, 3).requireGradient();
+			Tensor tensor3c = tensor3a.matrixMultiply(tensor3b);
+			Assert::IsTrue(tensor3c.requiresGradient());
+			Assert::IsNotNull((MatrixMultiplicationFunction*)tensor3c.getFunction());
+		}
 	};
 
 	TEST_CLASS(GradientTest)

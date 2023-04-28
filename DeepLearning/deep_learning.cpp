@@ -347,7 +347,15 @@ Tensor Tensor::matrixMultiply(Tensor& other)
 		}
 	}
 
-	return Tensor(newShape, newSize, newValues);
+	Tensor newTensor(newShape, newSize, newValues);
+	if (gradient || other.gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new MatrixMultiplicationFunction(
+			this, &other, broadcastedIndices1, broadcastedIndices2, matrixWidth, matrixInner, matrixHeight
+		);
+	}
+	return newTensor;
 }
 
 Tensor Tensor::zeroes(const std::vector<int>& shape) {
