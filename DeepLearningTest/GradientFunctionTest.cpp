@@ -840,6 +840,63 @@ namespace GradientFunctionTest
 		}
 	};
 
+	TEST_CLASS(MatrixMultiplicationFunctionTest)
+	{
+	public:
+		TEST_METHOD(Shape1)
+		{
+
+			Tensor tensor1a = Tensor::zeroes({ 10, 3, 1 });
+			Tensor tensor1b = Tensor::zeroes({ 1, 1, 2 }).requireGradient();
+			Tensor tensor1c = tensor1a.matrixMultiply(tensor1b);
+			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
+				Tensor::zeroes({ 4,3 })
+			);
+			Tensor& gradient1 = std::get<1>(gradients1[0]);
+			Assert::AreEqual(10, gradient1.getShape()[0]);
+			Assert::AreEqual(3, gradient1.getShape()[1]);
+			Assert::AreEqual(1, gradient1.getShape()[2]);
+
+			Tensor tensor2a = Tensor::zeroes({ 7, 5, 4, 2 });
+			Tensor tensor2b = Tensor::zeroes({ 5, 2, 3 }).requireGradient();
+			Tensor tensor2c = tensor2a.matrixMultiply(tensor2b);
+			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
+				Tensor::zeroes({ 4,3 })
+			);
+			Tensor& gradient2 = std::get<1>(gradients2[0]);
+			Assert::AreEqual(7, gradient2.getShape()[0]);
+			Assert::AreEqual(5, gradient2.getShape()[1]);
+			Assert::AreEqual(4, gradient2.getShape()[2]);
+			Assert::AreEqual(2, gradient2.getShape()[3]);
+		}
+
+		TEST_METHOD(Shape2)
+		{
+
+			Tensor tensor1a = Tensor::zeroes({ 10, 3, 1 });
+			Tensor tensor1b = Tensor::zeroes({ 1, 1, 2 }).requireGradient();
+			Tensor tensor1c = tensor1a.matrixMultiply(tensor1b);
+			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
+				Tensor::zeroes({ 4,3 })
+			);
+			Tensor& gradient1 = std::get<1>(gradients1[1]);
+			Assert::AreEqual(1, gradient1.getShape()[0]);
+			Assert::AreEqual(1, gradient1.getShape()[1]);
+			Assert::AreEqual(2, gradient1.getShape()[2]);
+
+			Tensor tensor2a = Tensor::zeroes({ 7, 5, 4, 2 });
+			Tensor tensor2b = Tensor::zeroes({ 5, 2, 3 }).requireGradient();
+			Tensor tensor2c = tensor2a.matrixMultiply(tensor2b);
+			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
+				Tensor::zeroes({ 4,3 })
+			);
+			Tensor& gradient2 = std::get<1>(gradients2[1]);
+			Assert::AreEqual(5, gradient2.getShape()[0]);
+			Assert::AreEqual(2, gradient2.getShape()[1]);
+			Assert::AreEqual(3, gradient2.getShape()[2]);
+		}
+	};
+
 	TEST_CLASS(TransposeFunctionTest)
 	{
 	public:

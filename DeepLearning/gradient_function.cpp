@@ -314,5 +314,16 @@ MatrixMultiplicationFunction::MatrixMultiplicationFunction(Tensor* original1, Te
 
 gradientList MatrixMultiplicationFunction::calculateGradient(const Tensor& previousGradient) const
 {
-	return gradientList{};
+	int gradientSize1 = original1->getSize();
+	const std::vector<int>& gradientShape1 = original1->getShape();
+	float* gradientValues1 = new float[gradientSize1];
+
+	int gradientSize2 = original2->getSize();
+	const std::vector<int>& gradientShape2 = original2->getShape();
+	float* gradientValues2 = new float[gradientSize2];
+
+	return gradientList{
+		gradientTuple(original1, Tensor::fromValues(gradientValues1, gradientShape1)),
+		gradientTuple(original2, Tensor::fromValues(gradientValues2, gradientShape2))
+	};
 }
