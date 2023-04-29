@@ -850,7 +850,7 @@ namespace GradientFunctionTest
 			Tensor tensor1b = Tensor::zeroes({ 1, 1, 2 }).requireGradient();
 			Tensor tensor1c = tensor1a.matrixMultiply(tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
-				Tensor::zeroes({ 4,3 })
+				Tensor::zeroes({ 10,3,2 })
 			);
 			Tensor& gradient1 = std::get<1>(gradients1[0]);
 			Assert::AreEqual(10, gradient1.getShape()[0]);
@@ -861,7 +861,7 @@ namespace GradientFunctionTest
 			Tensor tensor2b = Tensor::zeroes({ 5, 2, 3 }).requireGradient();
 			Tensor tensor2c = tensor2a.matrixMultiply(tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
-				Tensor::zeroes({ 4,3 })
+				Tensor::zeroes({ 7,5,4,3 })
 			);
 			Tensor& gradient2 = std::get<1>(gradients2[0]);
 			Assert::AreEqual(7, gradient2.getShape()[0]);
@@ -877,7 +877,7 @@ namespace GradientFunctionTest
 			Tensor tensor1b = Tensor::zeroes({ 1, 1, 2 }).requireGradient();
 			Tensor tensor1c = tensor1a.matrixMultiply(tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
-				Tensor::zeroes({ 4,3 })
+				Tensor::zeroes({ 10,3,2 })
 			);
 			Tensor& gradient1 = std::get<1>(gradients1[1]);
 			Assert::AreEqual(1, gradient1.getShape()[0]);
@@ -888,12 +888,211 @@ namespace GradientFunctionTest
 			Tensor tensor2b = Tensor::zeroes({ 5, 2, 3 }).requireGradient();
 			Tensor tensor2c = tensor2a.matrixMultiply(tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
-				Tensor::zeroes({ 4,3 })
+				Tensor::zeroes({ 7,5,4,3 })
 			);
 			Tensor& gradient2 = std::get<1>(gradients2[1]);
 			Assert::AreEqual(5, gradient2.getShape()[0]);
 			Assert::AreEqual(2, gradient2.getShape()[1]);
 			Assert::AreEqual(3, gradient2.getShape()[2]);
+		}
+
+		TEST_METHOD(Values1)
+		{
+			Tensor tensor1a = Tensor::range({ 2, 3 }, 1);
+			Tensor tensor1b = Tensor::range({ 3, 4 }, 1).requireGradient();
+			Tensor tensor1c = tensor1a.matrixMultiply(tensor1b);
+			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
+				Tensor::range({ 2,4 })
+			);
+			Tensor& gradient1 = std::get<1>(gradients1[0]);
+			CompareFloats(gradient1.at({ 0, 0 }), 20.0f);
+			CompareFloats(gradient1.at({ 0, 1 }), 44.0f);
+			CompareFloats(gradient1.at({ 0, 2 }), 68.0f);
+			CompareFloats(gradient1.at({ 1, 0 }), 60.0f);
+			CompareFloats(gradient1.at({ 1, 1 }), 148.0f);
+			CompareFloats(gradient1.at({ 1, 2 }), 236.0f);
+
+			Tensor tensor2a = Tensor::range({ 2, 1, 1, 3 }, 1);
+			{
+				CompareFloats(tensor2a.at({ 0,0,0,0 }), 1);
+				CompareFloats(tensor2a.at({ 0,0,0,1 }), 2);
+				CompareFloats(tensor2a.at({ 0,0,0,2 }), 3);
+				CompareFloats(tensor2a.at({ 1,0,0,0 }), 4);
+				CompareFloats(tensor2a.at({ 1,0,0,1 }), 5);
+				CompareFloats(tensor2a.at({ 1,0,0,2 }), 6);
+			}
+			Tensor tensor2b = Tensor::range({ 1, 3 ,3, 2 }, 1).requireGradient();
+			{
+				CompareFloats(tensor2b.at({ 0,0,0,0 }), 1);
+				CompareFloats(tensor2b.at({ 0,0,0,1 }), 2);
+				CompareFloats(tensor2b.at({ 0,0,1,0 }), 3);
+				CompareFloats(tensor2b.at({ 0,0,1,1 }), 4);
+				CompareFloats(tensor2b.at({ 0,0,2,0 }), 5);
+				CompareFloats(tensor2b.at({ 0,0,2,1 }), 6);
+				CompareFloats(tensor2b.at({ 0,1,0,0 }), 7);
+				CompareFloats(tensor2b.at({ 0,1,0,1 }), 8);
+				CompareFloats(tensor2b.at({ 0,1,1,0 }), 9);
+				CompareFloats(tensor2b.at({ 0,1,1,1 }), 10);
+				CompareFloats(tensor2b.at({ 0,1,2,0 }), 11);
+				CompareFloats(tensor2b.at({ 0,1,2,1 }), 12);
+				CompareFloats(tensor2b.at({ 0,2,0,0 }), 13);
+				CompareFloats(tensor2b.at({ 0,2,0,1 }), 14);
+				CompareFloats(tensor2b.at({ 0,2,1,0 }), 15);
+				CompareFloats(tensor2b.at({ 0,2,1,1 }), 16);
+				CompareFloats(tensor2b.at({ 0,2,2,0 }), 17);
+				CompareFloats(tensor2b.at({ 0,2,2,1 }), 18);
+			}
+			Tensor tensor2c = tensor2a.matrixMultiply(tensor2b);
+			{
+				CompareFloats(tensor2c.at({ 0,0,0,0 }), 22);
+				CompareFloats(tensor2c.at({ 0,0,0,1 }), 28);
+				CompareFloats(tensor2c.at({ 0,1,0,0 }), 58);
+				CompareFloats(tensor2c.at({ 0,1,0,1 }), 64);
+				CompareFloats(tensor2c.at({ 0,2,0,0 }), 94);
+				CompareFloats(tensor2c.at({ 0,2,0,1 }), 100);
+				CompareFloats(tensor2c.at({ 1,0,0,0 }), 49);
+				CompareFloats(tensor2c.at({ 1,0,0,1 }), 64);
+				CompareFloats(tensor2c.at({ 1,1,0,0 }), 139);
+				CompareFloats(tensor2c.at({ 1,1,0,1 }), 154);
+				CompareFloats(tensor2c.at({ 1,2,0,0 }), 229);
+				CompareFloats(tensor2c.at({ 1,2,0,1 }), 244);
+			}			
+			Tensor tensor2d = Tensor::range({ 2,3,1,2 });
+			{
+				CompareFloats(tensor2d.at({ 0,0,0,0 }), 0);
+				CompareFloats(tensor2d.at({ 0,0,0,1 }), 1);
+				CompareFloats(tensor2d.at({ 0,1,0,0 }), 2);
+				CompareFloats(tensor2d.at({ 0,1,0,1 }), 3);
+				CompareFloats(tensor2d.at({ 0,2,0,0 }), 4);
+				CompareFloats(tensor2d.at({ 0,2,0,1 }), 5);
+				CompareFloats(tensor2d.at({ 1,0,0,0 }), 6);
+				CompareFloats(tensor2d.at({ 1,0,0,1 }), 7);
+				CompareFloats(tensor2d.at({ 1,1,0,0 }), 8);
+				CompareFloats(tensor2d.at({ 1,1,0,1 }), 9);
+				CompareFloats(tensor2d.at({ 1,2,0,0 }), 10);
+				CompareFloats(tensor2d.at({ 1,2,0,1 }), 11);
+			}
+			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
+				tensor2d
+			);
+			Tensor& gradient2 = std::get<1>(gradients2[0]);
+			CompareFloats(gradient2.at({ 0,0,0,0 }), 162.0f);
+			CompareFloats(gradient2.at({ 0,0,0,1 }), 192.0f);
+			CompareFloats(gradient2.at({ 0,0,0,2 }), 222.0f);
+			CompareFloats(gradient2.at({ 1,0,0,0 }), 432.0f);
+			CompareFloats(gradient2.at({ 1,0,0,1 }), 534.0f);
+			CompareFloats(gradient2.at({ 1,0,0,2 }), 636.0f);
+		}
+
+		TEST_METHOD(Values2)
+		{
+			Tensor tensor1a = Tensor::range({ 2, 3 }, 1);
+			Tensor tensor1b = Tensor::range({ 3, 4 }, 1).requireGradient();
+			Tensor tensor1c = tensor1a.matrixMultiply(tensor1b);
+			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
+				Tensor::range({ 2,4 })
+			);
+			Tensor& gradient1 = std::get<1>(gradients1[1]);
+			CompareFloats(gradient1.at({ 0, 0 }), 16.0f);
+			CompareFloats(gradient1.at({ 0, 1 }), 21.0f);
+			CompareFloats(gradient1.at({ 0, 2 }), 26.0f);
+			CompareFloats(gradient1.at({ 0, 3 }), 31.0f);
+
+			CompareFloats(gradient1.at({ 1, 0 }), 20.0f);
+			CompareFloats(gradient1.at({ 1, 1 }), 27.0f);
+			CompareFloats(gradient1.at({ 1, 2 }), 34.0f);
+			CompareFloats(gradient1.at({ 1, 3 }), 41.0f);
+
+			CompareFloats(gradient1.at({ 2, 0 }), 24.0f);
+			CompareFloats(gradient1.at({ 2, 1 }), 33.0f);
+			CompareFloats(gradient1.at({ 2, 2 }), 42.0f);
+			CompareFloats(gradient1.at({ 2, 3 }), 51.0f);
+
+			Tensor tensor2a = Tensor::range({ 2, 1, 1, 3 }, 1);
+			{
+				CompareFloats(tensor2a.at({ 0,0,0,0 }), 1);
+				CompareFloats(tensor2a.at({ 0,0,0,1 }), 2);
+				CompareFloats(tensor2a.at({ 0,0,0,2 }), 3);
+				CompareFloats(tensor2a.at({ 1,0,0,0 }), 4);
+				CompareFloats(tensor2a.at({ 1,0,0,1 }), 5);
+				CompareFloats(tensor2a.at({ 1,0,0,2 }), 6);
+			}
+			Tensor tensor2b = Tensor::range({ 1, 3 ,3, 2 }, 1).requireGradient();
+			{
+				CompareFloats(tensor2b.at({ 0,0,0,0 }), 1);
+				CompareFloats(tensor2b.at({ 0,0,0,1 }), 2);
+				CompareFloats(tensor2b.at({ 0,0,1,0 }), 3);
+				CompareFloats(tensor2b.at({ 0,0,1,1 }), 4);
+				CompareFloats(tensor2b.at({ 0,0,2,0 }), 5);
+				CompareFloats(tensor2b.at({ 0,0,2,1 }), 6);
+				CompareFloats(tensor2b.at({ 0,1,0,0 }), 7);
+				CompareFloats(tensor2b.at({ 0,1,0,1 }), 8);
+				CompareFloats(tensor2b.at({ 0,1,1,0 }), 9);
+				CompareFloats(tensor2b.at({ 0,1,1,1 }), 10);
+				CompareFloats(tensor2b.at({ 0,1,2,0 }), 11);
+				CompareFloats(tensor2b.at({ 0,1,2,1 }), 12);
+				CompareFloats(tensor2b.at({ 0,2,0,0 }), 13);
+				CompareFloats(tensor2b.at({ 0,2,0,1 }), 14);
+				CompareFloats(tensor2b.at({ 0,2,1,0 }), 15);
+				CompareFloats(tensor2b.at({ 0,2,1,1 }), 16);
+				CompareFloats(tensor2b.at({ 0,2,2,0 }), 17);
+				CompareFloats(tensor2b.at({ 0,2,2,1 }), 18);
+			}
+			Tensor tensor2c = tensor2a.matrixMultiply(tensor2b);
+			{
+				CompareFloats(tensor2c.at({ 0,0,0,0 }), 22);
+				CompareFloats(tensor2c.at({ 0,0,0,1 }), 28);
+				CompareFloats(tensor2c.at({ 0,1,0,0 }), 58);
+				CompareFloats(tensor2c.at({ 0,1,0,1 }), 64);
+				CompareFloats(tensor2c.at({ 0,2,0,0 }), 94);
+				CompareFloats(tensor2c.at({ 0,2,0,1 }), 100);
+				CompareFloats(tensor2c.at({ 1,0,0,0 }), 49);
+				CompareFloats(tensor2c.at({ 1,0,0,1 }), 64);
+				CompareFloats(tensor2c.at({ 1,1,0,0 }), 139);
+				CompareFloats(tensor2c.at({ 1,1,0,1 }), 154);
+				CompareFloats(tensor2c.at({ 1,2,0,0 }), 229);
+				CompareFloats(tensor2c.at({ 1,2,0,1 }), 244);
+			}
+			Tensor tensor2d = Tensor::range({ 2,3,1,2 });
+			{
+				CompareFloats(tensor2d.at({ 0,0,0,0 }), 0);
+				CompareFloats(tensor2d.at({ 0,0,0,1 }), 1);
+				CompareFloats(tensor2d.at({ 0,1,0,0 }), 2);
+				CompareFloats(tensor2d.at({ 0,1,0,1 }), 3);
+				CompareFloats(tensor2d.at({ 0,2,0,0 }), 4);
+				CompareFloats(tensor2d.at({ 0,2,0,1 }), 5);
+				CompareFloats(tensor2d.at({ 1,0,0,0 }), 6);
+				CompareFloats(tensor2d.at({ 1,0,0,1 }), 7);
+				CompareFloats(tensor2d.at({ 1,1,0,0 }), 8);
+				CompareFloats(tensor2d.at({ 1,1,0,1 }), 9);
+				CompareFloats(tensor2d.at({ 1,2,0,0 }), 10);
+				CompareFloats(tensor2d.at({ 1,2,0,1 }), 11);
+			}
+			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
+				tensor2d
+			);
+			Tensor& gradient2 = std::get<1>(gradients2[1]);
+			CompareFloats(gradient2.at({ 0,0,0,0 }), 24.0f);
+			CompareFloats(gradient2.at({ 0,0,0,1 }), 29.0f);
+			CompareFloats(gradient2.at({ 0,0,1,0 }), 30.0f);
+			CompareFloats(gradient2.at({ 0,0,1,1 }), 37.0f);
+			CompareFloats(gradient2.at({ 0,0,2,0 }), 36.0f);
+			CompareFloats(gradient2.at({ 0,0,2,1 }), 45.0f);
+
+			CompareFloats(gradient2.at({ 0,1,0,0 }), 34.0f);
+			CompareFloats(gradient2.at({ 0,1,0,1 }), 39.0f);
+			CompareFloats(gradient2.at({ 0,1,1,0 }), 44.0f);
+			CompareFloats(gradient2.at({ 0,1,1,1 }), 51.0f);
+			CompareFloats(gradient2.at({ 0,1,2,0 }), 54.0f);
+			CompareFloats(gradient2.at({ 0,1,2,1 }), 63.0f);
+
+			CompareFloats(gradient2.at({ 0,2,0,0 }), 44.0f);
+			CompareFloats(gradient2.at({ 0,2,0,1 }), 49.0f);
+			CompareFloats(gradient2.at({ 0,2,1,0 }), 58.0f);
+			CompareFloats(gradient2.at({ 0,2,1,1 }), 65.0f);
+			CompareFloats(gradient2.at({ 0,2,2,0 }), 72.0f);
+			CompareFloats(gradient2.at({ 0,2,2,1 }), 81.0f);
+
 		}
 	};
 

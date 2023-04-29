@@ -59,6 +59,16 @@ Tensor& Tensor::reshape(const std::vector<int>& shape) {
 	return *this;
 }
 
+Tensor Tensor::detached() const
+{
+	float* newValues = new float[size];
+	for (int i = 0; i < size; i++)
+	{
+		newValues[i] = values[i];
+	}
+	return Tensor(shape, size, newValues);
+}
+
 Tensor Tensor::get(const std::vector<int>& indices) {
 	int index = getIndex(indices);
 	std::vector<int> newShape(shape.begin() + indices.size(), shape.end());

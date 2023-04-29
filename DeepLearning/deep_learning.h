@@ -33,6 +33,8 @@ public:
 
 	Tensor& reshape(const std::vector<int>& shape);
 
+	Tensor detached() const;
+
 	Tensor get(const std::vector<int>& indices);
 	Tensor set(float value, const std::vector<int>& indices = {});
 	Tensor set(Tensor& values, const std::vector<int>& indices = {});
