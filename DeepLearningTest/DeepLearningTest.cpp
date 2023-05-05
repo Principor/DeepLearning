@@ -1217,4 +1217,49 @@ namespace TensorTest
 			Assert::IsTrue(tensor2.requiresGradient());
 		}
 	};
+
+	TEST_CLASS(DetachedTest)
+	{
+	public:
+		TEST_METHOD(Shape)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 2,4 });
+			Tensor tensor1b = tensor1a.detached();
+			Assert::AreEqual(tensor1b.getShape()[0], 2);
+			Assert::AreEqual(tensor1b.getShape()[1], 4);
+
+			Tensor tensor2a = Tensor::zeroes({ 1, 3, 2, 5 });
+			Tensor tensor2b = tensor2a.detached();
+			Assert::AreEqual(tensor2b.getShape()[0], 1);
+			Assert::AreEqual(tensor2b.getShape()[1], 3);
+			Assert::AreEqual(tensor2b.getShape()[2], 2);
+			Assert::AreEqual(tensor2b.getShape()[3], 5);
+		}
+
+		TEST_METHOD(Values)
+		{
+			Tensor tensor1a = Tensor::range({ 2,4 });
+			Tensor tensor1b = tensor1a.detached();
+			for (int i = 0; i < 8; i++) {
+				CompareFloats(tensor1b.at(i), i);
+			}
+
+			Tensor tensor2a = Tensor::range({ 1, 3, 2, 5 });
+			Tensor tensor2b = tensor2a.detached();			
+			for (int i = 0; i < 30; i++) {
+				CompareFloats(tensor2b.at(i), i);
+			}
+		}
+
+		TEST_METHOD(Gradient)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 2,4 });
+			Tensor tensor1b = tensor1a.detached();
+			Assert::IsFalse(tensor1b.requiresGradient());
+
+			Tensor tensor2a = Tensor::zeroes({ 1, 3, 2, 5 }).requireGradient();
+			Tensor tensor2b = tensor2a.detached();
+			Assert::IsFalse(tensor2b.requiresGradient());
+		}
+	};
 }
