@@ -223,7 +223,7 @@ namespace GradientFunctionTest
 		TEST_METHOD(Shape)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 2,1,3 }).requireGradient();
-			Tensor tensor1b = tensor1a.add(2.0f);
+			Tensor tensor1b = Tensor::add(tensor1a, 2.0f);
 			gradientList gradients1 = tensor1b.getFunction()->calculateGradient(
 				Tensor::zeroes({ 2,1,3 })
 			);
@@ -233,7 +233,7 @@ namespace GradientFunctionTest
 			Assert::AreEqual(gradient1.getShape()[2], tensor1a.getShape()[2]);
 
 			Tensor tensor2a = Tensor::zeroes({ 10 }).requireGradient();
-			Tensor tensor2b = tensor2a.add(2.0f);
+			Tensor tensor2b = Tensor::add(tensor2a, 2.0f);
 			gradientList gradients2 = tensor2b.getFunction()->calculateGradient(
 				Tensor::zeroes({ 10 })
 			);
@@ -244,7 +244,7 @@ namespace GradientFunctionTest
 		TEST_METHOD(Values)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 2,1,3 }).requireGradient();
-			Tensor tensor1b = tensor1a.add(2.0f);
+			Tensor tensor1b = Tensor::add(tensor1a, 2.0f);
 			gradientList gradients1 = tensor1b.getFunction()->calculateGradient(
 				Tensor::range({ 2,1,3 }, 1)
 			);
@@ -257,7 +257,7 @@ namespace GradientFunctionTest
 			CompareFloats(gradient1.at(5), 6.0f);
 
 			Tensor tensor2a = Tensor::zeroes({ 5 }).requireGradient();
-			Tensor tensor2b = tensor2a.add(2.0f);
+			Tensor tensor2b = Tensor::add(tensor2a, 2.0f);
 			gradientList gradients2 = tensor2b.getFunction()->calculateGradient(
 				Tensor::range({ 5 }, 1)
 			);
@@ -277,7 +277,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
 			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
-			Tensor tensor1c = tensor1a.add(tensor1b);
+			Tensor tensor1c = Tensor::add(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 4,3 })
 			);
@@ -287,7 +287,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::zeroes({ 1, });
 			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
-			Tensor tensor2c = tensor2a.add(tensor2b);
+			Tensor tensor2c = Tensor::add(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 2, 3, 1 })
 			);
@@ -299,7 +299,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
 			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
-			Tensor tensor1c = tensor1a.add(tensor1b);
+			Tensor tensor1c = Tensor::add(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 4,3 })
 			);
@@ -309,7 +309,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::zeroes({ 1, });
 			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
-			Tensor tensor2c = tensor2a.add(tensor2b);
+			Tensor tensor2c = Tensor::add(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 2, 3, 1 })
 			);
@@ -323,7 +323,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
 			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
-			Tensor tensor1c = tensor1a.add(tensor1b);
+			Tensor tensor1c = Tensor::add(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::range({ 4, 3 })
 			);
@@ -334,7 +334,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::zeroes({ 1, });
 			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
-			Tensor tensor2c = tensor2a.add(tensor2b);
+			Tensor tensor2c = Tensor::add(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::ones({ 2, 3, 1 })
 			);
@@ -346,7 +346,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
 			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
-			Tensor tensor1c = tensor1a.add(tensor1b);
+			Tensor tensor1c = Tensor::add(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::range({ 4, 3 })
 			);
@@ -358,7 +358,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::zeroes({ 1, });
 			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
-			Tensor tensor2c = tensor2a.add(tensor2b);
+			Tensor tensor2c = Tensor::add(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::range({ 2, 3, 1 }, 1)
 			);
@@ -378,7 +378,7 @@ namespace GradientFunctionTest
 		TEST_METHOD(Shape)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 2,1,3 }).requireGradient();
-			Tensor tensor1b = tensor1a.subtract(2.0f);
+			Tensor tensor1b = Tensor::subtract(tensor1a, 2.0f);
 			gradientList gradients1 = tensor1b.getFunction()->calculateGradient(
 				Tensor::zeroes({ 2,1,3 })
 			);
@@ -388,7 +388,7 @@ namespace GradientFunctionTest
 			Assert::AreEqual(gradient1.getShape()[2], tensor1a.getShape()[2]);
 
 			Tensor tensor2a = Tensor::zeroes({ 10 }).requireGradient();
-			Tensor tensor2b = tensor2a.subtract(2.0f);
+			Tensor tensor2b = Tensor::subtract(tensor2a, 2.0f);
 			gradientList gradients2 = tensor2b.getFunction()->calculateGradient(
 				Tensor::zeroes({ 10 })
 			);
@@ -399,7 +399,7 @@ namespace GradientFunctionTest
 		TEST_METHOD(Values)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 2,1,3 }).requireGradient();
-			Tensor tensor1b = tensor1a.subtract(2.0f);
+			Tensor tensor1b = Tensor::subtract(tensor1a, 2.0f);
 			gradientList gradients1 = tensor1b.getFunction()->calculateGradient(
 				Tensor::range({ 2,1,3 }, 1)
 			);
@@ -412,7 +412,7 @@ namespace GradientFunctionTest
 			CompareFloats(gradient1.at(5), 6.0f);
 
 			Tensor tensor2a = Tensor::zeroes({ 5 }).requireGradient();
-			Tensor tensor2b = tensor2a.subtract(2.0f);
+			Tensor tensor2b = Tensor::subtract(tensor2a, 2.0f);
 			gradientList gradients2 = tensor2b.getFunction()->calculateGradient(
 				Tensor::range({ 5 }, 1)
 			);
@@ -432,7 +432,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
 			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
-			Tensor tensor1c = tensor1a.subtract(tensor1b);
+			Tensor tensor1c = Tensor::subtract(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 4,3 })
 			);
@@ -442,7 +442,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::zeroes({ 1, });
 			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
-			Tensor tensor2c = tensor2a.subtract(tensor2b);
+			Tensor tensor2c = Tensor::subtract(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 2, 3, 1 })
 			);
@@ -454,7 +454,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
 			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
-			Tensor tensor1c = tensor1a.subtract(tensor1b);
+			Tensor tensor1c = Tensor::subtract(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 4,3 })
 			);
@@ -464,7 +464,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::zeroes({ 1, });
 			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
-			Tensor tensor2c = tensor2a.subtract(tensor2b);
+			Tensor tensor2c = Tensor::subtract(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 2, 3, 1 })
 			);
@@ -478,7 +478,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
 			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
-			Tensor tensor1c = tensor1a.subtract(tensor1b);
+			Tensor tensor1c = Tensor::subtract(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::range({ 4, 3 })
 			);
@@ -489,7 +489,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::zeroes({ 1, });
 			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
-			Tensor tensor2c = tensor2a.subtract(tensor2b);
+			Tensor tensor2c = Tensor::subtract(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::ones({ 2, 3, 1 })
 			);
@@ -501,7 +501,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
 			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
-			Tensor tensor1c = tensor1a.subtract(tensor1b);
+			Tensor tensor1c = Tensor::subtract(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::range({ 4, 3 })
 			);
@@ -513,7 +513,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::zeroes({ 1, });
 			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
-			Tensor tensor2c = tensor2a.subtract(tensor2b);
+			Tensor tensor2c = Tensor::subtract(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::range({ 2, 3, 1 }, 1)
 			);
@@ -533,7 +533,7 @@ namespace GradientFunctionTest
 		TEST_METHOD(Shape)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 2,1,3 }).requireGradient();
-			Tensor tensor1b = tensor1a.multiply(2.0f);
+			Tensor tensor1b = Tensor::multiply(tensor1a, 2.0f);
 			gradientList gradients1 = tensor1b.getFunction()->calculateGradient(
 				Tensor::zeroes({ 2,1,3 })
 			);
@@ -543,7 +543,7 @@ namespace GradientFunctionTest
 			Assert::AreEqual(gradient1.getShape()[2], tensor1a.getShape()[2]);
 
 			Tensor tensor2a = Tensor::zeroes({ 10 }).requireGradient();
-			Tensor tensor2b = tensor2a.multiply(2.0f);
+			Tensor tensor2b = Tensor::multiply(tensor2a, 2.0f);
 			gradientList gradients2 = tensor2b.getFunction()->calculateGradient(
 				Tensor::zeroes({ 10 })
 			);
@@ -554,7 +554,7 @@ namespace GradientFunctionTest
 		TEST_METHOD(Values)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 2,1,3 }).requireGradient();
-			Tensor tensor1b = tensor1a.multiply(2.0f);
+			Tensor tensor1b = Tensor::multiply(tensor1a, 2.0f);
 			gradientList gradients1 = tensor1b.getFunction()->calculateGradient(
 				Tensor::range({ 2,1,3 }, 1)
 			);
@@ -567,7 +567,7 @@ namespace GradientFunctionTest
 			CompareFloats(gradient1.at(5), 12.0f);
 
 			Tensor tensor2a = Tensor::zeroes({ 5 }).requireGradient();
-			Tensor tensor2b = tensor2a.multiply(2.0f);
+			Tensor tensor2b = Tensor::multiply(tensor2a, 2.0f);
 			gradientList gradients2 = tensor2b.getFunction()->calculateGradient(
 				Tensor::range({ 5 }, 1)
 			);
@@ -587,7 +587,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
 			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
-			Tensor tensor1c = tensor1a.multiply(tensor1b);
+			Tensor tensor1c = Tensor::multiply(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 4,3 })
 			);
@@ -597,7 +597,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::zeroes({ 1, });
 			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
-			Tensor tensor2c = tensor2a.multiply(tensor2b);
+			Tensor tensor2c = Tensor::multiply(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 2, 3, 1 })
 			);
@@ -609,7 +609,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
 			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
-			Tensor tensor1c = tensor1a.multiply(tensor1b);
+			Tensor tensor1c = Tensor::multiply(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 4,3 })
 			);
@@ -619,7 +619,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::zeroes({ 1, });
 			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
-			Tensor tensor2c = tensor2a.multiply(tensor2b);
+			Tensor tensor2c = Tensor::multiply(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 2, 3, 1 })
 			);
@@ -633,7 +633,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
 			Tensor tensor1b = Tensor::range({ 4, 1 }).requireGradient();
-			Tensor tensor1c = tensor1a.multiply(tensor1b);
+			Tensor tensor1c = Tensor::multiply(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::range({ 4, 3 })
 			);
@@ -644,7 +644,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::zeroes({ 1, });
 			Tensor tensor2b = Tensor::ones({ 2, 3, 1 }).requireGradient();
-			Tensor tensor2c = tensor2a.multiply(tensor2b);
+			Tensor tensor2c = Tensor::multiply(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::range({ 2, 3, 1 })
 			);
@@ -656,7 +656,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::range({ 1, 3 });
 			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
-			Tensor tensor1c = tensor1a.multiply(tensor1b);
+			Tensor tensor1c = Tensor::multiply(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::range({ 4, 3 })
 			);
@@ -668,7 +668,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::full({ 1, }, 2);
 			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
-			Tensor tensor2c = tensor2a.multiply(tensor2b);
+			Tensor tensor2c = Tensor::multiply(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::range({ 2, 3, 1 }, 1)
 			);
@@ -688,7 +688,7 @@ namespace GradientFunctionTest
 		TEST_METHOD(Shape)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 2,1,3 }).requireGradient();
-			Tensor tensor1b = tensor1a.divide(2.0f);
+			Tensor tensor1b = Tensor::divide(tensor1a, 2.0f);
 			gradientList gradients1 = tensor1b.getFunction()->calculateGradient(
 				Tensor::zeroes({ 2,1,3 })
 			);
@@ -698,7 +698,7 @@ namespace GradientFunctionTest
 			Assert::AreEqual(gradient1.getShape()[2], tensor1a.getShape()[2]);
 
 			Tensor tensor2a = Tensor::zeroes({ 10 }).requireGradient();
-			Tensor tensor2b = tensor2a.divide(2.0f);
+			Tensor tensor2b = Tensor::divide(tensor2a, 2.0f);
 			gradientList gradients2 = tensor2b.getFunction()->calculateGradient(
 				Tensor::zeroes({ 10 })
 			);
@@ -709,7 +709,7 @@ namespace GradientFunctionTest
 		TEST_METHOD(Values)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 2,1,3 }).requireGradient();
-			Tensor tensor1b = tensor1a.divide(2.0f);
+			Tensor tensor1b = Tensor::divide(tensor1a, 2.0f);
 			gradientList gradients1 = tensor1b.getFunction()->calculateGradient(
 				Tensor::range({ 2,1,3 }, 1)
 			);
@@ -722,7 +722,7 @@ namespace GradientFunctionTest
 			CompareFloats(gradient1.at(5), 3.0f);
 
 			Tensor tensor2a = Tensor::zeroes({ 5 }).requireGradient();
-			Tensor tensor2b = tensor2a.divide(0.5f);
+			Tensor tensor2b = Tensor::divide(tensor2a, 0.5f);
 			gradientList gradients2 = tensor2b.getFunction()->calculateGradient(
 				Tensor::range({ 5 }, 1)
 			);
@@ -742,7 +742,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
 			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
-			Tensor tensor1c = tensor1a.divide(tensor1b);
+			Tensor tensor1c = Tensor::divide(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 4,3 })
 			);
@@ -752,7 +752,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::zeroes({ 1, });
 			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
-			Tensor tensor2c = tensor2a.divide(tensor2b);
+			Tensor tensor2c = Tensor::divide(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 2, 3, 1 })
 			);
@@ -764,7 +764,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
 			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
-			Tensor tensor1c = tensor1a.divide(tensor1b);
+			Tensor tensor1c = Tensor::divide(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 4,3 })
 			);
@@ -774,7 +774,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::zeroes({ 1, });
 			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
-			Tensor tensor2c = tensor2a.divide(tensor2b);
+			Tensor tensor2c = Tensor::divide(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 2, 3, 1 })
 			);
@@ -788,7 +788,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::range({ 2, 1, 3 }, 0, 2);
 			Tensor tensor1b = Tensor::full({ 1 }, 0.5f).requireGradient();
-			Tensor tensor1c = tensor1a.divide(tensor1b);
+			Tensor tensor1c = Tensor::divide(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::range({ 2, 1, 3 }, 1)
 			);
@@ -802,7 +802,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::zeroes({ 1, });
 			Tensor tensor2b = Tensor::full({ 2, 3, 1 }, 2.0f).requireGradient();
-			Tensor tensor2c = tensor2a.divide(tensor2b);
+			Tensor tensor2c = Tensor::divide(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::range({ 2, 3, 1 })
 			);
@@ -814,7 +814,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::range({ 1, 3 }, 1);
 			Tensor tensor1b = Tensor::full({ 4, 1 }, 0.2f).requireGradient();
-			Tensor tensor1c = tensor1a.divide(tensor1b);
+			Tensor tensor1c = Tensor::divide(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::range({ 4, 3 })
 			);
@@ -826,7 +826,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::full({ 1, }, 2);
 			Tensor tensor2b = Tensor::full({ 2, 3, 1 }, -1.0f).requireGradient();
-			Tensor tensor2c = tensor2a.divide(tensor2b);
+			Tensor tensor2c = Tensor::divide(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::range({ 2, 3, 1 }, 1)
 			);
@@ -848,7 +848,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor1a = Tensor::zeroes({ 10, 3, 1 });
 			Tensor tensor1b = Tensor::zeroes({ 1, 1, 2 }).requireGradient();
-			Tensor tensor1c = tensor1a.matrixMultiply(tensor1b);
+			Tensor tensor1c = Tensor::matrixMultiply(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 10,3,2 })
 			);
@@ -859,7 +859,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::zeroes({ 7, 5, 4, 2 });
 			Tensor tensor2b = Tensor::zeroes({ 5, 2, 3 }).requireGradient();
-			Tensor tensor2c = tensor2a.matrixMultiply(tensor2b);
+			Tensor tensor2c = Tensor::matrixMultiply(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 7,5,4,3 })
 			);
@@ -875,7 +875,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor1a = Tensor::zeroes({ 10, 3, 1 });
 			Tensor tensor1b = Tensor::zeroes({ 1, 1, 2 }).requireGradient();
-			Tensor tensor1c = tensor1a.matrixMultiply(tensor1b);
+			Tensor tensor1c = Tensor::matrixMultiply(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 10,3,2 })
 			);
@@ -886,7 +886,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::zeroes({ 7, 5, 4, 2 });
 			Tensor tensor2b = Tensor::zeroes({ 5, 2, 3 }).requireGradient();
-			Tensor tensor2c = tensor2a.matrixMultiply(tensor2b);
+			Tensor tensor2c = Tensor::matrixMultiply(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::zeroes({ 7,5,4,3 })
 			);
@@ -900,7 +900,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::range({ 2, 3 }, 1);
 			Tensor tensor1b = Tensor::range({ 3, 4 }, 1).requireGradient();
-			Tensor tensor1c = tensor1a.matrixMultiply(tensor1b);
+			Tensor tensor1c = Tensor::matrixMultiply(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::range({ 2,4 })
 			);
@@ -942,7 +942,7 @@ namespace GradientFunctionTest
 				CompareFloats(tensor2b.at({ 0,2,2,0 }), 17);
 				CompareFloats(tensor2b.at({ 0,2,2,1 }), 18);
 			}
-			Tensor tensor2c = tensor2a.matrixMultiply(tensor2b);
+			Tensor tensor2c = Tensor::matrixMultiply(tensor2a, tensor2b);
 			{
 				CompareFloats(tensor2c.at({ 0,0,0,0 }), 22);
 				CompareFloats(tensor2c.at({ 0,0,0,1 }), 28);
@@ -988,7 +988,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::range({ 2, 3 }, 1);
 			Tensor tensor1b = Tensor::range({ 3, 4 }, 1).requireGradient();
-			Tensor tensor1c = tensor1a.matrixMultiply(tensor1b);
+			Tensor tensor1c = Tensor::matrixMultiply(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::range({ 2,4 })
 			);
@@ -1038,7 +1038,7 @@ namespace GradientFunctionTest
 				CompareFloats(tensor2b.at({ 0,2,2,0 }), 17);
 				CompareFloats(tensor2b.at({ 0,2,2,1 }), 18);
 			}
-			Tensor tensor2c = tensor2a.matrixMultiply(tensor2b);
+			Tensor tensor2c = Tensor::matrixMultiply(tensor2a, tensor2b);
 			{
 				CompareFloats(tensor2c.at({ 0,0,0,0 }), 22);
 				CompareFloats(tensor2c.at({ 0,0,0,1 }), 28);

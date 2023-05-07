@@ -38,16 +38,18 @@ public:
 	Tensor get(const std::vector<int>& indices);
 	Tensor set(float value, const std::vector<int>& indices = {});
 	Tensor set(Tensor& values, const std::vector<int>& indices = {});
-	Tensor add(float value);
-	Tensor add(Tensor& values);
-	Tensor subtract(float value);
-	Tensor subtract(Tensor& values);
-	Tensor multiply(float value);
-	Tensor multiply(Tensor& values);
-	Tensor divide(float value);
-	Tensor divide(Tensor& values);
 	Tensor transpose();
-	Tensor matrixMultiply(Tensor& other);
+
+	static Tensor add(Tensor& input, float other);
+	static Tensor add(Tensor& input, Tensor& other);
+	static Tensor subtract(Tensor& input, float value);
+	static Tensor subtract(Tensor& input, Tensor& other);
+	static Tensor multiply(Tensor& input, float value);
+	static Tensor multiply(Tensor& input, Tensor& other);
+	static Tensor divide(Tensor& input, float value);
+	static Tensor divide(Tensor& input, Tensor& other);
+	static Tensor matrixMultiply(Tensor& input, Tensor& other);
+	
 
 	static Tensor zeroes(const std::vector<int>& shape);
 	static Tensor ones(const std::vector<int>& shape);

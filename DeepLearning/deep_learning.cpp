@@ -134,146 +134,6 @@ Tensor Tensor::set(Tensor& values, const std::vector<int>& indices)
 	return newTensor;
 }
 
-Tensor Tensor::add(float value) {
-	float* values = new float[size];
-	for (int i = 0; i < size; i++) {
-		values[i] = this->values[i] + value;
-	}
-	Tensor newTensor(shape, size, values);
-	if (gradient)
-	{
-		newTensor.gradient = true;
-		newTensor.function = new AddSingleFunction(this);
-	}
-	return newTensor;
-}
-
-Tensor Tensor::add(Tensor& values) {
-	auto broadcastedShape = broadcastShapes(shape, values.shape);
-	int broadcastedSize = calculateSize(broadcastedShape);
-	auto broadcastedIndices1 = broadcastIndices(shape, broadcastedShape);
-	auto broadcastedIndices2 = broadcastIndices(values.shape, broadcastedShape);
-
-	float* newValues = new float[broadcastedSize];
-
-	for (int i = 0; i < broadcastedSize; i++) {
-		newValues[i] = this->values[broadcastedIndices1[i]] + values.values[broadcastedIndices2[i]];
-	}
-
-	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
-	if (gradient || values.gradient)
-	{
-		newTensor.gradient = true;
-		newTensor.function = new AddTensorFunction(this, &values, broadcastedIndices1, broadcastedIndices2);
-	}
-	return newTensor;
-}
-
-Tensor Tensor::subtract(float value) {
-	float* values = new float[size];
-	for (int i = 0; i < size; i++) {
-		values[i] = this->values[i] - value;
-	}
-	Tensor newTensor(shape, size, values);
-	if (gradient)
-	{
-		newTensor.gradient = true;
-		newTensor.function = new SubtractSingleFunction(this);
-	}
-	return newTensor;
-}
-
-Tensor Tensor::subtract(Tensor& values) {
-	auto broadcastedShape = broadcastShapes(shape, values.shape);
-	int broadcastedSize = calculateSize(broadcastedShape);
-	auto broadcastedIndices1 = broadcastIndices(shape, broadcastedShape);
-	auto broadcastedIndices2 = broadcastIndices(values.shape, broadcastedShape);
-
-	float* newValues = new float[broadcastedSize];
-
-	for (int i = 0; i < broadcastedSize; i++) {
-		newValues[i] = this->values[broadcastedIndices1[i]] - values.values[broadcastedIndices2[i]];
-	}
-
-	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
-	if (gradient || values.gradient)
-	{
-		newTensor.gradient = true;
-		newTensor.function = new SubtractTensorFunction(this, &values, broadcastedIndices1, broadcastedIndices2);
-	}
-	return newTensor;
-}
-
-Tensor Tensor::multiply(float value) {
-	float* values = new float[size];
-	for (int i = 0; i < size; i++) {
-		values[i] = this->values[i] * value;
-	}
-	Tensor newTensor(shape, size, values);
-	if (gradient)
-	{
-		newTensor.gradient = true;
-		newTensor.function = new MultiplySingleFunction(this, value);
-	}
-	return newTensor;
-}
-
-Tensor Tensor::multiply(Tensor& values) {
-	auto broadcastedShape = broadcastShapes(shape, values.shape);
-	int broadcastedSize = calculateSize(broadcastedShape);
-	auto broadcastedIndices1 = broadcastIndices(shape, broadcastedShape);
-	auto broadcastedIndices2 = broadcastIndices(values.shape, broadcastedShape);
-
-	float* newValues = new float[broadcastedSize];
-
-	for (int i = 0; i < broadcastedSize; i++) {
-		newValues[i] = this->values[broadcastedIndices1[i]] * values.values[broadcastedIndices2[i]];
-	}
-
-	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
-	if (gradient || values.gradient)
-	{
-		newTensor.gradient = true;
-		newTensor.function = new MultiplyTensorFunction(this, &values, broadcastedIndices1, broadcastedIndices2);
-	}
-	return newTensor;
-}
-
-Tensor Tensor::divide(float value) {
-	float* values = new float[size];
-	for (int i = 0; i < size; i++) {
-		values[i] = this->values[i] / value;
-	}
-	Tensor newTensor(shape, size, values);
-	if (gradient)
-	{
-		newTensor.gradient = true;
-		newTensor.function = new DivideSingleFunction(this, value);
-	}
-	return newTensor;
-}
-
-Tensor Tensor::divide(Tensor& values) {
-	auto broadcastedShape = broadcastShapes(shape, values.shape);
-	int broadcastedSize = calculateSize(broadcastedShape);
-	auto broadcastedIndices1 = broadcastIndices(shape, broadcastedShape);
-	auto broadcastedIndices2 = broadcastIndices(values.shape, broadcastedShape);
-
-	float* newValues = new float[broadcastedSize];
-
-	for (int i = 0; i < broadcastedSize; i++) {
-		newValues[i] = this->values[broadcastedIndices1[i]] / values.values[broadcastedIndices2[i]];
-	}
-
-	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
-	if (gradient || values.gradient)
-	{
-		newTensor.gradient = true;
-		newTensor.function = new DivideTensorFunction(this, &values, broadcastedIndices1, broadcastedIndices2);
-	}
-	return newTensor;
-}
-
 Tensor Tensor::transpose() {
 	int numDims = shape.size();
 
@@ -314,18 +174,158 @@ Tensor Tensor::transpose() {
 	return newTensor;
 }
 
-Tensor Tensor::matrixMultiply(Tensor& other)
+Tensor Tensor::add(Tensor& input, float value) {
+	float* other = new float[input.size];
+	for (int i = 0; i < input.size; i++) {
+		other[i] = input.values[i] + value;
+	}
+	Tensor newTensor(input.shape, input.size, other);
+	if (input.gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new AddSingleFunction(&input);
+	}
+	return newTensor;
+}
+
+Tensor Tensor::add(Tensor& input, Tensor& other) {
+	auto broadcastedShape = broadcastShapes(input.shape, other.shape);
+	int broadcastedSize = calculateSize(broadcastedShape);
+	auto broadcastedIndices1 = broadcastIndices(input.shape, broadcastedShape);
+	auto broadcastedIndices2 = broadcastIndices(other.shape, broadcastedShape);
+
+	float* newValues = new float[broadcastedSize];
+
+	for (int i = 0; i < broadcastedSize; i++) {
+		newValues[i] = input.values[broadcastedIndices1[i]] + other.values[broadcastedIndices2[i]];
+	}
+
+	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
+	if (input.gradient || other.gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new AddTensorFunction(&input, &other, broadcastedIndices1, broadcastedIndices2);
+	}
+	return newTensor;
+}
+
+Tensor Tensor::subtract(Tensor& input, float value) {
+	float* other = new float[input.size];
+	for (int i = 0; i < input.size; i++) {
+		other[i] = input.values[i] - value;
+	}
+	Tensor newTensor(input.shape, input.size, other);
+	if (input.gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new SubtractSingleFunction(&input);
+	}
+	return newTensor;
+}
+
+Tensor Tensor::subtract(Tensor& input, Tensor& other) {
+	auto broadcastedShape = broadcastShapes(input.shape, other.shape);
+	int broadcastedSize = calculateSize(broadcastedShape);
+	auto broadcastedIndices1 = broadcastIndices(input.shape, broadcastedShape);
+	auto broadcastedIndices2 = broadcastIndices(other.shape, broadcastedShape);
+
+	float* newValues = new float[broadcastedSize];
+
+	for (int i = 0; i < broadcastedSize; i++) {
+		newValues[i] = input.values[broadcastedIndices1[i]] - other.values[broadcastedIndices2[i]];
+	}
+
+	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
+	if (input.gradient || other.gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new SubtractTensorFunction(&input, &other, broadcastedIndices1, broadcastedIndices2);
+	}
+	return newTensor;
+}
+
+Tensor Tensor::multiply(Tensor& input, float value) {
+	float* other = new float[input.size];
+	for (int i = 0; i < input.size; i++) {
+		other[i] = input.values[i] * value;
+	}
+	Tensor newTensor(input.shape, input.size, other);
+	if (input.gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new MultiplySingleFunction(&input, value);
+	}
+	return newTensor;
+}
+
+Tensor Tensor::multiply(Tensor& input, Tensor& other) {
+	auto broadcastedShape = broadcastShapes(input.shape, other.shape);
+	int broadcastedSize = calculateSize(broadcastedShape);
+	auto broadcastedIndices1 = broadcastIndices(input.shape, broadcastedShape);
+	auto broadcastedIndices2 = broadcastIndices(other.shape, broadcastedShape);
+
+	float* newValues = new float[broadcastedSize];
+
+	for (int i = 0; i < broadcastedSize; i++) {
+		newValues[i] = input.values[broadcastedIndices1[i]] * other.values[broadcastedIndices2[i]];
+	}
+
+	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
+	if (input.gradient || other.gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new MultiplyTensorFunction(&input, &other, broadcastedIndices1, broadcastedIndices2);
+	}
+	return newTensor;
+}
+
+Tensor Tensor::divide(Tensor& input, float value) {
+	float* other = new float[input.size];
+	for (int i = 0; i < input.size; i++) {
+		other[i] = input.values[i] / value;
+	}
+	Tensor newTensor(input.shape, input.size, other);
+	if (input.gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new DivideSingleFunction(&input, value);
+	}
+	return newTensor;
+}
+
+Tensor Tensor::divide(Tensor& input, Tensor& other) {
+	auto broadcastedShape = broadcastShapes(input.shape, other.shape);
+	int broadcastedSize = calculateSize(broadcastedShape);
+	auto broadcastedIndices1 = broadcastIndices(input.shape, broadcastedShape);
+	auto broadcastedIndices2 = broadcastIndices(other.shape, broadcastedShape);
+
+	float* newValues = new float[broadcastedSize];
+
+	for (int i = 0; i < broadcastedSize; i++) {
+		newValues[i] = input.values[broadcastedIndices1[i]] / other.values[broadcastedIndices2[i]];
+	}
+
+	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
+	if (input.gradient || other.gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new DivideTensorFunction(&input, &other, broadcastedIndices1, broadcastedIndices2);
+	}
+	return newTensor;
+}
+
+Tensor Tensor::matrixMultiply(Tensor& input, Tensor& other)
 {
-	if (shape.size() < 2 || other.shape.size() < 2)
+	if (input.shape.size() < 2 || other.shape.size() < 2)
 		throw std::length_error("Tensors must have at least 2 dims for matrix multiplication.");
 
-	std::vector<int> matrixShape1 = getSubShape(shape, shape.size() - 2, 0);
+	std::vector<int> matrixShape1 = getSubShape(input.shape, input.shape.size() - 2, 0);
 	std::vector<int> matrixShape2 = getSubShape(other.shape, other.shape.size() - 2, 0);
 
 	if (matrixShape1[1] != matrixShape2[0])
 		throw std::invalid_argument("Inner dimensions of matrixes must match.");
 
-	std::vector<int> beforeShape1 = getSubShape(shape, 0, 2);
+	std::vector<int> beforeShape1 = getSubShape(input.shape, 0, 2);
 	std::vector<int> beforeShape2 = getSubShape(other.shape, 0, 2);
 
 	std::vector<int> broadcastedShape = broadcastShapes(beforeShape1, beforeShape2);
@@ -350,7 +350,7 @@ Tensor Tensor::matrixMultiply(Tensor& other)
 			for (int y = 0; y < matrixHeight; y++) {
 				int sum = 0;
 				for (int j = 0; j < matrixInner; j++) {
-					sum += values[startIndex1 + x * matrixInner + j] * other.values[startIndex2 + j * matrixHeight + y];
+					sum += input.values[startIndex1 + x * matrixInner + j] * other.values[startIndex2 + j * matrixHeight + y];
 				}
 				newValues[i * matrixWidth * matrixHeight + x * matrixHeight + y] = sum;
 			}
@@ -358,11 +358,11 @@ Tensor Tensor::matrixMultiply(Tensor& other)
 	}
 
 	Tensor newTensor(newShape, newSize, newValues);
-	if (gradient || other.gradient)
+	if (input.gradient || other.gradient)
 	{
 		newTensor.gradient = true;
 		newTensor.function = new MatrixMultiplicationFunction(
-			this, &other, broadcastedIndices1, broadcastedIndices2, matrixWidth, matrixInner, matrixHeight
+			&input, &other, broadcastedIndices1, broadcastedIndices2, matrixWidth, matrixInner, matrixHeight
 		);
 	}
 	return newTensor;

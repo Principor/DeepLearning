@@ -319,7 +319,7 @@ gradientList MatrixMultiplicationFunction::calculateGradient(Tensor& previousGra
 	float* gradientValues1 = new float[gradientSize1];
 	for (int i = 0; i < gradientSize1; i++) gradientValues1[i] = 0;
 	Tensor transpose1 = original2->detached().transpose();
-	Tensor unbroadcastedGradient1 = previousGradient.matrixMultiply(transpose1);
+	Tensor unbroadcastedGradient1 = Tensor::matrixMultiply(previousGradient, transpose1);
 	int matrixSize1 = matrixWidth * matrixInner;
 	for (int i = 0; i < broadcastIndices1.size(); i++) {
 		for (int j = 0; j < matrixSize1; j++) {
@@ -334,7 +334,7 @@ gradientList MatrixMultiplicationFunction::calculateGradient(Tensor& previousGra
 	float* gradientValues2 = new float[gradientSize2];
 	for (int i = 0; i < gradientSize2; i++) gradientValues2[i] = 0;
 	Tensor transpose2 = original1->detached().transpose();
-	Tensor unbroadcastedGradient2 = transpose2.matrixMultiply(previousGradient);
+	Tensor unbroadcastedGradient2 = Tensor::matrixMultiply(transpose2, previousGradient);
 	int matrixSize2 = matrixInner * matrixHeight;	
 	for (int i = 0; i < broadcastIndices2.size(); i++) {
 		for (int j = 0; j < matrixSize2; j++) {
