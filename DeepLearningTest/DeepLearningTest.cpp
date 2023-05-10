@@ -297,6 +297,7 @@ namespace TensorTest
 
 	TEST_CLASS(UniformTest)
 	{
+	public:
 		TEST_METHOD(Shape)
 		{
 			Assert::AreEqual(1, Tensor::uniform({ 1 }, 0, 1).getShape()[0]);
@@ -333,6 +334,48 @@ namespace TensorTest
 			Assert::IsFalse(Tensor::uniform({ 4, 3, 2 }, 0, 1).requiresGradient());
 			Assert::IsFalse(Tensor::uniform({  }, 0, 1).requiresGradient());
 			Assert::IsFalse(Tensor::uniform({ 10 }, 0, 1).requiresGradient());
+		}
+	};
+
+	TEST_CLASS(NormalTest)
+	{
+	public:
+		TEST_METHOD(Shape)
+		{
+			Assert::AreEqual(1, Tensor::normal({ 1 }, 0, 1).getShape()[0]);
+
+			Assert::AreEqual(3, Tensor::normal({ 3 }, 0, 1).getShape()[0]);
+
+			Assert::AreEqual(5, Tensor::normal({ 5, 2 }, 0, 1).getShape()[0]);
+			Assert::AreEqual(2, Tensor::normal({ 5, 2 }, 0, 1).getShape()[1]);
+
+			Assert::AreEqual(3, Tensor::normal({ 3,7,5 }, 0, 1).getShape()[0]);
+			Assert::AreEqual(7, Tensor::normal({ 3,7,5 }, 0, 1).getShape()[1]);
+			Assert::AreEqual(5, Tensor::normal({ 3,7,5 }, 0, 1).getShape()[2]);
+		}
+
+		TEST_METHOD(Size)
+		{
+			Assert::AreEqual(1, Tensor::normal({}, 0, 1).getSize());
+			Assert::AreEqual(1, Tensor::normal({ 1 }, 0, 1).getSize());
+			Assert::AreEqual(1, Tensor::normal({ 1, 1, 1 }, 0, 1).getSize());
+			Assert::AreEqual(2, Tensor::normal({ 2 }, 0, 1).getSize());
+			Assert::AreEqual(9, Tensor::normal({ 3, 3 }, 0, 1).getSize());
+			Assert::AreEqual(105, Tensor::normal({ 3, 7, 5 }, 0, 1).getSize());
+		}
+
+		TEST_METHOD(InvalidShape)
+		{
+			Assert::ExpectException<std::invalid_argument>([]() { Tensor::normal({ -1 }, 0, 1); });
+			Assert::ExpectException<std::invalid_argument>([]() { Tensor::normal({ 0 }, 0, 1); });
+			Assert::ExpectException<std::invalid_argument>([]() { Tensor::normal({ 1, 0, 3 }, 0, 1); });
+		}
+
+		TEST_METHOD(RequiresGradient)
+		{
+			Assert::IsFalse(Tensor::normal({ 4, 3, 2 }, 0, 1).requiresGradient());
+			Assert::IsFalse(Tensor::normal({  }, 0, 1).requiresGradient());
+			Assert::IsFalse(Tensor::normal({ 10 }, 0, 1).requiresGradient());
 		}
 	};
 

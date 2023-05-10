@@ -416,6 +416,20 @@ Tensor Tensor::uniform(const std::vector<int>& shape, float min, float max)
 	return Tensor(shape, size, values);
 }
 
+Tensor Tensor::normal(const std::vector<int>& shape, float mean, float std)
+{
+	int size = calculateSize(shape);
+	float* values = new float[size];
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::normal_distribution<> dist(mean, std);
+	for (int i = 0; i < size; i++)
+	{
+		values[i] = dist(gen);
+	}
+	return Tensor(shape, size, values);
+}
+
 int Tensor::getIndex(const std::vector<int>& indices) const {
 	//Ensure indices are valid
 	if (indices.size() > shape.size()) throw std::length_error("Number of indices cannot be greater than number of dimensions.");
