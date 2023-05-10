@@ -1285,6 +1285,38 @@ namespace TensorTest
 		}
 	};
 
+	TEST_CLASS(MaxTestSingle)
+	{
+	public:
+		TEST_METHOD(NewValue)
+		{
+			Tensor tensor1a = Tensor::range({ 3,1 });
+			Tensor tensor1b = Tensor::max(tensor1a, 1.0f);
+			Assert::AreEqual(tensor1b.at(0), 1.0f);
+			Assert::AreEqual(tensor1b.at(1), 1.0f);
+			Assert::AreEqual(tensor1b.at(2), 2.0f);
+
+			Tensor tensor2a = Tensor::range({ 2 }, 1);
+			Tensor tensor2b = Tensor::max(tensor2a, 1.3f);
+			Assert::AreEqual(tensor2b.at(0), 1.3f);
+			Assert::AreEqual(tensor2b.at(1), 2.0f);
+		}
+
+		TEST_METHOD(IndependentValues)
+		{
+			Tensor tensor1a = Tensor::range({ 3,1 });
+			Tensor tensor1b = Tensor::max(tensor1a, 1.0f);
+			Assert::AreEqual(tensor1a.at(0), 0.0f);
+			Assert::AreEqual(tensor1a.at(1), 1.0f);
+			Assert::AreEqual(tensor1a.at(2), 2.0f);
+
+			Tensor tensor2a = Tensor::range({ 2 }, 1);
+			Tensor tensor2b = Tensor::max(tensor2a, 1.3f);
+			Assert::AreEqual(tensor2a.at(0), 1.0f);
+			Assert::AreEqual(tensor2a.at(1), 2.0f);
+		}
+	};
+
 	TEST_CLASS(GradientTest)
 	{
 	public:

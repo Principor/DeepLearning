@@ -369,6 +369,15 @@ Tensor Tensor::matrixMultiply(Tensor& input, Tensor& other)
 	return newTensor;
 }
 
+Tensor Tensor::max(Tensor& input, float value) {
+	float* other = new float[input.size];
+	for (int i = 0; i < input.size; i++) {
+		other[i] = std::max(input.values[i], value);
+	}
+	Tensor newTensor(input.shape, input.size, other);
+	return newTensor;
+}
+
 Tensor Tensor::zeroes(const std::vector<int>& shape) {
 	return full(shape, 0.0f);
 }
