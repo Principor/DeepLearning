@@ -349,3 +349,12 @@ gradientList MatrixMultiplicationFunction::calculateGradient(Tensor& previousGra
 		gradientTuple(original2, Tensor::fromValues(gradientValues2, gradientShape2))
 	};
 }
+
+MaxSingleFunction::MaxSingleFunction(Tensor* original, float value) : original(original), value(value)
+{
+
+}
+
+gradientList MaxSingleFunction::calculateGradient(Tensor& previousGradient) const {
+	return gradientList{};
+}

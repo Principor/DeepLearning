@@ -375,6 +375,11 @@ Tensor Tensor::max(Tensor& input, float value) {
 		other[i] = std::max(input.values[i], value);
 	}
 	Tensor newTensor(input.shape, input.size, other);
+	if (input.gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new MaxSingleFunction(&input, value);
+	}
 	return newTensor;
 }
 

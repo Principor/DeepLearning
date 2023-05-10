@@ -147,3 +147,13 @@ public:
 		int matrixWidth, int matrixInner, int matrixHeight);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
 };
+
+class MaxSingleFunction : public GradientFunction
+{
+private:
+	Tensor* original;
+	float value;
+public:
+	MaxSingleFunction(Tensor* original, float value);
+	gradientList calculateGradient(Tensor& previousGradient) const override;
+};

@@ -1315,6 +1315,19 @@ namespace TensorTest
 			Assert::AreEqual(tensor2a.at(0), 1.0f);
 			Assert::AreEqual(tensor2a.at(1), 2.0f);
 		}
+
+		TEST_METHOD(Gradient)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 3,1 });
+			Tensor tensor1b = Tensor::max(tensor1a, 3.0f);
+			Assert::IsFalse(tensor1b.requiresGradient());
+			Assert::IsNull(tensor1b.getFunction());
+
+			Tensor tensor2a = Tensor::ones({ 2 }).set(-1, { 0 }).requireGradient();
+			Tensor tensor2b = Tensor::max(tensor2a, -1.0f);
+			Assert::IsTrue(tensor2b.requiresGradient());
+			Assert::IsNotNull((MaxSingleFunction*)tensor2b.getFunction());
+		}
 	};
 
 	TEST_CLASS(GradientTest)
