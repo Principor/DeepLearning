@@ -157,3 +157,4 @@ public:
 	MaxSingleFunction(Tensor* original, float value);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
 };
+
