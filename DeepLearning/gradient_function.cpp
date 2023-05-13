@@ -335,7 +335,7 @@ gradientList MatrixMultiplicationFunction::calculateGradient(Tensor& previousGra
 	for (int i = 0; i < gradientSize2; i++) gradientValues2[i] = 0;
 	Tensor transpose2 = original1->detached().transpose();
 	Tensor unbroadcastedGradient2 = Tensor::matrixMultiply(transpose2, previousGradient);
-	int matrixSize2 = matrixInner * matrixHeight;	
+	int matrixSize2 = matrixInner * matrixHeight;
 	for (int i = 0; i < broadcastIndices2.size(); i++) {
 		for (int j = 0; j < matrixSize2; j++) {
 			int broadcastedIndex = broadcastIndices2[i] * matrixSize2 + j;
@@ -364,4 +364,15 @@ gradientList MaxSingleFunction::calculateGradient(Tensor& previousGradient) cons
 		gradientValues[i] = original->at(i) >= value ? previousGradient.at(i) : 0;
 	}
 	return gradientList{ gradientTuple{original, Tensor::fromValues(gradientValues, gradientShape)} };
+}
+
+MaxTensorFunction::MaxTensorFunction(Tensor* original1, Tensor* original2,
+	const std::vector<int>& broadcastIndices1, const std::vector<int>& broadcastIndices2) : original1(original1), original2(original2),
+	broadcastIndices1(broadcastIndices1), broadcastIndices2(broadcastIndices2)
+{
+}
+
+gradientList MaxTensorFunction::calculateGradient(Tensor& previousGradient) const
+{
+	return gradientList{};
 }

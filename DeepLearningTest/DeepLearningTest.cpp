@@ -965,12 +965,12 @@ namespace TensorTest
 			Tensor tensor2b = Tensor::ones({ 3 }).requireGradient();
 			Tensor tensor2c = Tensor::divide(tensor2a, tensor2b);
 			Assert::IsTrue(tensor2c.requiresGradient());
-			Assert::IsNotNull((AddTensorFunction*)tensor2c.getFunction());
+			Assert::IsNotNull((DivideTensorFunction*)tensor2c.getFunction());
 
 			Tensor tensor3a = Tensor::ones({ 2, 1, 3 }).requireGradient();
 			Tensor tensor3b = Tensor::divide(tensor3a, Tensor::ones({ 1, 1 }));
 			Assert::IsTrue(tensor3b.requiresGradient());
-			Assert::IsNotNull((AddTensorFunction*)tensor3b.getFunction());
+			Assert::IsNotNull((DivideTensorFunction*)tensor3b.getFunction());
 		}
 	};
 
@@ -1205,6 +1205,26 @@ namespace TensorTest
 			CompareFloats(tensor2.at({ 1,0,0 }), 4.0f);
 			CompareFloats(tensor2.at({ 1,0,1 }), 5.0f);
 			CompareFloats(tensor2.at({ 1,0,2 }), 6.0f);
+		}
+
+
+		TEST_METHOD(Gradient)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 3,1 });
+			Tensor tensor1b = Tensor::max(tensor1a, Tensor::zeroes({ 1 }));
+			Assert::IsFalse(tensor1b.requiresGradient());
+			Assert::IsNull(tensor1b.getFunction());
+
+			Tensor tensor2a = Tensor::zeroes({ 1 });
+			Tensor tensor2b = Tensor::ones({ 3 }).requireGradient();
+			Tensor tensor2c = Tensor::max(tensor2a, tensor2b);
+			Assert::IsTrue(tensor2c.requiresGradient());
+			Assert::IsNotNull((MaxTensorFunction*)tensor2c.getFunction());
+
+			Tensor tensor3a = Tensor::ones({ 2, 1, 3 }).requireGradient();
+			Tensor tensor3b = Tensor::max(tensor3a, Tensor::ones({ 1, 1 }));
+			Assert::IsTrue(tensor3b.requiresGradient());
+			Assert::IsNotNull((MaxTensorFunction*)tensor3b.getFunction());
 		}
 	};
 

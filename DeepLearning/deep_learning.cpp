@@ -398,6 +398,11 @@ Tensor Tensor::max(Tensor& input, Tensor& other)
 	}
 
 	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
+	if (input.gradient || other.gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new MaxTensorFunction(&input, &other, broadcastedIndices1, broadcastedIndices2);
+	}
 	return newTensor;
 }
 
