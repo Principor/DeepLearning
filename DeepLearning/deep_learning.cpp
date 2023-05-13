@@ -393,6 +393,10 @@ Tensor Tensor::max(Tensor& input, Tensor& other)
 
 	float* newValues = new float[broadcastedSize];
 
+	for (int i = 0; i < broadcastedSize; i++) {
+		newValues[i] = std::max(input.values[broadcastedIndices1[i]], other.values[broadcastedIndices2[i]]);
+	}
+
 	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
 	return newTensor;
 }

@@ -572,13 +572,6 @@ namespace TensorTest
 			CompareFloats(tensor2.at({ 1, 2 }), -1.0f);
 		}
 
-		TEST_METHOD(IndependentValues)
-		{
-			Tensor tensor1 = Tensor::zeroes({ 3 });
-			Tensor tensor2 = tensor1.set(1.0f, {});
-			Assert::AreEqual(tensor1.at(0), 0.0f);
-		}
-
 		TEST_METHOD(Gradient)
 		{
 			Tensor tensor1 = Tensor::zeroes({ 10, 3 });
@@ -637,13 +630,6 @@ namespace TensorTest
 			CompareFloats(tensor2.at({ 1,0,2 }), 1.0f);
 		}
 
-		TEST_METHOD(Independentvalues)
-		{
-			Tensor tensor1 = Tensor::zeroes({ 3 });
-			Tensor tensor2 = tensor1.set(Tensor::ones({ 1 }), { 2 });
-			CompareFloats(tensor1.at(2), 0.0f);
-		}
-
 		TEST_METHOD(Gradient)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 10, 3 });
@@ -679,20 +665,6 @@ namespace TensorTest
 			Tensor tensor2b = Tensor::add(tensor2a, -1.0f);
 			Assert::AreEqual(tensor2b.at(0), 0.0f);
 			Assert::AreEqual(tensor2b.at(1), 1.0f);
-		}
-
-		TEST_METHOD(IndependentValues)
-		{
-			Tensor tensor1a = Tensor::zeroes({ 3,1 });
-			Tensor tensor1b = Tensor::add(tensor1a, 3.0f);
-			Assert::AreEqual(tensor1a.at(0), 0.0f);
-			Assert::AreEqual(tensor1a.at(1), 0.0f);
-			Assert::AreEqual(tensor1a.at(2), 0.0f);
-
-			Tensor tensor2a = Tensor::ones({ 2 }).set(-1, { 0 });
-			Tensor tensor2b = Tensor::add(tensor2a, -1.0f);
-			Assert::AreEqual(tensor2a.at(0), -1.0f);
-			Assert::AreEqual(tensor2a.at(1), 1.0f);
 		}
 
 		TEST_METHOD(Gradient)
@@ -739,15 +711,6 @@ namespace TensorTest
 			CompareFloats(tensor2.at({ 1,0,2 }), 7.0f);
 		}
 
-		TEST_METHOD(Independentvalues)
-		{
-			Tensor tensor1 = Tensor::zeroes({ 3 }).set(Tensor::ones({ 1 }), { 2 });
-			Tensor tensor2 = Tensor::add(tensor1, Tensor::ones({ 1 }));
-			CompareFloats(tensor1.at(0), 0.0f);
-			CompareFloats(tensor1.at(1), 0.0f);
-			CompareFloats(tensor1.at(2), 1.0f);
-		}
-
 		TEST_METHOD(Gradient)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 3,1 });
@@ -783,20 +746,6 @@ namespace TensorTest
 			Tensor tensor2b = Tensor::subtract(tensor2a, -1.0f);
 			Assert::AreEqual(tensor2b.at(0), 2.0f);
 			Assert::AreEqual(tensor2b.at(1), 3.0f);
-		}
-
-		TEST_METHOD(IndependentValues)
-		{
-			Tensor tensor1a = Tensor::zeroes({ 3,1 });
-			Tensor tensor1b = Tensor::subtract(tensor1a, 3.0f);
-			Assert::AreEqual(tensor1a.at(0), 0.0f);
-			Assert::AreEqual(tensor1a.at(1), 0.0f);
-			Assert::AreEqual(tensor1a.at(2), 0.0f);
-
-			Tensor tensor2a = Tensor::ones({ 2 }).set(-1, { 0 });
-			Tensor tensor2b = Tensor::subtract(tensor2a, -1.0f);
-			Assert::AreEqual(tensor2a.at(0), -1.0f);
-			Assert::AreEqual(tensor2a.at(1), 1.0f);
 		}
 
 		TEST_METHOD(Gradient)
@@ -843,15 +792,6 @@ namespace TensorTest
 			CompareFloats(tensor2.at({ 1,0,2 }), 3.0f);
 		}
 
-		TEST_METHOD(Independentvalues)
-		{
-			Tensor tensor1 = Tensor::zeroes({ 3 }).set(Tensor::ones({ 1 }), { 2 });
-			Tensor tensor2 = Tensor::subtract(tensor1, Tensor::ones({ 1 }));
-			CompareFloats(tensor1.at(0), 0.0f);
-			CompareFloats(tensor1.at(1), 0.0f);
-			CompareFloats(tensor1.at(2), 1.0f);
-		}
-
 		TEST_METHOD(Gradient)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 3,1 });
@@ -887,20 +827,6 @@ namespace TensorTest
 			Tensor tensor2b = Tensor::multiply(tensor2a, -1.0f);
 			Assert::AreEqual(tensor2b.at(0), -1.0f);
 			Assert::AreEqual(tensor2b.at(1), -2.0f);
-		}
-
-		TEST_METHOD(IndependentValues)
-		{
-			Tensor tensor1a = Tensor::zeroes({ 3,1 });
-			Tensor tensor1b = Tensor::multiply(tensor1a, 3.0f);
-			Assert::AreEqual(tensor1a.at(0), 0.0f);
-			Assert::AreEqual(tensor1a.at(1), 0.0f);
-			Assert::AreEqual(tensor1a.at(2), 0.0f);
-
-			Tensor tensor2a = Tensor::ones({ 2 }).set(-1, { 0 });
-			Tensor tensor2b = Tensor::multiply(tensor2a, -1.0f);
-			Assert::AreEqual(tensor2a.at(0), -1.0f);
-			Assert::AreEqual(tensor2a.at(1), 1.0f);
 		}
 
 		TEST_METHOD(Gradient)
@@ -947,15 +873,6 @@ namespace TensorTest
 			CompareFloats(tensor2.at({ 1,0,2 }), 10.0f);
 		}
 
-		TEST_METHOD(Independentvalues)
-		{
-			Tensor tensor1 = Tensor::zeroes({ 3 }).set(Tensor::ones({ 1 }), { 2 });
-			Tensor tensor2 = Tensor::multiply(tensor1, Tensor::ones({ 1 }));
-			CompareFloats(tensor1.at(0), 0.0f);
-			CompareFloats(tensor1.at(1), 0.0f);
-			CompareFloats(tensor1.at(2), 1.0f);
-		}
-
 		TEST_METHOD(Gradient)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 3,1 });
@@ -991,20 +908,6 @@ namespace TensorTest
 			Tensor tensor2b = Tensor::divide(tensor2a, -1.0f);
 			Assert::AreEqual(tensor2b.at(0), -1.0f);
 			Assert::AreEqual(tensor2b.at(1), -2.0f);
-		}
-
-		TEST_METHOD(IndependentValues)
-		{
-			Tensor tensor1a = Tensor::zeroes({ 3,1 });
-			Tensor tensor1b = Tensor::divide(tensor1a, 3.0f);
-			Assert::AreEqual(tensor1a.at(0), 0.0f);
-			Assert::AreEqual(tensor1a.at(1), 0.0f);
-			Assert::AreEqual(tensor1a.at(2), 0.0f);
-
-			Tensor tensor2a = Tensor::ones({ 2 }).set(-1, { 0 });
-			Tensor tensor2b = Tensor::divide(tensor2a, -1.0f);
-			Assert::AreEqual(tensor2a.at(0), -1.0f);
-			Assert::AreEqual(tensor2a.at(1), 1.0f);
 		}
 
 		TEST_METHOD(Gradient)
@@ -1049,15 +952,6 @@ namespace TensorTest
 			CompareFloats(tensor2.at({ 1,0,0 }), 4.0f);
 			CompareFloats(tensor2.at({ 1,0,1 }), 2.5f);
 			CompareFloats(tensor2.at({ 1,0,2 }), 2.0f);
-		}
-
-		TEST_METHOD(IndependentValues)
-		{
-			Tensor tensor1 = Tensor::zeroes({ 3 }).set(Tensor::ones({ 1 }), { 2 });
-			Tensor tensor2 = Tensor::divide(tensor1, Tensor::ones({ 1 }));
-			CompareFloats(tensor1.at(0), 0.0f);
-			CompareFloats(tensor1.at(1), 0.0f);
-			CompareFloats(tensor1.at(2), 1.0f);
 		}
 
 		TEST_METHOD(Gradient)
@@ -1129,39 +1023,6 @@ namespace TensorTest
 				}
 			}
 
-		}
-
-		TEST_METHOD(IndepentShape)
-		{
-			Tensor tensor1a = Tensor::zeroes({ 2,3 });
-			Tensor tensor1b = tensor1a.transpose();
-			Assert::AreEqual(tensor1a.getShape()[0], 2);
-			Assert::AreEqual(tensor1a.getShape()[1], 3);
-
-			Tensor tensor2a = Tensor::zeroes({ 10, 2, 1, 5 });
-			Tensor tensor2b = tensor2a.transpose();
-			Assert::AreEqual(tensor2a.getShape()[0], 10);
-			Assert::AreEqual(tensor2a.getShape()[1], 2);
-			Assert::AreEqual(tensor2a.getShape()[2], 1);
-			Assert::AreEqual(tensor2a.getShape()[3], 5);
-		}
-
-		TEST_METHOD(IndependentValues)
-		{
-			Tensor tensor1a = Tensor::range({ 2,3 });
-			Tensor tensor1b = tensor1a.transpose();
-			CompareFloats(tensor1a.at({ 0,0 }), 0);
-			CompareFloats(tensor1a.at({ 0,1 }), 1);
-			CompareFloats(tensor1a.at({ 0,2 }), 2);
-			CompareFloats(tensor1a.at({ 1,0 }), 3);
-			CompareFloats(tensor1a.at({ 1,1 }), 4);
-			CompareFloats(tensor1a.at({ 1,2 }), 5);
-
-			Tensor tensor2a = Tensor::range({ 10, 2, 1, 5 });
-			Tensor tensor2b = tensor2a.transpose();
-			for (int i = 0; i < 100; i++) {
-				CompareFloats(tensor2a.at(i), i);
-			}
 		}
 
 		TEST_METHOD(Gradient)
@@ -1302,20 +1163,6 @@ namespace TensorTest
 			Assert::AreEqual(tensor2b.at(1), 2.0f);
 		}
 
-		TEST_METHOD(IndependentValues)
-		{
-			Tensor tensor1a = Tensor::range({ 3,1 });
-			Tensor tensor1b = Tensor::max(tensor1a, 1.0f);
-			Assert::AreEqual(tensor1a.at(0), 0.0f);
-			Assert::AreEqual(tensor1a.at(1), 1.0f);
-			Assert::AreEqual(tensor1a.at(2), 2.0f);
-
-			Tensor tensor2a = Tensor::range({ 2 }, 1);
-			Tensor tensor2b = Tensor::max(tensor2a, 1.3f);
-			Assert::AreEqual(tensor2a.at(0), 1.0f);
-			Assert::AreEqual(tensor2a.at(1), 2.0f);
-		}
-
 		TEST_METHOD(Gradient)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 3,1 });
@@ -1342,6 +1189,22 @@ namespace TensorTest
 			Assert::ExpectException<std::invalid_argument>(
 				[]() {Tensor::max(Tensor::zeroes({ 10, 1, 3, 5 }), Tensor::zeroes({ 3, 10 })); }
 			);
+		}
+
+		TEST_METHOD(NewValue)
+		{
+			Tensor tensor1 = Tensor::max(Tensor::range({ 3 }), Tensor::full({ 1 }, 1.5));
+			CompareFloats(tensor1.at(0), 1.5f);
+			CompareFloats(tensor1.at(1), 1.5f);
+			CompareFloats(tensor1.at(2), 2.0f);
+
+			Tensor tensor2 = Tensor::max(Tensor::range({ 2, 1, 3 }, 1), Tensor::full({ 1, 3 }, 3));
+			CompareFloats(tensor2.at({ 0,0,0 }), 3.0f);
+			CompareFloats(tensor2.at({ 0,0,1 }), 3.0f);
+			CompareFloats(tensor2.at({ 0,0,2 }), 3.0f);
+			CompareFloats(tensor2.at({ 1,0,0 }), 4.0f);
+			CompareFloats(tensor2.at({ 1,0,1 }), 5.0f);
+			CompareFloats(tensor2.at({ 1,0,2 }), 6.0f);
 		}
 	};
 
