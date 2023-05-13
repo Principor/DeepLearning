@@ -383,6 +383,20 @@ Tensor Tensor::max(Tensor& input, float value) {
 	return newTensor;
 }
 
+Tensor Tensor::max(Tensor& input, Tensor& other)
+{
+	auto broadcastedShape = broadcastShapes(input.shape, other.shape);
+	int broadcastedSize = calculateSize(broadcastedShape);
+	auto broadcastedIndices1 = broadcastIndices(input.shape, broadcastedShape);
+	auto broadcastedIndices2 = broadcastIndices(other.shape, broadcastedShape);
+
+
+	float* newValues = new float[broadcastedSize];
+
+	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
+	return newTensor;
+}
+
 Tensor Tensor::zeroes(const std::vector<int>& shape) {
 	return full(shape, 0.0f);
 }

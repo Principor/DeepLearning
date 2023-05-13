@@ -1051,7 +1051,7 @@ namespace TensorTest
 			CompareFloats(tensor2.at({ 1,0,2 }), 2.0f);
 		}
 
-		TEST_METHOD(Independentvalues)
+		TEST_METHOD(IndependentValues)
 		{
 			Tensor tensor1 = Tensor::zeroes({ 3 }).set(Tensor::ones({ 1 }), { 2 });
 			Tensor tensor2 = Tensor::divide(tensor1, Tensor::ones({ 1 }));
@@ -1285,7 +1285,7 @@ namespace TensorTest
 		}
 	};
 
-	TEST_CLASS(MaxTestSingle)
+	TEST_CLASS(MaxSingleTest)
 	{
 	public:
 		TEST_METHOD(NewValue)
@@ -1327,6 +1327,21 @@ namespace TensorTest
 			Tensor tensor2b = Tensor::max(tensor2a, -1.0f);
 			Assert::IsTrue(tensor2b.requiresGradient());
 			Assert::IsNotNull((MaxSingleFunction*)tensor2b.getFunction());
+		}
+	};
+
+	TEST_CLASS(MaxTensorTest)
+	{
+	public:
+		TEST_METHOD(UnbroadcastableDims)
+		{
+			Assert::ExpectException<std::invalid_argument>(
+				[]() {Tensor::max(Tensor::zeroes({ 10, 3, 5 }), Tensor::zeroes({ 1, 2, 5 })); }
+			);
+
+			Assert::ExpectException<std::invalid_argument>(
+				[]() {Tensor::max(Tensor::zeroes({ 10, 1, 3, 5 }), Tensor::zeroes({ 3, 10 })); }
+			);
 		}
 	};
 
