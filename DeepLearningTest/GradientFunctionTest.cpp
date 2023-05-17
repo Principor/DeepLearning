@@ -1159,8 +1159,6 @@ namespace GradientFunctionTest
 	TEST_CLASS(MaxSingleFunction)
 	{
 	public:
-
-	public:
 		TEST_METHOD(Shape)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 2,1,3 }).requireGradient();
@@ -1260,12 +1258,10 @@ namespace GradientFunctionTest
 			Assert::AreEqual(1, gradient2.getShape()[2]);
 		}
 
-
-
 		TEST_METHOD(Values1)
 		{
 			Tensor tensor1a = Tensor::range({ 2, 1, 3 }, 0, 2);
-			Tensor tensor1b = Tensor::full({ 1 }, 3.0f).requireGradient();
+			Tensor tensor1b = Tensor::full({ 1 }, 3.5f).requireGradient();
 			Tensor tensor1c = Tensor::max(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::range({ 2, 1, 3 }, 1)
@@ -1278,7 +1274,7 @@ namespace GradientFunctionTest
 			CompareFloats(gradient1.at({ 1, 0, 1 }), 5.0f);
 			CompareFloats(gradient1.at({ 1, 0, 2 }), 6.0f);
 
-			Tensor tensor2a = Tensor::full({ 1, }, 2);
+			Tensor tensor2a = Tensor::full({ 1, }, 2.5f);
 			Tensor tensor2b = Tensor::range({ 2, 3, 1 }).requireGradient();
 			Tensor tensor2c = Tensor::max(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
@@ -1291,7 +1287,7 @@ namespace GradientFunctionTest
 		TEST_METHOD(Values2)
 		{
 			Tensor tensor1a = Tensor::range({ 1, 3 }, 1);
-			Tensor tensor1b = Tensor::full({ 4, 1 }, 2.0f).requireGradient();
+			Tensor tensor1b = Tensor::full({ 4, 1 }, 2.5f).requireGradient();
 			Tensor tensor1c = Tensor::max(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::range({ 4, 3 })
@@ -1326,7 +1322,7 @@ namespace GradientFunctionTest
 		TEST_METHOD(Shape)
 		{
 			Tensor tensor1a = Tensor::zeroes({ 2,1,3 }).requireGradient();
-			Tensor tensor1b = Tensor::min(tensor1a, 2.0f);
+			Tensor tensor1b = Tensor::min(tensor1a, 2.5f);
 			gradientList gradients1 = tensor1b.getFunction()->calculateGradient(
 				Tensor::zeroes({ 2,1,3 })
 			);
@@ -1370,6 +1366,111 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(2), 3.0f);
 			CompareFloats(gradient2.at(3), 4.0f);
 			CompareFloats(gradient2.at(4), 5.0f);
+		}
+	};
+
+	TEST_CLASS(MinTensorFunction)
+	{
+	public:
+		TEST_METHOD(Shape1)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
+			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
+			Tensor tensor1c = Tensor::min(tensor1a, tensor1b);
+			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
+				Tensor::zeroes({ 4,3 })
+			);
+			Tensor& gradient1 = std::get<1>(gradients1[0]);
+			Assert::AreEqual(1, gradient1.getShape()[0]);
+			Assert::AreEqual(3, gradient1.getShape()[1]);
+
+			Tensor tensor2a = Tensor::zeroes({ 1, });
+			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
+			Tensor tensor2c = Tensor::min(tensor2a, tensor2b);
+			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
+				Tensor::zeroes({ 2, 3, 1 })
+			);
+			Tensor& gradient2 = std::get<1>(gradients2[0]);
+			Assert::AreEqual(1, gradient2.getShape()[0]);
+		}
+
+		TEST_METHOD(Shape2)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
+			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
+			Tensor tensor1c = Tensor::min(tensor1a, tensor1b);
+			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
+				Tensor::zeroes({ 4,3 })
+			);
+			Tensor& gradient1 = std::get<1>(gradients1[1]);
+			Assert::AreEqual(4, gradient1.getShape()[0]);
+			Assert::AreEqual(1, gradient1.getShape()[1]);
+
+			Tensor tensor2a = Tensor::zeroes({ 1, });
+			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
+			Tensor tensor2c = Tensor::min(tensor2a, tensor2b);
+			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
+				Tensor::zeroes({ 2, 3, 1 })
+			);
+			Tensor& gradient2 = std::get<1>(gradients2[1]);
+			Assert::AreEqual(2, gradient2.getShape()[0]);
+			Assert::AreEqual(3, gradient2.getShape()[1]);
+			Assert::AreEqual(1, gradient2.getShape()[2]);
+		}
+
+		TEST_METHOD(Values1)
+		{
+			Tensor tensor1a = Tensor::range({ 2, 1, 3 }, 0, 2);
+			Tensor tensor1b = Tensor::full({ 1 }, 2.5f).requireGradient();
+			Tensor tensor1c = Tensor::min(tensor1a, tensor1b);
+			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
+				Tensor::range({ 2, 1, 3 }, 1)
+			);
+			Tensor& gradient1 = std::get<1>(gradients1[0]);
+			CompareFloats(gradient1.at({ 0, 0, 0 }), 1.0f);
+			CompareFloats(gradient1.at({ 0, 0, 1 }), 2.0f);
+			CompareFloats(gradient1.at({ 0, 0, 2 }), 0.0f);
+			CompareFloats(gradient1.at({ 1, 0, 0 }), 0.0f);
+			CompareFloats(gradient1.at({ 1, 0, 1 }), 0.0f);
+			CompareFloats(gradient1.at({ 1, 0, 2 }), 0.0f);
+
+			Tensor tensor2a = Tensor::full({ 1, }, 2.5f);
+			Tensor tensor2b = Tensor::range({ 2, 3, 1 }).requireGradient();
+			Tensor tensor2c = Tensor::min(tensor2a, tensor2b);
+			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
+				Tensor::range({ 2, 3, 1 })
+			);
+			Tensor& gradient2 = std::get<1>(gradients2[0]);
+			CompareFloats(gradient2.at(0), 12.0f);
+		}
+
+		TEST_METHOD(Values2)
+		{
+			Tensor tensor1a = Tensor::range({ 1, 3 }, 1);
+			Tensor tensor1b = Tensor::full({ 4, 1 }, 2.5f).requireGradient();
+			Tensor tensor1c = Tensor::min(tensor1a, tensor1b);
+			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
+				Tensor::range({ 4, 3 })
+			);
+			Tensor& gradient1 = std::get<1>(gradients1[1]);
+			CompareFloats(gradient1.at(0), 2.0f);
+			CompareFloats(gradient1.at(1), 5.0f);
+			CompareFloats(gradient1.at(2), 8.0f);
+			CompareFloats(gradient1.at(3), 11.0f);
+
+			Tensor tensor2a = Tensor::full({ 1, }, 2.0f);
+			Tensor tensor2b = Tensor::full({ 2, 3, 1 }, 3.0f).requireGradient();
+			Tensor tensor2c = Tensor::min(tensor2a, tensor2b);
+			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
+				Tensor::range({ 2, 3, 1 }, 1)
+			);
+			Tensor& gradient2 = std::get<1>(gradients2[1]);
+			CompareFloats(gradient2.at(0), 0.0f);
+			CompareFloats(gradient2.at(1), 0.0f);
+			CompareFloats(gradient2.at(2), 0.0f);
+			CompareFloats(gradient2.at(3), 0.0f);
+			CompareFloats(gradient2.at(4), 0.0f);
+			CompareFloats(gradient2.at(5), 0.0f);
 		}
 	};
 }

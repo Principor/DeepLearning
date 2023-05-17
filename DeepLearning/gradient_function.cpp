@@ -419,5 +419,24 @@ MinTensorFunction::MinTensorFunction(Tensor* original1, Tensor* original2,
 
 gradientList MinTensorFunction::calculateGradient(Tensor& previousGradient) const
 {
-	return gradientList{};
+	int gradientSize1 = original1->getSize();
+	const std::vector<int>& gradientShape1 = original1->getShape();
+	float* gradientValues1 = new float[gradientSize1];
+	for (int i = 0; i < gradientSize1; i++) gradientValues1[i] = 0;
+
+	int gradientSize2 = original2->getSize();
+	const std::vector<int>& gradientShape2 = original2->getShape();
+	float* gradientValues2 = new float[gradientSize2];
+	for (int i = 0; i < gradientSize2; i++) gradientValues2[i] = 0;
+
+	for (int i = 0; i < previousGradient.getSize(); i++) {
+		int index1 = broadcastIndices1[i], index2 = broadcastIndices2[i];
+		if (original1->at(index1) <= original2->at(index2)) gradientValues1[index1] += previousGradient.at(i);
+		if (original2->at(index2) <= original1->at(index1)) gradientValues2[index2] += previousGradient.at(i);
+	}
+
+	return gradientList{
+		gradientTuple(original1, Tensor::fromValues(gradientValues1, gradientShape1)),
+		gradientTuple(original2, Tensor::fromValues(gradientValues2, gradientShape2))
+	};
 }
