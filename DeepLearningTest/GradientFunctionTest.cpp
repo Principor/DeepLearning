@@ -1210,4 +1210,54 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(4), 0.0f);
 		}
 	};
+
+	TEST_CLASS(MaxTensorFunction)
+	{
+	public:
+		TEST_METHOD(Shape1)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
+			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
+			Tensor tensor1c = Tensor::max(tensor1a, tensor1b);
+			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
+				Tensor::zeroes({ 4,3 })
+			);
+			Tensor& gradient1 = std::get<1>(gradients1[0]);
+			Assert::AreEqual(1, gradient1.getShape()[0]);
+			Assert::AreEqual(3, gradient1.getShape()[1]);
+
+			Tensor tensor2a = Tensor::zeroes({ 1, });
+			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
+			Tensor tensor2c = Tensor::max(tensor2a, tensor2b);
+			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
+				Tensor::zeroes({ 2, 3, 1 })
+			);
+			Tensor& gradient2 = std::get<1>(gradients2[0]);
+			Assert::AreEqual(1, gradient2.getShape()[0]);
+		}
+
+		TEST_METHOD(Shape2)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
+			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
+			Tensor tensor1c = Tensor::max(tensor1a, tensor1b);
+			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
+				Tensor::zeroes({ 4,3 })
+			);
+			Tensor& gradient1 = std::get<1>(gradients1[1]);
+			Assert::AreEqual(4, gradient1.getShape()[0]);
+			Assert::AreEqual(1, gradient1.getShape()[1]);
+
+			Tensor tensor2a = Tensor::zeroes({ 1, });
+			Tensor tensor2b = Tensor::zeroes({ 2, 3, 1 }).requireGradient();
+			Tensor tensor2c = Tensor::max(tensor2a, tensor2b);
+			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
+				Tensor::zeroes({ 2, 3, 1 })
+			);
+			Tensor& gradient2 = std::get<1>(gradients2[1]);
+			Assert::AreEqual(2, gradient2.getShape()[0]);
+			Assert::AreEqual(3, gradient2.getShape()[1]);
+			Assert::AreEqual(1, gradient2.getShape()[2]);
+		}
+	};
 }

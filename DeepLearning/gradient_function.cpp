@@ -374,5 +374,18 @@ MaxTensorFunction::MaxTensorFunction(Tensor* original1, Tensor* original2,
 
 gradientList MaxTensorFunction::calculateGradient(Tensor& previousGradient) const
 {
-	return gradientList{};
+	int gradientSize1 = original1->getSize();
+	const std::vector<int>& gradientShape1 = original1->getShape();
+	float* gradientValues1 = new float[gradientSize1];
+	for (int i = 0; i < gradientSize1; i++) gradientValues1[i] = 0;
+
+	int gradientSize2 = original2->getSize();
+	const std::vector<int>& gradientShape2 = original2->getShape();
+	float* gradientValues2 = new float[gradientSize2];
+	for (int i = 0; i < gradientSize2; i++) gradientValues2[i] = 0;
+
+	return gradientList{
+		gradientTuple(original1, Tensor::fromValues(gradientValues1, gradientShape1)),
+		gradientTuple(original2, Tensor::fromValues(gradientValues2, gradientShape2))
+	};
 }
