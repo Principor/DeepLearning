@@ -355,8 +355,8 @@ MaxSingleFunction::MaxSingleFunction(Tensor* original, float value) : original(o
 
 }
 
-gradientList MaxSingleFunction::calculateGradient(Tensor& previousGradient) const {
-
+gradientList MaxSingleFunction::calculateGradient(Tensor& previousGradient) const 
+{
 	int gradientSize = original->getSize();
 	const std::vector<int>& gradientShape = original->getShape();
 	float* gradientValues = new float[gradientSize];
@@ -398,10 +398,15 @@ gradientList MaxTensorFunction::calculateGradient(Tensor& previousGradient) cons
 
 MinSingleFunction::MinSingleFunction(Tensor* original, float value) : original(original), value(value)
 {
-
 }
 
 gradientList MinSingleFunction::calculateGradient(Tensor& previousGradient) const 
 {
-	return gradientList{  };
+	int gradientSize = original->getSize();
+	const std::vector<int>& gradientShape = original->getShape();
+	float* gradientValues = new float[gradientSize];
+	for (int i = 0; i < gradientSize; i++) {
+		gradientValues[i] = original->at(i) <= value ? previousGradient.at(i) : 0;
+	}
+	return gradientList{ gradientTuple{original, Tensor::fromValues(gradientValues, gradientShape)} };
 }
