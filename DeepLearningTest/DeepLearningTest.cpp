@@ -1228,6 +1228,37 @@ namespace TensorTest
 		}
 	};
 
+	TEST_CLASS(MinSingleTest)
+	{
+	public:
+		TEST_METHOD(NewValue)
+		{
+			Tensor tensor1a = Tensor::range({ 3,1 });
+			Tensor tensor1b = Tensor::min(tensor1a, 1.0f);
+			Assert::AreEqual(tensor1b.at(0), 0.0f);
+			Assert::AreEqual(tensor1b.at(1), 1.0f);
+			Assert::AreEqual(tensor1b.at(2), 1.0f);
+
+			Tensor tensor2a = Tensor::range({ 2 }, 1);
+			Tensor tensor2b = Tensor::min(tensor2a, 1.3f);
+			Assert::AreEqual(tensor2b.at(0), 1.0f);
+			Assert::AreEqual(tensor2b.at(1), 1.3f);
+		}
+
+		TEST_METHOD(Gradient)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 3,1 });
+			Tensor tensor1b = Tensor::min(tensor1a, 3.0f);
+			Assert::IsFalse(tensor1b.requiresGradient());
+			Assert::IsNull(tensor1b.getFunction());
+
+			Tensor tensor2a = Tensor::ones({ 2 }).set(-1, { 0 }).requireGradient();
+			Tensor tensor2b = Tensor::min(tensor2a, -1.0f);
+			Assert::IsTrue(tensor2b.requiresGradient());
+			Assert::IsNotNull((MinSingleFunction*)tensor2b.getFunction());
+		}
+	};
+
 	TEST_CLASS(GradientTest)
 	{
 	public:

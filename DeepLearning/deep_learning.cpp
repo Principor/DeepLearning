@@ -406,6 +406,20 @@ Tensor Tensor::max(Tensor& input, Tensor& other)
 	return newTensor;
 }
 
+Tensor Tensor::min(Tensor& input, float value) {
+	float* other = new float[input.size];
+	for (int i = 0; i < input.size; i++) {
+		other[i] = std::min(input.values[i], value);
+	}
+	Tensor newTensor(input.shape, input.size, other);
+	if (input.gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new MinSingleFunction(&input, value);
+	}
+	return newTensor;
+}
+
 Tensor Tensor::zeroes(const std::vector<int>& shape) {
 	return full(shape, 0.0f);
 }

@@ -395,3 +395,13 @@ gradientList MaxTensorFunction::calculateGradient(Tensor& previousGradient) cons
 		gradientTuple(original2, Tensor::fromValues(gradientValues2, gradientShape2))
 	};
 }
+
+MinSingleFunction::MinSingleFunction(Tensor* original, float value) : original(original), value(value)
+{
+
+}
+
+gradientList MinSingleFunction::calculateGradient(Tensor& previousGradient) const 
+{
+	return gradientList{  };
+}

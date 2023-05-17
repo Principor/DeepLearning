@@ -51,6 +51,7 @@ public:
 	static Tensor matrixMultiply(Tensor& input, Tensor& other);
 	static Tensor max(Tensor& input, float other);
 	static Tensor max(Tensor& input, Tensor& other);
+	static Tensor min(Tensor& input, float other);
 
 	static Tensor zeroes(const std::vector<int>& shape);
 	static Tensor ones(const std::vector<int>& shape);

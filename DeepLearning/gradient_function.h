@@ -168,3 +168,13 @@ public:
 		const std::vector<int>& broadcastIndices1, const std::vector<int>& broadcastIndices2);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
 };
+
+class MinSingleFunction : public GradientFunction
+{
+private:
+	Tensor* original;
+	float value;
+public:
+	MinSingleFunction(Tensor* original, float value);
+	gradientList calculateGradient(Tensor& previousGradient) const override;
+};
