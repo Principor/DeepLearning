@@ -1259,6 +1259,57 @@ namespace TensorTest
 		}
 	};
 
+	TEST_CLASS(MinTensorTest)
+	{
+	public:
+		TEST_METHOD(UnbroadcastableDims)
+		{
+			Assert::ExpectException<std::invalid_argument>(
+				[]() {Tensor::min(Tensor::zeroes({ 10, 3, 5 }), Tensor::zeroes({ 1, 2, 5 })); }
+			);
+
+			Assert::ExpectException<std::invalid_argument>(
+				[]() {Tensor::min(Tensor::zeroes({ 10, 1, 3, 5 }), Tensor::zeroes({ 3, 10 })); }
+			);
+		}
+
+		TEST_METHOD(NewValue)
+		{
+			Tensor tensor1 = Tensor::min(Tensor::range({ 3 }), Tensor::full({ 1 }, 1.5));
+			CompareFloats(tensor1.at(0), 0.0f);
+			CompareFloats(tensor1.at(1), 1.0f);
+			CompareFloats(tensor1.at(2), 1.5f);
+
+			Tensor tensor2 = Tensor::min(Tensor::range({ 2, 1, 3 }, 1), Tensor::full({ 1, 3 }, 3));
+			CompareFloats(tensor2.at({ 0,0,0 }), 1.0f);
+			CompareFloats(tensor2.at({ 0,0,1 }), 2.0f);
+			CompareFloats(tensor2.at({ 0,0,2 }), 3.0f);
+			CompareFloats(tensor2.at({ 1,0,0 }), 3.0f);
+			CompareFloats(tensor2.at({ 1,0,1 }), 3.0f);
+			CompareFloats(tensor2.at({ 1,0,2 }), 3.0f);
+		}
+
+
+		TEST_METHOD(Gradient)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 3,1 });
+			Tensor tensor1b = Tensor::min(tensor1a, Tensor::zeroes({ 1 }));
+			Assert::IsFalse(tensor1b.requiresGradient());
+			Assert::IsNull(tensor1b.getFunction());
+
+			Tensor tensor2a = Tensor::zeroes({ 1 });
+			Tensor tensor2b = Tensor::ones({ 3 }).requireGradient();
+			Tensor tensor2c = Tensor::min(tensor2a, tensor2b);
+			Assert::IsTrue(tensor2c.requiresGradient());
+			Assert::IsNotNull((MaxTensorFunction*)tensor2c.getFunction());
+
+			Tensor tensor3a = Tensor::ones({ 2, 1, 3 }).requireGradient();
+			Tensor tensor3b = Tensor::min(tensor3a, Tensor::ones({ 1, 1 }));
+			Assert::IsTrue(tensor3b.requiresGradient());
+			Assert::IsNotNull((MinTensorFunction*)tensor3b.getFunction());
+		}
+	};
+
 	TEST_CLASS(GradientTest)
 	{
 	public:

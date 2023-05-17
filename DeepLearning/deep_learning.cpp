@@ -420,6 +420,29 @@ Tensor Tensor::min(Tensor& input, float value) {
 	return newTensor;
 }
 
+Tensor Tensor::min(Tensor& input, Tensor& other)
+{
+	auto broadcastedShape = broadcastShapes(input.shape, other.shape);
+	int broadcastedSize = calculateSize(broadcastedShape);
+	auto broadcastedIndices1 = broadcastIndices(input.shape, broadcastedShape);
+	auto broadcastedIndices2 = broadcastIndices(other.shape, broadcastedShape);
+
+
+	float* newValues = new float[broadcastedSize];
+
+	for (int i = 0; i < broadcastedSize; i++) {
+		newValues[i] = std::min(input.values[broadcastedIndices1[i]], other.values[broadcastedIndices2[i]]);
+	}
+
+	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
+	if (input.gradient || other.gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new MinTensorFunction(&input, &other, broadcastedIndices1, broadcastedIndices2);
+	}
+	return newTensor;
+}
+
 Tensor Tensor::zeroes(const std::vector<int>& shape) {
 	return full(shape, 0.0f);
 }

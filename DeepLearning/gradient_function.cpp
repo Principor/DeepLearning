@@ -410,3 +410,14 @@ gradientList MinSingleFunction::calculateGradient(Tensor& previousGradient) cons
 	}
 	return gradientList{ gradientTuple{original, Tensor::fromValues(gradientValues, gradientShape)} };
 }
+
+MinTensorFunction::MinTensorFunction(Tensor* original1, Tensor* original2,
+	const std::vector<int>& broadcastIndices1, const std::vector<int>& broadcastIndices2) : original1(original1), original2(original2),
+	broadcastIndices1(broadcastIndices1), broadcastIndices2(broadcastIndices2)
+{
+}
+
+gradientList MinTensorFunction::calculateGradient(Tensor& previousGradient) const
+{
+	return gradientList{};
+}
