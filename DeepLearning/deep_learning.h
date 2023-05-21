@@ -54,6 +54,8 @@ public:
 	static Tensor min(Tensor& input, float other);
 	static Tensor min(Tensor& input, Tensor& other);
 
+	static Tensor ReLU(Tensor& input);
+
 	static Tensor zeroes(const std::vector<int>& shape);
 	static Tensor ones(const std::vector<int>& shape);
 	static Tensor full(const std::vector<int>& shape, float value);

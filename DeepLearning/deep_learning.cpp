@@ -443,6 +443,11 @@ Tensor Tensor::min(Tensor& input, Tensor& other)
 	return newTensor;
 }
 
+Tensor Tensor::ReLU(Tensor& input)
+{
+	return max(input, 0);
+}
+
 Tensor Tensor::zeroes(const std::vector<int>& shape) {
 	return full(shape, 0.0f);
 }
