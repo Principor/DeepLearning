@@ -448,6 +448,32 @@ Tensor Tensor::ReLU(Tensor& input)
 	return max(input, 0);
 }
 
+Tensor Tensor::meanSquaredErrorLoss(Tensor& input, Tensor& target)
+{
+	auto broadcastedShape = broadcastShapes(input.shape, target.shape);
+	int broadcastedSize = calculateSize(broadcastedShape);
+	auto broadcastedIndices1 = broadcastIndices(input.shape, broadcastedShape);
+	auto broadcastedIndices2 = broadcastIndices(target.shape, broadcastedShape);
+
+	float* newValue = new float;
+	*newValue = 0;
+
+	for (int i = 0; i < broadcastedSize; i++)
+	{
+		float diff = input.values[broadcastedIndices1[i]] - target.values[broadcastedIndices1[i]];
+		*newValue += diff * diff;
+	}
+	*newValue /= broadcastedSize;
+
+	Tensor newTensor = Tensor({}, 1, newValue);
+	if (input.gradient || target.gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new MeanSquaredErrorLossFunction(&input, &target, broadcastedSize, broadcastedIndices1, broadcastedIndices2);
+	}
+	return newTensor;
+}
+
 Tensor Tensor::zeroes(const std::vector<int>& shape) {
 	return full(shape, 0.0f);
 }

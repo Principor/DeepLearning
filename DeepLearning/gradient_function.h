@@ -40,10 +40,10 @@ private:
 	int index;
 	int size;
 	std::vector<int> broadcastShape;
-	std::vector<int> broadcastIndices;
+	std::vector<int> broadcastedIndices;
 public:
 	SetTensorFunction(Tensor* copyTo, Tensor* copyFrom, int index, int size, const std::vector<int>& broadcastShape,
-		const std::vector<int>& broadcastIndices);
+		const std::vector<int>& broadcastedIndices);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
 };
 
@@ -59,10 +59,10 @@ class AddTensorFunction : public GradientFunction
 {
 private:
 	Tensor* original1, * original2;
-	std::vector<int> broadcastIndices1, broadcastIndices2;
+	std::vector<int> broadcastedIndices1, broadcastedIndices2;
 public:
 	AddTensorFunction(Tensor* original1, Tensor* original2,
-		const std::vector<int>& broadcastIndices1, const std::vector<int>& broadcastIndices2);
+		const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
 };
 
@@ -78,10 +78,10 @@ class SubtractTensorFunction : public GradientFunction
 {
 private:
 	Tensor* original1, * original2;
-	std::vector<int> broadcastIndices1, broadcastIndices2;
+	std::vector<int> broadcastedIndices1, broadcastedIndices2;
 public:
 	SubtractTensorFunction(Tensor* original1, Tensor* original2,
-		const std::vector<int>& broadcastIndices1, const std::vector<int>& broadcastIndices2);
+		const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
 };
 
@@ -98,10 +98,10 @@ class MultiplyTensorFunction : public GradientFunction
 {
 private:
 	Tensor* original1, * original2;
-	std::vector<int> broadcastIndices1, broadcastIndices2;
+	std::vector<int> broadcastedIndices1, broadcastedIndices2;
 public:
 	MultiplyTensorFunction(Tensor* original1, Tensor* original2,
-		const std::vector<int>& broadcastIndices1, const std::vector<int>& broadcastIndices2);
+		const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
 };
 
@@ -118,10 +118,10 @@ class DivideTensorFunction : public GradientFunction
 {
 private:
 	Tensor* original1, * original2;
-	std::vector<int> broadcastIndices1, broadcastIndices2;
+	std::vector<int> broadcastedIndices1, broadcastedIndices2;
 public:
 	DivideTensorFunction(Tensor* original1, Tensor* original2,
-		const std::vector<int>& broadcastIndices1, const std::vector<int>& broadcastIndices2);
+		const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
 };
 
@@ -139,11 +139,11 @@ class MatrixMultiplicationFunction : public GradientFunction
 {
 private:
 	Tensor* original1, * original2;
-	std::vector<int> broadcastIndices1, broadcastIndices2;
+	std::vector<int> broadcastedIndices1, broadcastedIndices2;
 	int matrixWidth, matrixInner, matrixHeight;
 public:
 	MatrixMultiplicationFunction(Tensor* original1, Tensor* original2,
-		const std::vector<int>& broadcastIndices1, const std::vector<int>& broadcastIndices2,
+		const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2,
 		int matrixWidth, int matrixInner, int matrixHeight);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
 };
@@ -162,10 +162,10 @@ class MaxTensorFunction : public GradientFunction
 {
 private:
 	Tensor* original1, * original2;
-	std::vector<int> broadcastIndices1, broadcastIndices2;
+	std::vector<int> broadcastedIndices1, broadcastedIndices2;
 public:
 	MaxTensorFunction(Tensor* original1, Tensor* original2,
-		const std::vector<int>& broadcastIndices1, const std::vector<int>& broadcastIndices2);
+		const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
 };
 
@@ -183,9 +183,21 @@ class MinTensorFunction : public GradientFunction
 {
 private:
 	Tensor* original1, * original2;
-	std::vector<int> broadcastIndices1, broadcastIndices2;
+	std::vector<int> broadcastedIndices1, broadcastedIndices2;
 public:
 	MinTensorFunction(Tensor* original1, Tensor* original2,
-		const std::vector<int>& broadcastIndices1, const std::vector<int>& broadcastIndices2);
+		const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2);
+	gradientList calculateGradient(Tensor& previousGradient) const override;
+};
+
+class MeanSquaredErrorLossFunction : public GradientFunction
+{
+private:
+	Tensor* original1, * original2;
+	int broadcastedSize;
+	std::vector<int> broadcastedIndices1, broadcastedIndices2;
+public:
+	MeanSquaredErrorLossFunction(Tensor* original1, Tensor* original2, int broadcastedSize,
+		const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
 };

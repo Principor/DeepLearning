@@ -1301,7 +1301,7 @@ namespace TensorTest
 			Tensor tensor2b = Tensor::ones({ 3 }).requireGradient();
 			Tensor tensor2c = Tensor::min(tensor2a, tensor2b);
 			Assert::IsTrue(tensor2c.requiresGradient());
-			Assert::IsNotNull((MaxTensorFunction*)tensor2c.getFunction());
+			Assert::IsNotNull((MinTensorFunction*)tensor2c.getFunction());
 
 			Tensor tensor3a = Tensor::ones({ 2, 1, 3 }).requireGradient();
 			Tensor tensor3b = Tensor::min(tensor3a, Tensor::ones({ 1, 1 }));
@@ -1338,6 +1338,42 @@ namespace TensorTest
 			Tensor tensor2b = Tensor::ReLU(tensor2a);
 			Assert::IsTrue(tensor2b.requiresGradient());
 			Assert::IsNotNull((MaxSingleFunction*)tensor2b.getFunction());
+		}
+	};
+
+	TEST_CLASS(MeanSquaredErrorLossTest)
+	{
+	public:
+		TEST_METHOD(NewValue)
+		{
+			Tensor tensor1a = Tensor::full({ 1,3 }, 5.0f);
+			Tensor tensor1b = Tensor::full({ 4,1 }, 1.0f);
+			Tensor tensor1c = Tensor::meanSquaredErrorLoss(tensor1a, tensor1b);
+			CompareFloats(tensor1c.item(), 16.0f);
+
+			Tensor tensor2a = Tensor::range({ 3 }, 3.0f, -1.0f);
+			Tensor tensor2b = Tensor::range({ 3 }, 1.0f, 2.0f);
+			Tensor tensor2c = Tensor::meanSquaredErrorLoss(tensor2a, tensor2b);
+			CompareFloats(tensor2c.item(), 7.0f);
+		}
+
+		TEST_METHOD(Gradient)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 3,1 });
+			Tensor tensor1b = Tensor::meanSquaredErrorLoss(tensor1a, Tensor::zeroes({ 1 }));
+			Assert::IsFalse(tensor1b.requiresGradient());
+			Assert::IsNull(tensor1b.getFunction());
+
+			Tensor tensor2a = Tensor::zeroes({ 1 });
+			Tensor tensor2b = Tensor::ones({ 3 }).requireGradient();
+			Tensor tensor2c = Tensor::meanSquaredErrorLoss(tensor2a, tensor2b);
+			Assert::IsTrue(tensor2c.requiresGradient());
+			Assert::IsNotNull((MeanSquaredErrorLossFunction*)tensor2c.getFunction());
+
+			Tensor tensor3a = Tensor::ones({ 2, 1, 3 }).requireGradient();
+			Tensor tensor3b = Tensor::meanSquaredErrorLoss(tensor3a, Tensor::ones({ 1, 1 }));
+			Assert::IsTrue(tensor3b.requiresGradient());
+			Assert::IsNotNull((MeanSquaredErrorLossFunction*)tensor3b.getFunction());
 		}
 	};
 
