@@ -8,8 +8,9 @@ private:
 	std::vector<int> shape;
 	int size;
 	float* values;
-	bool gradient;
+	bool requiresGrad;
 	GradientFunction* function;
+	Tensor* grad;
 
 	Tensor(const std::vector<int>& shape, int size, float* values);
 
@@ -30,10 +31,13 @@ public:
 	float at(int index) const;
 	float at(const std::vector<int>& indices) const;
 	const GradientFunction* getFunction() const;
-
-	Tensor& reshape(const std::vector<int>& shape);
+	Tensor* getGradient();
 
 	Tensor detached() const;
+
+	void backwards();
+
+	Tensor& reshape(const std::vector<int>& shape);
 
 	Tensor get(const std::vector<int>& indices);
 	Tensor set(float value, const std::vector<int>& indices = {});
@@ -57,7 +61,7 @@ public:
 	static Tensor ReLU(Tensor& input);
 
 	static Tensor meanSquaredErrorLoss(Tensor& input, Tensor& targets);
-	static Tensor CategoricalCrossEntropyLoss(Tensor& input, const Tensor& target);
+	static Tensor categoricalCrossEntropyLoss(Tensor& input, const Tensor& target);
 
 	static Tensor zeroes(const std::vector<int>& shape);
 	static Tensor ones(const std::vector<int>& shape);

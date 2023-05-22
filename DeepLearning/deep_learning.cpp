@@ -1,11 +1,14 @@
 #include <stdexcept>
 #include <functional>
 #include <random>
+#include <unordered_map>
+#include <unordered_set>
+#include <queue>
 
 #include "deep_learning.h"
 
 Tensor::Tensor(const std::vector<int>& shape, int size, float* values) : shape(shape), size(size), values(values),
-gradient(false), function(NULL)
+requiresGrad(false), function(NULL)
 {
 }
 
@@ -23,11 +26,11 @@ int Tensor::getSize() const {
 }
 
 bool Tensor::requiresGradient() const {
-	return gradient;
+	return requiresGrad;
 }
 
 Tensor& Tensor::requireGradient() {
-	this->gradient = true;
+	this->requiresGrad = true;
 	return *this;
 }
 
@@ -51,13 +54,9 @@ const GradientFunction* Tensor::getFunction() const
 	return function;
 }
 
-Tensor& Tensor::reshape(const std::vector<int>& shape) {
-	int size = calculateSize(shape);
-	if (this->size != size) {
-		throw::std::length_error("New size does not match the current size.");
-	}
-	this->shape = shape;
-	return *this;
+Tensor* Tensor::getGradient()
+{
+	return grad;
 }
 
 Tensor Tensor::detached() const
@@ -70,6 +69,74 @@ Tensor Tensor::detached() const
 	return Tensor(shape, size, newValues);
 }
 
+void Tensor::backwards() 
+{
+	std::unordered_map<Tensor*, int> dependencies{};
+	std::unordered_set<Tensor*> visited;
+	std::queue<Tensor*> initQueue{};
+
+	dependencies.insert({ this, 0 });
+	initQueue.push(this);
+
+	// Discover all dependencies and create empty gradients
+	while (!initQueue.empty())
+	{
+		Tensor* current = initQueue.front();
+		visited.insert(current);
+		initQueue.pop();
+
+		float* gradValues = new float[current->size];
+		for (int i = 0; i < current->size; i++) gradValues[i] = 0.0f;
+		current->grad = new Tensor(current->shape, current->size, gradValues);
+
+		const GradientFunction* func = current->getFunction();
+		if (!func) continue;
+
+		for (Tensor* dependent : func->getDependents()) {
+			if (dependencies.find(dependent) == dependencies.end())
+				dependencies.insert({ dependent, 0 });
+			dependencies.at(dependent)++;
+
+			if (visited.find(dependent) == visited.end())
+				initQueue.push(dependent);
+		}
+	}
+
+	*grad = add(*grad, 1.0f);
+	std::queue<Tensor*> solveQueue{};
+	solveQueue.push(this);
+	while (!solveQueue.empty())
+	{
+		Tensor* current = solveQueue.front();
+		solveQueue.pop();
+
+		if (dependencies.at(current) != 0) continue;
+		dependencies.at(current) = -1;
+
+		if (current->function == nullptr) continue;
+
+		gradientList gradients = current->function->calculateGradient(*current->grad);
+		for (gradientTuple tuple : gradients)
+		{
+			Tensor* dependent = std::get<0>(tuple);
+			Tensor& gradient = std::get<1>(tuple);
+
+			*dependent->grad = add(*dependent->grad, gradient);
+			dependencies.at(dependent)--;
+			solveQueue.push(dependent);
+		}
+	}
+}
+
+Tensor& Tensor::reshape(const std::vector<int>& shape) {
+	int size = calculateSize(shape);
+	if (this->size != size) {
+		throw::std::length_error("New size does not match the current size.");
+	}
+	this->shape = shape;
+	return *this;
+}
+
 Tensor Tensor::get(const std::vector<int>& indices) {
 	int index = getIndex(indices);
 	std::vector<int> newShape(shape.begin() + indices.size(), shape.end());
@@ -79,8 +146,8 @@ Tensor Tensor::get(const std::vector<int>& indices) {
 		newValues[i] = values[i + index];
 	}
 	Tensor newTensor(newShape, newSize, newValues);
-	if (gradient) {
-		newTensor.gradient = true;
+	if (requiresGrad) {
+		newTensor.requiresGrad = true;
 		newTensor.function = new GetFunction(this, index, newSize);
 	}
 	return newTensor;
@@ -99,8 +166,8 @@ Tensor Tensor::set(float value, const std::vector<int>& indices) {
 	}
 
 	Tensor newTensor(shape, size, newValues);
-	if (gradient) {
-		newTensor.gradient = true;
+	if (requiresGrad) {
+		newTensor.requiresGrad = true;
 		newTensor.function = new SetSingleFunction(this, index, assignmentSize);
 	}
 	return newTensor;
@@ -128,8 +195,8 @@ Tensor Tensor::set(Tensor& values, const std::vector<int>& indices)
 	}
 
 	Tensor newTensor(shape, size, newValues);
-	if (gradient || values.gradient) {
-		newTensor.gradient = true;
+	if (requiresGrad || values.requiresGrad) {
+		newTensor.requiresGrad = true;
 		newTensor.function = new SetTensorFunction(this, &values, index, assignmentSize, broadcastedShape, broadcastedIndices);
 	}
 	return newTensor;
@@ -167,9 +234,9 @@ Tensor Tensor::transpose() {
 	}
 
 	Tensor newTensor(newShape, newSize, newValues);
-	if (gradient)
+	if (requiresGrad)
 	{
-		newTensor.gradient = true;
+		newTensor.requiresGrad = true;
 		newTensor.function = new TransposeFunction(this, transposeIndices);
 	}
 	return newTensor;
@@ -181,9 +248,9 @@ Tensor Tensor::add(Tensor& input, float value) {
 		other[i] = input.values[i] + value;
 	}
 	Tensor newTensor(input.shape, input.size, other);
-	if (input.gradient)
+	if (input.requiresGrad)
 	{
-		newTensor.gradient = true;
+		newTensor.requiresGrad = true;
 		newTensor.function = new AddSingleFunction(&input);
 	}
 	return newTensor;
@@ -202,9 +269,9 @@ Tensor Tensor::add(Tensor& input, Tensor& other) {
 	}
 
 	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
-	if (input.gradient || other.gradient)
+	if (input.requiresGrad || other.requiresGrad)
 	{
-		newTensor.gradient = true;
+		newTensor.requiresGrad = true;
 		newTensor.function = new AddTensorFunction(&input, &other, broadcastedIndices1, broadcastedIndices2);
 	}
 	return newTensor;
@@ -216,9 +283,9 @@ Tensor Tensor::subtract(Tensor& input, float value) {
 		other[i] = input.values[i] - value;
 	}
 	Tensor newTensor(input.shape, input.size, other);
-	if (input.gradient)
+	if (input.requiresGrad)
 	{
-		newTensor.gradient = true;
+		newTensor.requiresGrad = true;
 		newTensor.function = new SubtractSingleFunction(&input);
 	}
 	return newTensor;
@@ -237,9 +304,9 @@ Tensor Tensor::subtract(Tensor& input, Tensor& other) {
 	}
 
 	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
-	if (input.gradient || other.gradient)
+	if (input.requiresGrad || other.requiresGrad)
 	{
-		newTensor.gradient = true;
+		newTensor.requiresGrad = true;
 		newTensor.function = new SubtractTensorFunction(&input, &other, broadcastedIndices1, broadcastedIndices2);
 	}
 	return newTensor;
@@ -251,9 +318,9 @@ Tensor Tensor::multiply(Tensor& input, float value) {
 		other[i] = input.values[i] * value;
 	}
 	Tensor newTensor(input.shape, input.size, other);
-	if (input.gradient)
+	if (input.requiresGrad)
 	{
-		newTensor.gradient = true;
+		newTensor.requiresGrad = true;
 		newTensor.function = new MultiplySingleFunction(&input, value);
 	}
 	return newTensor;
@@ -272,9 +339,9 @@ Tensor Tensor::multiply(Tensor& input, Tensor& other) {
 	}
 
 	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
-	if (input.gradient || other.gradient)
+	if (input.requiresGrad || other.requiresGrad)
 	{
-		newTensor.gradient = true;
+		newTensor.requiresGrad = true;
 		newTensor.function = new MultiplyTensorFunction(&input, &other, broadcastedIndices1, broadcastedIndices2);
 	}
 	return newTensor;
@@ -286,9 +353,9 @@ Tensor Tensor::divide(Tensor& input, float value) {
 		other[i] = input.values[i] / value;
 	}
 	Tensor newTensor(input.shape, input.size, other);
-	if (input.gradient)
+	if (input.requiresGrad)
 	{
-		newTensor.gradient = true;
+		newTensor.requiresGrad = true;
 		newTensor.function = new DivideSingleFunction(&input, value);
 	}
 	return newTensor;
@@ -307,9 +374,9 @@ Tensor Tensor::divide(Tensor& input, Tensor& other) {
 	}
 
 	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
-	if (input.gradient || other.gradient)
+	if (input.requiresGrad || other.requiresGrad)
 	{
-		newTensor.gradient = true;
+		newTensor.requiresGrad = true;
 		newTensor.function = new DivideTensorFunction(&input, &other, broadcastedIndices1, broadcastedIndices2);
 	}
 	return newTensor;
@@ -349,7 +416,7 @@ Tensor Tensor::matrixMultiply(Tensor& input, Tensor& other)
 		int startIndex2 = broadcastedIndices2[i] * matrixInner * matrixHeight;
 		for (int x = 0; x < matrixWidth; x++) {
 			for (int y = 0; y < matrixHeight; y++) {
-				int sum = 0;
+				float sum = 0;
 				for (int j = 0; j < matrixInner; j++) {
 					sum += input.values[startIndex1 + x * matrixInner + j] * other.values[startIndex2 + j * matrixHeight + y];
 				}
@@ -359,9 +426,9 @@ Tensor Tensor::matrixMultiply(Tensor& input, Tensor& other)
 	}
 
 	Tensor newTensor(newShape, newSize, newValues);
-	if (input.gradient || other.gradient)
+	if (input.requiresGrad || other.requiresGrad)
 	{
-		newTensor.gradient = true;
+		newTensor.requiresGrad = true;
 		newTensor.function = new MatrixMultiplicationFunction(
 			&input, &other, broadcastedIndices1, broadcastedIndices2, matrixWidth, matrixInner, matrixHeight
 		);
@@ -375,9 +442,9 @@ Tensor Tensor::max(Tensor& input, float value) {
 		other[i] = std::max(input.values[i], value);
 	}
 	Tensor newTensor(input.shape, input.size, other);
-	if (input.gradient)
+	if (input.requiresGrad)
 	{
-		newTensor.gradient = true;
+		newTensor.requiresGrad = true;
 		newTensor.function = new MaxSingleFunction(&input, value);
 	}
 	return newTensor;
@@ -398,9 +465,9 @@ Tensor Tensor::max(Tensor& input, Tensor& other)
 	}
 
 	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
-	if (input.gradient || other.gradient)
+	if (input.requiresGrad || other.requiresGrad)
 	{
-		newTensor.gradient = true;
+		newTensor.requiresGrad = true;
 		newTensor.function = new MaxTensorFunction(&input, &other, broadcastedIndices1, broadcastedIndices2);
 	}
 	return newTensor;
@@ -412,9 +479,9 @@ Tensor Tensor::min(Tensor& input, float value) {
 		other[i] = std::min(input.values[i], value);
 	}
 	Tensor newTensor(input.shape, input.size, other);
-	if (input.gradient)
+	if (input.requiresGrad)
 	{
-		newTensor.gradient = true;
+		newTensor.requiresGrad = true;
 		newTensor.function = new MinSingleFunction(&input, value);
 	}
 	return newTensor;
@@ -435,9 +502,9 @@ Tensor Tensor::min(Tensor& input, Tensor& other)
 	}
 
 	Tensor newTensor(broadcastedShape, broadcastedSize, newValues);
-	if (input.gradient || other.gradient)
+	if (input.requiresGrad || other.requiresGrad)
 	{
-		newTensor.gradient = true;
+		newTensor.requiresGrad = true;
 		newTensor.function = new MinTensorFunction(&input, &other, broadcastedIndices1, broadcastedIndices2);
 	}
 	return newTensor;
@@ -466,15 +533,15 @@ Tensor Tensor::meanSquaredErrorLoss(Tensor& input, Tensor& target)
 	*newValue /= broadcastedSize;
 
 	Tensor newTensor = Tensor({}, 1, newValue);
-	if (input.gradient || target.gradient)
+	if (input.requiresGrad || target.requiresGrad)
 	{
-		newTensor.gradient = true;
+		newTensor.requiresGrad = true;
 		newTensor.function = new MeanSquaredErrorLossFunction(&input, &target, broadcastedSize, broadcastedIndices1, broadcastedIndices2);
 	}
 	return newTensor;
 }
 
-Tensor Tensor::CategoricalCrossEntropyLoss(Tensor& input, const Tensor& target)
+Tensor Tensor::categoricalCrossEntropyLoss(Tensor& input, const Tensor& target)
 {
 	int finalDimSize = input.shape[input.shape.size() - 1];
 
@@ -513,9 +580,9 @@ Tensor Tensor::CategoricalCrossEntropyLoss(Tensor& input, const Tensor& target)
 	*newValue /= (broadcastedSize / finalDimSize);
 
 	Tensor newTensor = Tensor({}, 1, newValue);
-	if (input.gradient)
+	if (input.requiresGrad)
 	{
-		newTensor.gradient = true;
+		newTensor.requiresGrad = true;
 		newTensor.function = new CategoricalCrossEntropyLossFunction(&input, &target, softmaxValues, finalDimSize,
 			broadcastedSize, broadcastedIndices1, broadcastedIndices2);
 	}

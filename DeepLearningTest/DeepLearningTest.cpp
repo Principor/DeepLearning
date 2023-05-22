@@ -1382,12 +1382,12 @@ namespace TensorTest
 		{
 			Tensor tensor1a = Tensor::range({ 2,1,3 }, 1.0f);
 			Tensor tensor1b = Tensor::range({ 3 }, 0.0f, 1.0f / 3.0f);
-			Tensor tensor1c = Tensor::CategoricalCrossEntropyLoss(tensor1a, tensor1b);
+			Tensor tensor1c = Tensor::categoricalCrossEntropyLoss(tensor1a, tensor1b);
 			CompareFloats(tensor1c.item(), 0.741f);
 
 			Tensor tensor2a = Tensor::full({ 2 }, 3.0f);
 			Tensor tensor2b = Tensor::fromValues(new float[4] {0.2f, 0.8f, 0.8f, 0.2f}, { 2,1,2 });
-			Tensor tensor2c = Tensor::CategoricalCrossEntropyLoss(tensor2a, tensor2b);
+			Tensor tensor2c = Tensor::categoricalCrossEntropyLoss(tensor2a, tensor2b);
 			CompareFloats(tensor2c.item(), 0.693f);
 		}
 
@@ -1396,19 +1396,19 @@ namespace TensorTest
 
 			Tensor tensor1a = Tensor::range({ 2,1,3 }, 1.0f);
 			Tensor tensor1b = Tensor::range({ 3 }, 0.0f, 1.0f / 3.0f);
-			Tensor tensor1c = Tensor::CategoricalCrossEntropyLoss(tensor1a, tensor1b);
+			Tensor tensor1c = Tensor::categoricalCrossEntropyLoss(tensor1a, tensor1b);
 			Assert::IsFalse(tensor1c.requiresGradient());
 			Assert::IsNull(tensor1c.getFunction());
 
 			Tensor tensor2a = Tensor::full({ 2 }, 3.0f);
 			Tensor tensor2b = Tensor::fromValues(new float[4] {0.2f, 0.8f, 0.8f, 0.2f}, { 2,1,2 }).requireGradient();
-			Tensor tensor2c = Tensor::CategoricalCrossEntropyLoss(tensor2a, tensor2b);
+			Tensor tensor2c = Tensor::categoricalCrossEntropyLoss(tensor2a, tensor2b);
 			Assert::IsFalse(tensor2c.requiresGradient());
 			Assert::IsNull(tensor2c.getFunction());
 
 			Tensor tensor3a = Tensor::full({ 2 }, 3.0f).requireGradient();
 			Tensor tensor3b = Tensor::fromValues(new float[4] {0.2f, 0.8f, 0.8f, 0.2f}, { 2,1,2 });
-			Tensor tensor3c = Tensor::CategoricalCrossEntropyLoss(tensor3a, tensor3b);
+			Tensor tensor3c = Tensor::categoricalCrossEntropyLoss(tensor3a, tensor3b);
 			Assert::IsTrue(tensor3c.requiresGradient());
 			Assert::IsNotNull((CategoricalCrossEntropyLossFunction*)tensor3c.getFunction());
 		}

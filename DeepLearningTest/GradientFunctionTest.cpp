@@ -1749,7 +1749,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor1a = Tensor::range({ 2,1,3 }, 1.0f).requireGradient();
 			Tensor tensor1b = Tensor::range({ 3 }, 0.0f, 1.0f / 3.0f);
-			Tensor tensor1c = Tensor::CategoricalCrossEntropyLoss(tensor1a, tensor1b);
+			Tensor tensor1c = Tensor::categoricalCrossEntropyLoss(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::ones({})
 			);
@@ -1760,7 +1760,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::full({ 2 }, 3.0f).requireGradient();
 			Tensor tensor2b = Tensor::fromValues(new float[4] {0.2f, 0.8f, 0.8f, 0.2f}, { 2,1,2 });
-			Tensor tensor2c = Tensor::CategoricalCrossEntropyLoss(tensor2a, tensor2b);
+			Tensor tensor2c = Tensor::categoricalCrossEntropyLoss(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::ones({})
 			);
@@ -1772,7 +1772,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::range({ 2,1,3 }, 1.0f).requireGradient();
 			Tensor tensor1b = Tensor::range({ 3 }, 0.0f, 1.0f / 3.0f);
-			Tensor tensor1c = Tensor::CategoricalCrossEntropyLoss(tensor1a, tensor1b);
+			Tensor tensor1c = Tensor::categoricalCrossEntropyLoss(tensor1a, tensor1b);
 			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
 				Tensor::ones({})
 			);
@@ -1784,7 +1784,7 @@ namespace GradientFunctionTest
 
 			Tensor tensor2a = Tensor::full({ 2 }, 3.0f).requireGradient();
 			Tensor tensor2b = Tensor::fromValues(new float[4] {0.2f, 0.8f, 0.8f, 0.2f}, { 2,1,2 });
-			Tensor tensor2c = Tensor::CategoricalCrossEntropyLoss(tensor2a, tensor2b);
+			Tensor tensor2c = Tensor::categoricalCrossEntropyLoss(tensor2a, tensor2b);
 			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
 				Tensor::ones({})
 			);
@@ -1797,7 +1797,7 @@ namespace GradientFunctionTest
 		{
 			Tensor tensor1a = Tensor::range({ 2,1,3 }, 1.0f).requireGradient();
 			Tensor tensor1b = Tensor::range({ 3 }, 0.0f, 1.0f / 3.0f);
-			Tensor tensor1c = Tensor::CategoricalCrossEntropyLoss(tensor1a, tensor1b);
+			Tensor tensor1c = Tensor::categoricalCrossEntropyLoss(tensor1a, tensor1b);
 			auto function = tensor1c.getFunction();
 			ComparePointers(&tensor1a, function->getDependents()[0]);
 		}
