@@ -55,6 +55,14 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(1), 2.0f);
 			CompareFloats(gradient2.at(2), 1.0f);
 		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 4, 2 }).requireGradient();
+			Tensor tensor1b = tensor1a.get({ 1 });
+			auto function = tensor1b.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
+		}
 	};
 
 	TEST_CLASS(SetSingleFunctionTest)
@@ -107,6 +115,14 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(0), 0.0f);
 			CompareFloats(gradient2.at(1), 0.0f);
 			CompareFloats(gradient2.at(2), 0.0f);
+		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::ones({ 3 }).requireGradient();
+			Tensor tensor1b = tensor1a.set(1.0f);
+			auto function = tensor1b.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
 		}
 	};
 
@@ -215,6 +231,16 @@ namespace GradientFunctionTest
 			Tensor& gradient2 = std::get<1>(gradients2[1]);
 			CompareFloats(gradient2.at(0), 18.0f);
 		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 4,2,1 }).requireGradient();
+			Tensor tensor1b = Tensor::zeroes({ 1,2,1 });
+			Tensor tensor1c = tensor1a.set(tensor1b, { 0 });
+			auto function = tensor1c.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
+			ComparePointers(&tensor1b, function->getDependents()[1]);
+		}
 	};
 
 	TEST_CLASS(AddSingleFunctionTest)
@@ -267,6 +293,14 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(2), 3.0f);
 			CompareFloats(gradient2.at(3), 4.0f);
 			CompareFloats(gradient2.at(4), 5.0f);
+		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 2,1,3 }).requireGradient();
+			Tensor tensor1b = Tensor::add(tensor1a, 2.0f);
+			auto function = tensor1b.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
 		}
 	};
 
@@ -370,6 +404,16 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(4), 5.0f);
 			CompareFloats(gradient2.at(5), 6.0f);
 		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
+			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
+			Tensor tensor1c = Tensor::add(tensor1a, tensor1b);
+			auto function = tensor1c.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
+			ComparePointers(&tensor1b, function->getDependents()[1]);
+		}
 	};
 
 	TEST_CLASS(SubtractSingleFunctionTest)
@@ -422,6 +466,14 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(2), 3.0f);
 			CompareFloats(gradient2.at(3), 4.0f);
 			CompareFloats(gradient2.at(4), 5.0f);
+		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 2,1,3 }).requireGradient();
+			Tensor tensor1b = Tensor::subtract(tensor1a, 2.0f); 
+			auto function = tensor1b.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
 		}
 	};
 
@@ -525,6 +577,16 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(4), -5.0f);
 			CompareFloats(gradient2.at(5), -6.0f);
 		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 1, 3 });
+			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
+			Tensor tensor1c = Tensor::subtract(tensor1a, tensor1b);
+			auto function = tensor1c.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
+			ComparePointers(&tensor1b, function->getDependents()[1]);
+		}
 	};
 
 	TEST_CLASS(MultiplySingleFunctionTest)
@@ -577,6 +639,14 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(2), 6.0f);
 			CompareFloats(gradient2.at(3), 8.0f);
 			CompareFloats(gradient2.at(4), 10.0f);
+		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 2,1,3 }).requireGradient();
+			Tensor tensor1b = Tensor::multiply(tensor1a, 2.0f);
+			auto function = tensor1b.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
 		}
 	};
 
@@ -680,6 +750,16 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(4), 10.0f);
 			CompareFloats(gradient2.at(5), 12.0f);
 		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::range({ 1, 3 });
+			Tensor tensor1b = Tensor::zeroes({ 4, 1 }).requireGradient();
+			Tensor tensor1c = Tensor::multiply(tensor1a, tensor1b);
+			auto function = tensor1c.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
+			ComparePointers(&tensor1b, function->getDependents()[1]);
+		}
 	};
 
 	TEST_CLASS(DivideSingleFunctionTest)
@@ -732,6 +812,14 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(2), 6.0f);
 			CompareFloats(gradient2.at(3), 8.0f);
 			CompareFloats(gradient2.at(4), 10.0f);
+		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::zeroes({ 2,1,3 }).requireGradient();
+			Tensor tensor1b = Tensor::divide(tensor1a, 2.0f);
+			auto function = tensor1b.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
 		}
 	};
 
@@ -837,6 +925,16 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(3), -8.0f);
 			CompareFloats(gradient2.at(4), -10.0f);
 			CompareFloats(gradient2.at(5), -12.0f);
+		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::range({ 1, 3 }, 1);
+			Tensor tensor1b = Tensor::full({ 4, 1 }, 0.2f).requireGradient();
+			Tensor tensor1c = Tensor::divide(tensor1a, tensor1b);
+			auto function = tensor1c.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
+			ComparePointers(&tensor1b, function->getDependents()[1]);
 		}
 	};
 
@@ -1094,6 +1192,16 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at({ 0,2,2,1 }), 81.0f);
 
 		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::range({ 2, 3 }, 1);
+			Tensor tensor1b = Tensor::range({ 3, 4 }, 1).requireGradient();
+			Tensor tensor1c = Tensor::matrixMultiply(tensor1a, tensor1b);
+			auto function = tensor1c.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
+			ComparePointers(&tensor1b, function->getDependents()[1]);
+		}
 	};
 
 	TEST_CLASS(TransposeFunctionTest)
@@ -1154,6 +1262,14 @@ namespace GradientFunctionTest
 				}
 			}
 		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::range({ 2,3 }).requireGradient();
+			Tensor tensor1b = tensor1a.transpose();
+			auto function = tensor1b.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
+		}
 	};
 
 	TEST_CLASS(MaxSingleFunctionTest)
@@ -1206,6 +1322,14 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(2), 0.0f);
 			CompareFloats(gradient2.at(3), 0.0f);
 			CompareFloats(gradient2.at(4), 0.0f);
+		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::range({ 2,1,3 }).requireGradient();
+			Tensor tensor1b = Tensor::max(tensor1a, 2.5f);
+			auto function = tensor1b.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
 		}
 	};
 
@@ -1312,6 +1436,16 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(4), 5.0f);
 			CompareFloats(gradient2.at(5), 6.0f);
 		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::range({ 1, 3 }, 1);
+			Tensor tensor1b = Tensor::full({ 4, 1 }, 2.5f).requireGradient();
+			Tensor tensor1c = Tensor::max(tensor1a, tensor1b);
+			auto function = tensor1c.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
+			ComparePointers(&tensor1b, function->getDependents()[1]);
+		}
 	};
 
 	TEST_CLASS(MinSingleFunctionTest)
@@ -1366,6 +1500,14 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(2), 3.0f);
 			CompareFloats(gradient2.at(3), 4.0f);
 			CompareFloats(gradient2.at(4), 5.0f);
+		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::range({ 2,1,3 }).requireGradient();
+			Tensor tensor1b = Tensor::min(tensor1a, 2.5f);
+			auto function = tensor1b.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
 		}
 	};
 
@@ -1471,6 +1613,16 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(3), 0.0f);
 			CompareFloats(gradient2.at(4), 0.0f);
 			CompareFloats(gradient2.at(5), 0.0f);
+		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::range({ 2, 1, 3 }, 0, 2);
+			Tensor tensor1b = Tensor::full({ 1 }, 2.5f).requireGradient();
+			Tensor tensor1c = Tensor::min(tensor1a, tensor1b);
+			auto function = tensor1c.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
+			ComparePointers(&tensor1b, function->getDependents()[1]);
 		}
 	};
 
@@ -1578,9 +1730,19 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(8), 0.2f);
 			CompareFloats(gradient2.at(9), 0.2f);
 		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::range({ 1, 2 }, 1);
+			Tensor tensor1b = Tensor::full({ 4, 1 }, 3.0f).requireGradient();
+			Tensor tensor1c = Tensor::meanSquaredErrorLoss(tensor1a, tensor1b);
+			auto function = tensor1c.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
+			ComparePointers(&tensor1b, function->getDependents()[1]);
+		}
 	};
 
-	TEST_CLASS(CategoricalCrossEntropyFunctionTest)
+	TEST_CLASS(CategoricalCrossEntropyLossFunctionTest)
 	{
 		TEST_METHOD(Shape)
 		{
@@ -1629,6 +1791,15 @@ namespace GradientFunctionTest
 			Tensor& gradient2 = std::get<1>(gradients2[0]);
 			CompareFloats(gradient2.at(0), 0.0f);
 			CompareFloats(gradient2.at(1), 0.0f);
+		}
+
+		TEST_METHOD(Dependents)
+		{
+			Tensor tensor1a = Tensor::range({ 2,1,3 }, 1.0f).requireGradient();
+			Tensor tensor1b = Tensor::range({ 3 }, 0.0f, 1.0f / 3.0f);
+			Tensor tensor1c = Tensor::CategoricalCrossEntropyLoss(tensor1a, tensor1b);
+			auto function = tensor1c.getFunction();
+			ComparePointers(&tensor1a, function->getDependents()[0]);
 		}
 	};
 }

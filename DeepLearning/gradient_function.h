@@ -10,6 +10,7 @@ using gradientList = std::vector<gradientTuple>;
 class GradientFunction {
 public:
 	virtual gradientList calculateGradient(Tensor& previousGradient) const = 0;
+	virtual std::vector<Tensor*> getDependents() const = 0;
 };
 
 class GetFunction : public GradientFunction {
@@ -20,6 +21,7 @@ private:
 public:
 	GetFunction(Tensor* original, int index, int size);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
+	std::vector<Tensor*> getDependents() const override;
 };
 
 class SetSingleFunction : public GradientFunction {
@@ -30,6 +32,7 @@ private:
 public:
 	SetSingleFunction(Tensor* original, int index, int size);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
+	std::vector<Tensor*> getDependents() const override;
 };
 
 class SetTensorFunction : public GradientFunction
@@ -45,6 +48,7 @@ public:
 	SetTensorFunction(Tensor* copyTo, Tensor* copyFrom, int index, int size, const std::vector<int>& broadcastShape,
 		const std::vector<int>& broadcastedIndices);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
+	std::vector<Tensor*> getDependents() const override;
 };
 
 class AddSingleFunction : public GradientFunction {
@@ -53,6 +57,7 @@ private:
 public:
 	AddSingleFunction(Tensor* original);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
+	std::vector<Tensor*> getDependents() const override;
 };
 
 class AddTensorFunction : public GradientFunction
@@ -64,6 +69,7 @@ public:
 	AddTensorFunction(Tensor* original1, Tensor* original2,
 		const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
+	std::vector<Tensor*> getDependents() const override;
 };
 
 class SubtractSingleFunction : public GradientFunction {
@@ -72,6 +78,7 @@ private:
 public:
 	SubtractSingleFunction(Tensor* original);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
+	std::vector<Tensor*> getDependents() const override;
 };
 
 class SubtractTensorFunction : public GradientFunction
@@ -83,6 +90,7 @@ public:
 	SubtractTensorFunction(Tensor* original1, Tensor* original2,
 		const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
+	std::vector<Tensor*> getDependents() const override;
 };
 
 class MultiplySingleFunction : public GradientFunction {
@@ -92,6 +100,7 @@ private:
 public:
 	MultiplySingleFunction(Tensor* original, float value);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
+	std::vector<Tensor*> getDependents() const override;
 };
 
 class MultiplyTensorFunction : public GradientFunction
@@ -103,6 +112,7 @@ public:
 	MultiplyTensorFunction(Tensor* original1, Tensor* original2,
 		const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
+	std::vector<Tensor*> getDependents() const override;
 };
 
 class DivideSingleFunction : public GradientFunction {
@@ -112,6 +122,7 @@ private:
 public:
 	DivideSingleFunction(Tensor* original, float value);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
+	std::vector<Tensor*> getDependents() const override;
 };
 
 class DivideTensorFunction : public GradientFunction
@@ -123,6 +134,7 @@ public:
 	DivideTensorFunction(Tensor* original1, Tensor* original2,
 		const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
+	std::vector<Tensor*> getDependents() const override;
 };
 
 class TransposeFunction : public GradientFunction
@@ -133,6 +145,7 @@ private:
 public:
 	TransposeFunction(Tensor* original, const std::vector<int>& transposeIndices);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
+	std::vector<Tensor*> getDependents() const override;
 };
 
 class MatrixMultiplicationFunction : public GradientFunction
@@ -146,6 +159,7 @@ public:
 		const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2,
 		int matrixWidth, int matrixInner, int matrixHeight);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
+	std::vector<Tensor*> getDependents() const override;
 };
 
 class MaxSingleFunction : public GradientFunction
@@ -156,6 +170,7 @@ private:
 public:
 	MaxSingleFunction(Tensor* original, float value);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
+	std::vector<Tensor*> getDependents() const override;
 };
 
 class MaxTensorFunction : public GradientFunction
@@ -167,6 +182,7 @@ public:
 	MaxTensorFunction(Tensor* original1, Tensor* original2,
 		const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
+	std::vector<Tensor*> getDependents() const override;
 };
 
 class MinSingleFunction : public GradientFunction
@@ -177,6 +193,7 @@ private:
 public:
 	MinSingleFunction(Tensor* original, float value);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
+	std::vector<Tensor*> getDependents() const override;
 };
 
 class MinTensorFunction : public GradientFunction
@@ -188,6 +205,7 @@ public:
 	MinTensorFunction(Tensor* original1, Tensor* original2,
 		const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
+	std::vector<Tensor*> getDependents() const override;
 };
 
 class MeanSquaredErrorLossFunction : public GradientFunction
@@ -200,9 +218,10 @@ public:
 	MeanSquaredErrorLossFunction(Tensor* original1, Tensor* original2, int broadcastedSize,
 		const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
+	std::vector<Tensor*> getDependents() const override;
 };
 
-class CategoricalCrossEntropyFunction : public GradientFunction
+class CategoricalCrossEntropyLossFunction : public GradientFunction
 {
 private:
 	Tensor* original1;
@@ -212,8 +231,8 @@ private:
 	int broadcastedSize;
 	std::vector<int> broadcastedIndices1, broadcastedIndices2;
 public:
-	CategoricalCrossEntropyFunction(Tensor* original1, const Tensor* orignal2, float* softmaxValues, int finalDimSize,
+	CategoricalCrossEntropyLossFunction(Tensor* original1, const Tensor* orignal2, float* softmaxValues, int finalDimSize,
 		int broadcastedSize, const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
-
+	std::vector<Tensor*> getDependents() const override;
 };

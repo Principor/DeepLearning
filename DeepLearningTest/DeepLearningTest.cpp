@@ -1410,7 +1410,7 @@ namespace TensorTest
 			Tensor tensor3b = Tensor::fromValues(new float[4] {0.2f, 0.8f, 0.8f, 0.2f}, { 2,1,2 });
 			Tensor tensor3c = Tensor::CategoricalCrossEntropyLoss(tensor3a, tensor3b);
 			Assert::IsTrue(tensor3c.requiresGradient());
-			Assert::IsNotNull((CategoricalCrossEntropyFunction*)tensor3c.getFunction());
+			Assert::IsNotNull((CategoricalCrossEntropyLossFunction*)tensor3c.getFunction());
 		}
 	};
 

@@ -516,7 +516,7 @@ Tensor Tensor::CategoricalCrossEntropyLoss(Tensor& input, const Tensor& target)
 	if (input.gradient)
 	{
 		newTensor.gradient = true;
-		newTensor.function = new CategoricalCrossEntropyFunction(&input, &target, softmaxValues, finalDimSize,
+		newTensor.function = new CategoricalCrossEntropyLossFunction(&input, &target, softmaxValues, finalDimSize,
 			broadcastedSize, broadcastedIndices1, broadcastedIndices2);
 	}
 	return newTensor;

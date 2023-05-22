@@ -21,6 +21,9 @@ gradientList GetFunction::calculateGradient(Tensor& previousGradient) const {
 	return gradientList{ gradientTuple(original, Tensor::fromValues(gradientValues, gradientShape)) };
 }
 
+std::vector<Tensor*> GetFunction::getDependents() const {
+	return { original };
+}
 
 
 SetSingleFunction::SetSingleFunction(Tensor* original, int index, int size) : original(original), index(index), size(size)
@@ -41,6 +44,10 @@ gradientList SetSingleFunction::calculateGradient(Tensor& previousGradient) cons
 		}
 	}
 	return gradientList{ gradientTuple(original, Tensor::fromValues(gradientValues, gradientShape)) };
+}
+
+std::vector<Tensor*> SetSingleFunction::getDependents() const {
+	return { original };
 }
 
 
@@ -89,7 +96,9 @@ gradientList SetTensorFunction::calculateGradient(Tensor& previousGradient) cons
 	return list;
 }
 
-
+std::vector<Tensor*> SetTensorFunction::getDependents() const {
+	return { copyTo, copyFrom};
+}
 
 AddSingleFunction::AddSingleFunction(Tensor* original) : original(original)
 {
@@ -107,6 +116,9 @@ gradientList AddSingleFunction::calculateGradient(Tensor& previousGradient) cons
 	return gradientList{ gradientTuple{original, Tensor::fromValues(gradientValues, gradientShape)} };
 }
 
+std::vector<Tensor*> AddSingleFunction::getDependents() const {
+	return { original };
+}
 
 AddTensorFunction::AddTensorFunction(Tensor* original1, Tensor* original2, const std::vector<int>& broadcastedIndices1,
 	const std::vector<int>& broadcastedIndices2) : original1(original1), original2(original2),
@@ -138,6 +150,10 @@ gradientList AddTensorFunction::calculateGradient(Tensor& previousGradient) cons
 	};
 }
 
+std::vector<Tensor*> AddTensorFunction::getDependents() const {
+	return { original1, original2 };
+}
+
 
 
 SubtractSingleFunction::SubtractSingleFunction(Tensor* original) : original(original)
@@ -156,6 +172,10 @@ gradientList SubtractSingleFunction::calculateGradient(Tensor& previousGradient)
 	return gradientList{ gradientTuple{original, Tensor::fromValues(gradientValues, gradientShape)} };
 }
 
+
+std::vector<Tensor*> SubtractSingleFunction::getDependents() const {
+	return { original };
+}
 
 SubtractTensorFunction::SubtractTensorFunction(Tensor* original1, Tensor* original2, const std::vector<int>& broadcastedIndices1,
 	const std::vector<int>& broadcastedIndices2) : original1(original1), original2(original2),
@@ -187,6 +207,10 @@ gradientList SubtractTensorFunction::calculateGradient(Tensor& previousGradient)
 	};
 }
 
+std::vector<Tensor*> SubtractTensorFunction::getDependents() const {
+	return { original1, original2 };
+}
+
 
 
 MultiplySingleFunction::MultiplySingleFunction(Tensor* original, float value) : original(original), value(value)
@@ -203,6 +227,10 @@ gradientList MultiplySingleFunction::calculateGradient(Tensor& previousGradient)
 		gradientValues[i] = previousGradient.at(i) * value;
 	}
 	return gradientList{ gradientTuple{original, Tensor::fromValues(gradientValues, gradientShape)} };
+}
+
+std::vector<Tensor*> MultiplySingleFunction::getDependents() const {
+	return { original };
 }
 
 
@@ -237,6 +265,10 @@ gradientList MultiplyTensorFunction::calculateGradient(Tensor& previousGradient)
 	};
 }
 
+std::vector<Tensor*> MultiplyTensorFunction::getDependents() const {
+	return { original1, original2 };
+}
+
 
 
 DivideSingleFunction::DivideSingleFunction(Tensor* original, float value) : original(original), value(value)
@@ -253,6 +285,10 @@ gradientList DivideSingleFunction::calculateGradient(Tensor& previousGradient) c
 		gradientValues[i] = previousGradient.at(i) / value;
 	}
 	return gradientList{ gradientTuple{original, Tensor::fromValues(gradientValues, gradientShape)} };
+}
+
+std::vector<Tensor*> DivideSingleFunction::getDependents() const {
+	return { original };
 }
 
 
@@ -287,6 +323,11 @@ gradientList DivideTensorFunction::calculateGradient(Tensor& previousGradient) c
 	};
 }
 
+std::vector<Tensor*> DivideTensorFunction::getDependents() const {
+	return { original1, original2 };
+}
+
+
 TransposeFunction::TransposeFunction(Tensor* original, const std::vector<int>& transposeIndices) : original(original), transposeIndices(transposeIndices)
 {
 
@@ -302,6 +343,11 @@ gradientList TransposeFunction::calculateGradient(Tensor& previousGradient) cons
 	}
 	return gradientList{ gradientTuple(original, Tensor::fromValues(gradientValues, gradientShape)) };
 }
+
+std::vector<Tensor*> TransposeFunction::getDependents() const {
+	return { original };
+}
+
 
 MatrixMultiplicationFunction::MatrixMultiplicationFunction(Tensor* original1, Tensor* original2,
 	const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2,
@@ -350,6 +396,10 @@ gradientList MatrixMultiplicationFunction::calculateGradient(Tensor& previousGra
 	};
 }
 
+std::vector<Tensor*> MatrixMultiplicationFunction::getDependents() const {
+	return { original1, original2 };
+}
+
 MaxSingleFunction::MaxSingleFunction(Tensor* original, float value) : original(original), value(value)
 {
 
@@ -364,6 +414,10 @@ gradientList MaxSingleFunction::calculateGradient(Tensor& previousGradient) cons
 		gradientValues[i] = original->at(i) >= value ? previousGradient.at(i) : 0;
 	}
 	return gradientList{ gradientTuple{original, Tensor::fromValues(gradientValues, gradientShape)} };
+}
+
+std::vector<Tensor*> MaxSingleFunction::getDependents() const {
+	return { original };
 }
 
 MaxTensorFunction::MaxTensorFunction(Tensor* original1, Tensor* original2,
@@ -396,6 +450,11 @@ gradientList MaxTensorFunction::calculateGradient(Tensor& previousGradient) cons
 	};
 }
 
+std::vector<Tensor*> MaxTensorFunction::getDependents() const {
+	return { original1, original2 };
+}
+
+
 MinSingleFunction::MinSingleFunction(Tensor* original, float value) : original(original), value(value)
 {
 }
@@ -409,6 +468,10 @@ gradientList MinSingleFunction::calculateGradient(Tensor& previousGradient) cons
 		gradientValues[i] = original->at(i) <= value ? previousGradient.at(i) : 0;
 	}
 	return gradientList{ gradientTuple{original, Tensor::fromValues(gradientValues, gradientShape)} };
+}
+
+std::vector<Tensor*> MinSingleFunction::getDependents() const {
+	return { original };
 }
 
 MinTensorFunction::MinTensorFunction(Tensor* original1, Tensor* original2,
@@ -441,6 +504,11 @@ gradientList MinTensorFunction::calculateGradient(Tensor& previousGradient) cons
 	};
 }
 
+std::vector<Tensor*> MinTensorFunction::getDependents() const {
+	return { original1, original2 };
+}
+
+
 MeanSquaredErrorLossFunction::MeanSquaredErrorLossFunction(Tensor* original1, Tensor* original2, int broadcastedSize,
 	const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2) : original1(original1), original2(original2),
 	broadcastedSize(broadcastedSize), broadcastedIndices1(broadcastedIndices1), broadcastedIndices2(broadcastedIndices2)
@@ -472,14 +540,18 @@ gradientList MeanSquaredErrorLossFunction::calculateGradient(Tensor& previousGra
 	};
 }
 
-CategoricalCrossEntropyFunction::CategoricalCrossEntropyFunction(Tensor* original1, const Tensor* original2, float* softmaxValues,
+std::vector<Tensor*> MeanSquaredErrorLossFunction::getDependents() const {
+	return { original1, original2 };
+}
+
+CategoricalCrossEntropyLossFunction::CategoricalCrossEntropyLossFunction(Tensor* original1, const Tensor* original2, float* softmaxValues,
 	int finalDimSize, int broadcastedSize, const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2) :
 	original1(original1), original2(original2), softmaxValues(softmaxValues), finalDimSize(finalDimSize),
 	broadcastedSize(broadcastedSize), broadcastedIndices1(broadcastedIndices1), broadcastedIndices2(broadcastedIndices2)
 {
 }
 
-gradientList CategoricalCrossEntropyFunction::calculateGradient(Tensor& previousGradient) const
+gradientList CategoricalCrossEntropyLossFunction::calculateGradient(Tensor& previousGradient) const
 {
 	int gradientSize = original1->getSize();
 	const std::vector<int>& gradientShape = original1->getShape();
@@ -496,4 +568,8 @@ gradientList CategoricalCrossEntropyFunction::calculateGradient(Tensor& previous
 	return gradientList{
 		gradientTuple(original1, Tensor::fromValues(gradientValues, gradientShape))
 	};
+}
+
+std::vector<Tensor*> CategoricalCrossEntropyLossFunction::getDependents() const {
+	return { original1 };
 }
