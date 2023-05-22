@@ -1579,4 +1579,56 @@ namespace GradientFunctionTest
 			CompareFloats(gradient2.at(9), 0.2f);
 		}
 	};
+
+	TEST_CLASS(CategoricalCrossEntropyFunctionTest)
+	{
+		TEST_METHOD(Shape)
+		{
+
+			Tensor tensor1a = Tensor::range({ 2,1,3 }, 1.0f).requireGradient();
+			Tensor tensor1b = Tensor::range({ 3 }, 0.0f, 1.0f / 3.0f);
+			Tensor tensor1c = Tensor::CategoricalCrossEntropyLoss(tensor1a, tensor1b);
+			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
+				Tensor::ones({})
+			);
+			Tensor& gradient1 = std::get<1>(gradients1[0]);
+			Assert::AreEqual(gradient1.getShape()[0], 2);
+			Assert::AreEqual(gradient1.getShape()[1], 1);
+			Assert::AreEqual(gradient1.getShape()[2], 3);
+
+			Tensor tensor2a = Tensor::full({ 2 }, 3.0f).requireGradient();
+			Tensor tensor2b = Tensor::fromValues(new float[4] {0.2f, 0.8f, 0.8f, 0.2f}, { 2,1,2 });
+			Tensor tensor2c = Tensor::CategoricalCrossEntropyLoss(tensor2a, tensor2b);
+			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
+				Tensor::ones({})
+			);
+			Tensor& gradient2 = std::get<1>(gradients2[0]);
+			Assert::AreEqual(gradient2.getShape()[0], 2);
+		}
+
+		TEST_METHOD(Values)
+		{
+			Tensor tensor1a = Tensor::range({ 2,1,3 }, 1.0f).requireGradient();
+			Tensor tensor1b = Tensor::range({ 3 }, 0.0f, 1.0f / 3.0f);
+			Tensor tensor1c = Tensor::CategoricalCrossEntropyLoss(tensor1a, tensor1b);
+			gradientList gradients1 = tensor1c.getFunction()->calculateGradient(
+				Tensor::ones({})
+			);
+			Tensor& gradient1 = std::get<1>(gradients1[0]);
+			CompareFloats(gradient1.at(0), 0.045f);
+			CompareFloats(gradient1.at(1), -0.044f);
+			CompareFloats(gradient1.at(2), 0.000f);
+
+
+			Tensor tensor2a = Tensor::full({ 2 }, 3.0f).requireGradient();
+			Tensor tensor2b = Tensor::fromValues(new float[4] {0.2f, 0.8f, 0.8f, 0.2f}, { 2,1,2 });
+			Tensor tensor2c = Tensor::CategoricalCrossEntropyLoss(tensor2a, tensor2b);
+			gradientList gradients2 = tensor2c.getFunction()->calculateGradient(
+				Tensor::ones({})
+			);
+			Tensor& gradient2 = std::get<1>(gradients2[0]);
+			CompareFloats(gradient2.at(0), 0.0f);
+			CompareFloats(gradient2.at(1), 0.0f);
+		}
+	};
 }

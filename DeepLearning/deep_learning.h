@@ -57,6 +57,7 @@ public:
 	static Tensor ReLU(Tensor& input);
 
 	static Tensor meanSquaredErrorLoss(Tensor& input, Tensor& targets);
+	static Tensor CategoricalCrossEntropyLoss(Tensor& input, const Tensor& target);
 
 	static Tensor zeroes(const std::vector<int>& shape);
 	static Tensor ones(const std::vector<int>& shape);

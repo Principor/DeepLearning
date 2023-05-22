@@ -201,3 +201,19 @@ public:
 		const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2);
 	gradientList calculateGradient(Tensor& previousGradient) const override;
 };
+
+class CategoricalCrossEntropyFunction : public GradientFunction
+{
+private:
+	Tensor* original1;
+	const Tensor* original2;
+	float* softmaxValues;
+	int finalDimSize;
+	int broadcastedSize;
+	std::vector<int> broadcastedIndices1, broadcastedIndices2;
+public:
+	CategoricalCrossEntropyFunction(Tensor* original1, const Tensor* orignal2, float* softmaxValues, int finalDimSize,
+		int broadcastedSize, const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2);
+	gradientList calculateGradient(Tensor& previousGradient) const override;
+
+};

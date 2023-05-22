@@ -355,7 +355,7 @@ MaxSingleFunction::MaxSingleFunction(Tensor* original, float value) : original(o
 
 }
 
-gradientList MaxSingleFunction::calculateGradient(Tensor& previousGradient) const 
+gradientList MaxSingleFunction::calculateGradient(Tensor& previousGradient) const
 {
 	int gradientSize = original->getSize();
 	const std::vector<int>& gradientShape = original->getShape();
@@ -400,7 +400,7 @@ MinSingleFunction::MinSingleFunction(Tensor* original, float value) : original(o
 {
 }
 
-gradientList MinSingleFunction::calculateGradient(Tensor& previousGradient) const 
+gradientList MinSingleFunction::calculateGradient(Tensor& previousGradient) const
 {
 	int gradientSize = original->getSize();
 	const std::vector<int>& gradientShape = original->getShape();
@@ -469,5 +469,31 @@ gradientList MeanSquaredErrorLossFunction::calculateGradient(Tensor& previousGra
 	return gradientList{
 		gradientTuple(original1, Tensor::fromValues(gradientValues1, gradientShape1)),
 		gradientTuple(original2, Tensor::fromValues(gradientValues2, gradientShape2))
+	};
+}
+
+CategoricalCrossEntropyFunction::CategoricalCrossEntropyFunction(Tensor* original1, const Tensor* original2, float* softmaxValues,
+	int finalDimSize, int broadcastedSize, const std::vector<int>& broadcastedIndices1, const std::vector<int>& broadcastedIndices2) :
+	original1(original1), original2(original2), softmaxValues(softmaxValues), finalDimSize(finalDimSize),
+	broadcastedSize(broadcastedSize), broadcastedIndices1(broadcastedIndices1), broadcastedIndices2(broadcastedIndices2)
+{
+}
+
+gradientList CategoricalCrossEntropyFunction::calculateGradient(Tensor& previousGradient) const
+{
+	int gradientSize = original1->getSize();
+	const std::vector<int>& gradientShape = original1->getShape();
+	float* gradientValues = new float[gradientSize];
+	for (int i = 0; i < gradientSize; i++) gradientValues[i] = 0;
+
+	for (int i = 0; i < broadcastedSize; i++) {
+		int index1 = broadcastedIndices1[i], index2 = broadcastedIndices2[i];
+		float pred = softmaxValues[index1], truth = original2->at(index2);
+		gradientValues[index1] += previousGradient.item() * (pred - truth);
+	}
+	for (int i = 0; i < gradientSize; i++) gradientValues[i] /= (gradientSize / finalDimSize);
+
+	return gradientList{
+		gradientTuple(original1, Tensor::fromValues(gradientValues, gradientShape))
 	};
 }

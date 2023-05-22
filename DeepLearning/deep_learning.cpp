@@ -474,6 +474,54 @@ Tensor Tensor::meanSquaredErrorLoss(Tensor& input, Tensor& target)
 	return newTensor;
 }
 
+Tensor Tensor::CategoricalCrossEntropyLoss(Tensor& input, const Tensor& target)
+{
+	int finalDimSize = input.shape[input.shape.size() - 1];
+
+	if (finalDimSize < 2)
+		throw std::length_error("Input final dimension must be greater than 1.");
+
+	float* softmaxValues = new float[input.size];
+	for (int i = 0; i < input.size / finalDimSize; i++) {
+		float sum = 0;
+		for (int j = 0; j < finalDimSize; j++) {
+			int index = finalDimSize * i + j;
+			float exp = std::exp(input.values[index]);
+			softmaxValues[index] = exp;
+			sum += exp;
+		}
+		int x = 5;
+		for (int j = 0; j < finalDimSize; j++) {
+			int index = finalDimSize * i + j;
+#pragma warning(disable : 6385)
+			softmaxValues[index] /= sum;
+		}
+	}
+
+	float* newValue = new float;
+	*newValue = 0.0f;
+
+	auto broadcastedShape = broadcastShapes(input.shape, target.shape);
+	int broadcastedSize = calculateSize(broadcastedShape);
+	auto broadcastedIndices1 = broadcastIndices(input.shape, broadcastedShape);
+	auto broadcastedIndices2 = broadcastIndices(target.shape, broadcastedShape);
+
+	for (int i = 0; i < broadcastedSize; i++) {
+#pragma warning(disable : 6001)
+		* newValue -= target.values[broadcastedIndices2[i]] * std::log(softmaxValues[broadcastedIndices1[i]]);
+	}
+	*newValue /= (broadcastedSize / finalDimSize);
+
+	Tensor newTensor = Tensor({}, 1, newValue);
+	if (input.gradient)
+	{
+		newTensor.gradient = true;
+		newTensor.function = new CategoricalCrossEntropyFunction(&input, &target, softmaxValues, finalDimSize,
+			broadcastedSize, broadcastedIndices1, broadcastedIndices2);
+	}
+	return newTensor;
+}
+
 Tensor Tensor::zeroes(const std::vector<int>& shape) {
 	return full(shape, 0.0f);
 }
